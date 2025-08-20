@@ -14,8 +14,8 @@ namespace api\wxapp\controller;
  *     "create_time"             =>"2025-02-21 15:10:22",
  *     "version"                 =>"1.0",
  *     "use"                     => new \api\wxapp\controller\ShopCouponController();
- *     "test_environment"        =>"http://lscs.ikun:9090/api/wxapp/shop_coupon/index",
- *     "official_environment"    =>"https://lscs001.jscxkf.net/api/wxapp/shop_coupon/index",
+ *     "test_environment"        =>"http://tutor.ikun:9090/api/wxapp/shop_coupon/index",
+ *     "official_environment"    =>"https://xcxkf159.aubye.com/api/wxapp/shop_coupon/index",
  * )
  */
 
@@ -41,7 +41,7 @@ class ShopCouponController extends AuthController
     /**
      * 默认接口
      * /api/wxapp/shop_coupon/index
-     * https://lscs001.jscxkf.net/api/wxapp/shop_coupon/index
+     * https://xcxkf159.aubye.com/api/wxapp/shop_coupon/index
      */
     public function index()
     {
@@ -94,8 +94,8 @@ class ShopCouponController extends AuthController
      * )
      *
      *
-     *   test_environment: http://lscs.ikun:9090/api/wxapp/shop_coupon/find_coupon_list
-     *   official_environment: https://lscs001.jscxkf.net/api/wxapp/shop_coupon/find_coupon_list
+     *   test_environment: http://tutor.ikun:9090/api/wxapp/shop_coupon/find_coupon_list
+     *   official_environment: https://xcxkf159.aubye.com/api/wxapp/shop_coupon/find_coupon_list
      *   api:  /wxapp/shop_coupon/find_coupon_list
      *   remark_name: 优惠券 列表
      *
@@ -165,8 +165,8 @@ class ShopCouponController extends AuthController
      * )
      *
      *
-     *   test_environment: http://lscs.ikun:9090/api/wxapp/shop_coupon/add_coupon
-     *   official_environment: https://lscs001.jscxkf.net/api/wxapp/shop_coupon/add_coupon
+     *   test_environment: http://tutor.ikun:9090/api/wxapp/shop_coupon/add_coupon
+     *   official_environment: https://xcxkf159.aubye.com/api/wxapp/shop_coupon/add_coupon
      *   api:  /wxapp/shop_coupon/add_coupon
      *   remark_name: 领取优惠券
      *
@@ -263,8 +263,8 @@ class ShopCouponController extends AuthController
      * )
      *
      *
-     *   test_environment: http://lscs.ikun:9090/api/wxapp/shop_coupon/my_coupon_list
-     *   official_environment: https://lscs001.jscxkf.net/api/wxapp/shop_coupon/my_coupon_list
+     *   test_environment: http://tutor.ikun:9090/api/wxapp/shop_coupon/my_coupon_list
+     *   official_environment: https://xcxkf159.aubye.com/api/wxapp/shop_coupon/my_coupon_list
      *   api:  /wxapp/shop_coupon/my_coupon_list
      *   remark_name: 已领取优惠列表
      *
@@ -343,8 +343,8 @@ class ShopCouponController extends AuthController
      * )
      *
      *
-     *   test_environment: http://lscs.ikun:9090/api/wxapp/shop_coupon/verification_coupon
-     *   official_environment: https://lscs001.jscxkf.net/api/wxapp/shop_coupon/verification_coupon
+     *   test_environment: http://tutor.ikun:9090/api/wxapp/shop_coupon/verification_coupon
+     *   official_environment: https://xcxkf159.aubye.com/api/wxapp/shop_coupon/verification_coupon
      *   api:  /wxapp/shop_coupon/verification_coupon
      *   remark_name: 核销优惠券
      *

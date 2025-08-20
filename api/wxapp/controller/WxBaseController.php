@@ -92,8 +92,8 @@ class WxBaseController extends AuthController
 
     /**
      * 微信订单退款 测试
-     *   test_environment: http://lscs.ikun:9090/api/wxapp/wx_base/wx_refund_test
-     *   official_environment: https://lscs001.jscxkf.net/api/wxapp/wx_base/wx_refund_test
+     *   test_environment: http://tutor.ikun:9090/api/wxapp/wx_base/wx_refund_test
+     *   official_environment: https://xcxkf159.aubye.com/api/wxapp/wx_base/wx_refund_test
      *   api: /wxapp/wx_base/wx_refund_test
      *
      */
@@ -136,8 +136,8 @@ class WxBaseController extends AuthController
      * @param string $color
      *
      *
-     *   test_environment: http://lscs.ikun:9090/api/wxapp/wx_base/send_temp_msg_test
-     *   official_environment: https://lscs001.jscxkf.net/api/wxapp/wx_base/send_temp_msg_test
+     *   test_environment: http://tutor.ikun:9090/api/wxapp/wx_base/send_temp_msg_test
+     *   official_environment: https://xcxkf159.aubye.com/api/wxapp/wx_base/send_temp_msg_test
      *   api: /wxapp/wx_base/send_temp_msg_test
      *
      */
@@ -167,8 +167,8 @@ class WxBaseController extends AuthController
     /**
      * 发货测试用
      *
-     *   test_environment: http://lscs.ikun:9090/api/wxapp/wx_base/send_shipping
-     *   official_environment: https://lscs001.jscxkf.net/api/wxapp/wx_base/send_shipping
+     *   test_environment: http://tutor.ikun:9090/api/wxapp/wx_base/send_shipping
+     *   official_environment: https://xcxkf159.aubye.com/api/wxapp/wx_base/send_shipping
      *   api: /wxapp/wx_base/send_shipping
      *   remark_name: 发货测试用
      *
@@ -188,8 +188,8 @@ class WxBaseController extends AuthController
 
     /**
      *  文字违规检测 测试
-     *   test_environment: http://lscs.ikun:9090/api/wxapp/wx_base/msg_sec_check_test
-     *   official_environment: https://lscs001.jscxkf.net/api/wxapp/wx_base/msg_sec_check_test
+     *   test_environment: http://tutor.ikun:9090/api/wxapp/wx_base/msg_sec_check_test
+     *   official_environment: https://xcxkf159.aubye.com/api/wxapp/wx_base/msg_sec_check_test
      *   api: /wxapp/wx_base/msg_sec_check_test
      *
      */
@@ -205,7 +205,7 @@ class WxBaseController extends AuthController
 
     /**
      *  微信转账实例
-     *  调用示例 https://lscs001.jscxkf.net/api/wxapp/wx_base/example
+     *  调用示例 https://xcxkf159.aubye.com/api/wxapp/wx_base/example
      */
     public function example()
     {
@@ -237,7 +237,7 @@ class WxBaseController extends AuthController
 
     /**
      * 测试生成小程序(太阳)码
-     * 调用示例  https://lscs001.jscxkf.net/api/wxapp/wx_base/get_mini_qr_test
+     * 调用示例  https://xcxkf159.aubye.com/api/wxapp/wx_base/get_mini_qr_test
      */
     public function get_mini_qr_test()
     {
@@ -252,7 +252,7 @@ class WxBaseController extends AuthController
 
     /**
      * 测试生成小程序(方形)码
-     * 调用示例  https://lscs001.jscxkf.net/api/wxapp/wx_base/get_mini_square_qr_test
+     * 调用示例  https://xcxkf159.aubye.com/api/wxapp/wx_base/get_mini_square_qr_test
      */
     public function get_mini_square_qr_test()
     {
@@ -489,7 +489,7 @@ class WxBaseController extends AuthController
 
     /**
      * 微信转账回调 (官方回调)
-     * 调用示例 https://lscs001.jscxkf.net/api/wxapp/wx_base/notify
+     * 调用示例 https://xcxkf159.aubye.com/api/wxapp/wx_base/notify
      */
     public function notify()
     {
@@ -714,7 +714,7 @@ class WxBaseController extends AuthController
 
     /**
      * 将公众号的official_openid存入member表中   可以在用户授权登录成功后操作
-     * 调用示例 https://lscs001.jscxkf.net/api/wxapp/wx_base/update_official_openid
+     * 调用示例 https://xcxkf159.aubye.com/api/wxapp/wx_base/update_official_openid
      */
     public function update_official_openid()
     {
@@ -734,8 +734,8 @@ class WxBaseController extends AuthController
      * @throws \think\db\exception\DbException
      *
      *
-     *   test_environment: http://lscs.ikun:9090/api/wxapp/wx_base/find_official
-     *   official_environment: https://lscs001.jscxkf.net/api/wxapp/wx_base/find_official
+     *   test_environment: http://tutor.ikun:9090/api/wxapp/wx_base/find_official
+     *   official_environment: https://xcxkf159.aubye.com/api/wxapp/wx_base/find_official
      *   api: /wxapp/wx_base/find_official
      *
      * 相关文档:https://developers.weixin.qq.com/doc/offiaccount/Message_Management/Passive_user_reply_message.html
@@ -898,8 +898,8 @@ class WxBaseController extends AuthController
      * @param string  $color       主题字体颜色
      * @return  string
      *
-     *   test_environment: http://lscs.ikun:9090/api/wxapp/wx_base/sendTempMsg
-     *   official_environment: https://lscs001.jscxkf.net/api/wxapp/wx_base/sendTempMsg
+     *   test_environment: http://tutor.ikun:9090/api/wxapp/wx_base/sendTempMsg
+     *   official_environment: https://xcxkf159.aubye.com/api/wxapp/wx_base/sendTempMsg
      *   api: /wxapp/wx_base/sendTempMsg
      *
      */
@@ -963,8 +963,8 @@ class WxBaseController extends AuthController
      * 可带参数
      * 用户扫码后,进入公众号会携带参数以及ticket
      *
-     *   test_environment: http://lscs.ikun:9090/api/wxapp/wx_base/qrcode_create
-     *   official_environment: https://lscs001.jscxkf.net/api/wxapp/wx_base/qrcode_create
+     *   test_environment: http://tutor.ikun:9090/api/wxapp/wx_base/qrcode_create
+     *   official_environment: https://xcxkf159.aubye.com/api/wxapp/wx_base/qrcode_create
      *   api: /wxapp/wx_base/qrcode_create
      *
      * 相关文档:
@@ -998,8 +998,8 @@ class WxBaseController extends AuthController
     /**
      * 增加菜单   用浏览器直接访问下 然后就可以直接更新了
      *
-     *   test_environment: http://lscs.ikun:9090/api/wxapp/wx_base/addWeixinMenu
-     *   official_environment: https://lscs001.jscxkf.net/api/wxapp/wx_base/addWeixinMenu
+     *   test_environment: http://tutor.ikun:9090/api/wxapp/wx_base/addWeixinMenu
+     *   official_environment: https://xcxkf159.aubye.com/api/wxapp/wx_base/addWeixinMenu
      *   api: /wxapp/wx_base/addWeixinMenu
      *
      */
@@ -1053,8 +1053,8 @@ class WxBaseController extends AuthController
      * @throws \WeChat\Exceptions\InvalidResponseException
      * @throws \WeChat\Exceptions\LocalCacheException
      *
-     *   test_environment: http://lscs.ikun:9090/api/wxapp/wx_base/batch_get_material
-     *   official_environment: https://lscs001.jscxkf.net/api/wxapp/wx_base/batch_get_material
+     *   test_environment: http://tutor.ikun:9090/api/wxapp/wx_base/batch_get_material
+     *   official_environment: https://xcxkf159.aubye.com/api/wxapp/wx_base/batch_get_material
      *   api: /wxapp/wx_base/batch_get_material
      *
      */
@@ -1100,8 +1100,8 @@ class WxBaseController extends AuthController
      * 该接口调用频率限制为 1万次 每分钟，每天限制调用 50w 次；
      * 与获取Access token获取的调用凭证完全隔离，互不影响。该接口仅支持 POST JSON 形式的调用；
      *
-     *   test_environment: http://lscs.ikun:9090/api/wxapp/wx_base/get_stable_access_token
-     *   official_environment: https://lscs001.jscxkf.net/api/wxapp/wx_base/get_stable_access_token
+     *   test_environment: http://tutor.ikun:9090/api/wxapp/wx_base/get_stable_access_token
+     *   official_environment: https://xcxkf159.aubye.com/api/wxapp/wx_base/get_stable_access_token
      *   api: /wxapp/wx_base/get_stable_access_token
      *
      *  只针对公众号
