@@ -1,0 +1,23 @@
+.tags-view {
+	height: 33px;
+	line-height: 33px;
+	border-bottom: 1px solid #d8dce5;
+	padding: 0 18px 0 15px;
+	display: flex;
+	box-shadow: 0 1px 3px 0 rgb(0 0 0 / 12%), 0 0 3px 0 rgb(0 0 0 / 4%);
+	position: relative;
+	z-index: 9;
+}
+.tags-view .pull-left {
+	width: 100%;
+}
+.tags-view .pull-left .light-blue {
+	flex-shrink: 0;
+}
+.tags-view .light-blue [class*="fa-"] {
+	color: #495060;
+}
+
+.navbar-nav{
+	margin: 0;
+}

@@ -1,0 +1,104 @@
+<include file="public@header"/></head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="{:url('reply',['id'=>$id,'params'=>$params])}"> 回复</a></li>
+    </ul>
+    <form method="post" class="form-horizontal js-ajax-form margin-top-20 layui-form" autocomplete="off"
+          action="{:url('audit_post',['id'=>$id,'params'=>$params])}" onsubmit="return false">
+
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label">回复内容:</label>
+            <div class="layui-input-block col-sm-6">
+                <textarea name="reply_content" class="form-control post-params item-left">{$reply_content|default=''}</textarea>
+            </div>
+        </div>
+
+        <!-- 主键id -->
+        <input type="hidden" name="id" value="{$id}" class="form-control post-params item-left">
+        <input type="hidden" name="status" value="2" class="form-control post-params item-left">
+
+
+
+        <!--禁止回车提交-->
+        <input type="submit" class="form-control item-left" style="display: none;">
+
+        <div class="col-sm-offset-2 col-sm-10 edit_post_save">
+            <button type="button" class="layui-btn js-ajax-submit" id="save">保存</button>
+        </div>
+
+
+    </form>
+
+</div>
+<script src="__STATIC__/js/admin.js"></script>
+</body>
+</html>
+
+
+<!--弹框体积,父页面自动刷新-->
+<script>
+    // 封装方法，获取到form表单的数据。使用此方法，表单元素必须存在那么属性。
+    //el:元素的class名称。
+    function getParameter(el) {
+        var obj = {};
+        $(el).each(function (index, item) {
+            obj[$(this).attr("name")] = $(this).val();
+            // 判断元素的类型
+            if (item.type == "text" || item.type == "password" || item.type == "select-one" || item.type == "tel" ||
+                item.type == "search" || item.type == "range" || item.type == "number" || item.type == "month" ||
+                item.type == "email" || item.type == "datetime-local" || item.type == "datetime" || item.type == "date" ||
+                item.type == "color" || item.type == "hidden") {
+                //获取到name的值,name的值就是向后台传递的数据
+                obj[$(this).attr("name")] = $(this).val();
+            } else if (item.type == "checkbox") {
+                var stamp = false;
+                if ($(this).attr("name") && !stamp) {
+                    stamp = false;
+                    // 获取到复选框选中的元素
+                    var checkboxEl = $("input[name=" + $(item).attr('name') + "]:checked");
+                    if (checkboxEl) {
+                        var checkboxArr = [];
+                        // 取出复选框选中的值
+                        checkboxEl.each(function (idx, itm) {
+                            checkboxArr.push($(itm).val());
+                        });
+                        obj[$(this).attr("name")] = checkboxArr.join(",");
+                    }
+
+                }
+            } else if (item.type == "radio") {
+                // 获取到单选框选中的值
+                var radio_val = $("input[name=" + $(item).attr('name') + "]:checked").val();
+                if (radio_val) {
+                    obj[$(item).attr("name")] = radio_val;
+                }
+            }
+        });
+        return obj;
+    }
+
+    // 调用方法
+    $("#save").click(function () {
+        var parameter = getParameter(".post-params");
+        $.ajax({
+            type: 'POST',
+            url: "{:url('audit_post')}",
+            data: parameter,
+            dataType: 'json',
+            success: function (data) {
+                layer.msg(data.msg);
+
+                if (data.code == 1) {
+                    let time1 = setInterval(function () {
+                        //父级弹框关闭
+                        parent.layer.closeAll();
+                        //父页面自动刷新
+                    }, 500);
+                }
+
+            }
+        });
+    });
+</script>

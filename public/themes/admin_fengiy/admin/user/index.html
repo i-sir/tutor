@@ -1,0 +1,87 @@
+<include file="public@header" />
+<style>
+
+</style>
+</head>
+<body>
+	<div class="wrap js-check-wrap">
+		<ul class="nav nav-tabs">
+			<li class="active"><a href="{:url('user/index')}">{:lang('ADMIN_USER_INDEX')}</a></li>
+			<li><a href="{:url('user/add')}">{:lang('ADMIN_USER_ADD')}</a></li>
+		</ul>
+        <form class="well form-inline margin-top-20" method="get" action="{:url('User/index')}">
+            用户名:
+            <input type="text" class="form-control post-params" name="user_login" style="width: 120px;" value="{:input('request.user_login/s','')}" placeholder="请输入{:lang('USERNAME')}">
+            邮箱:
+            <input type="text" class="form-control post-params" name="user_email" style="width: 120px;" value="{:input('request.user_email/s','')}" placeholder="请输入{:lang('EMAIL')}">
+            <input type="submit" class="layui-btn" value="搜索" />
+            <a class="layui-btn layui-bg-red" href="{:url('User/index')}">清空</a>
+        </form>
+		<table class="table table-hover table-bordered">
+			<thead>
+				<tr>
+					<th width="50">ID</th>
+					<th>{:lang('USERNAME')}</th>
+					<th>{:lang('LAST_LOGIN_IP')}</th>
+					<th>{:lang('LAST_LOGIN_TIME')}</th>
+					<th>{:lang('EMAIL')}</th>
+					<th>{:lang('STATUS')}</th>
+					<th width="140">{:lang('ACTIONS')}</th>
+				</tr>
+			</thead>
+			<tbody>
+				<php>$user_statuses=array("0"=>lang('USER_STATUS_BLOCKED'),"1"=>lang('USER_STATUS_ACTIVATED'),"2"=>lang('USER_STATUS_UNVERIFIED'));</php>
+				<foreach name="users" item="vo">
+				<tr>
+					<td>{$vo.id}</td>
+					<td><if condition="$vo['user_url']"><a href="{$vo.user_url}" target="_blank" title="{$vo.signature}">{$vo.user_login}</a><else />{$vo.user_login}</if></td>
+					<td>{$vo.last_login_ip}</td>
+					<td>
+						<if condition="$vo['last_login_time'] eq 0">
+							{:lang('USER_HAVE_NOT_LOGIN')}
+						<else />
+							{:date('Y-m-d H:i:s',$vo['last_login_time'])}
+						</if>
+					</td>
+					<td>{$vo.user_email}</td>
+					<td>
+						<switch name="vo.user_status">
+							<case value="0">
+								<span class="layui-btn layui-btn-primary layui-border-red layui-btn-xs">{$user_statuses[$vo['user_status']]}</span>
+							</case>
+							<case value="1">
+								<span class="layui-btn layui-btn-primary layui-border-green layui-btn-xs">{$user_statuses[$vo['user_status']]}</span>
+							</case>
+							<case value="2">
+								<span class="layui-btn layui-btn-primary layui-border-orange layui-btn-xs">{$user_statuses[$vo['user_status']]}</span>
+							</case>
+						</switch>
+					</td>
+					<td>
+						<if condition="$vo['id'] eq 1 || $vo['id'] eq cmf_get_current_admin_id()">
+							<span class="layui-btn layui-btn-primary layui-border-green layui-btn-xs layui-btn-disabled">{:lang('EDIT')}</span>
+							<span class="layui-btn layui-btn-primary layui-border-red layui-btn-xs layui-btn-disabled">{:lang('DELETE')}</span>
+							<if condition="$vo['user_status'] eq 1">
+								<span class="layui-btn layui-btn-primary layui-border-orange layui-btn-xs layui-btn-disabled" > {:lang('BLOCK_USER')}</span>
+							<else />
+								<span class="layui-btn layui-btn-primary layui-border-orange layui-btn-xs layui-btn-disabled">{:lang('ACTIVATE_USER')}</span>
+							</if>
+						<else />
+							<a class="layui-btn layui-btn-primary layui-border-green layui-btn-xs" href='{:url("user/edit",array("id"=>$vo["id"]))}'>{:lang('EDIT')}</a>
+							<a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs js-ajax-delete" href="{:url('user/delete',array('id'=>$vo['id']))}">{:lang('DELETE')}</a>
+							<if condition="$vo['user_status'] eq 1">
+								<a class="layui-btn layui-btn-primary layui-border-orange layui-btn-xs js-ajax-dialog-btn" href="{:url('user/ban',array('id'=>$vo['id']))}" data-msg="{:lang('BLOCK_USER_CONFIRM_MESSAGE')}">{:lang('BLOCK_USER')}</a>
+							<else />
+								<a class="layui-btn layui-btn-primary layui-border-orange layui-btn-xs js-ajax-dialog-btn" href="{:url('user/cancelban',array('id'=>$vo['id']))}" data-msg="{:lang('ACTIVATE_USER_CONFIRM_MESSAGE')}">{:lang('ACTIVATE_USER')}</a>
+							</if>
+						</if>
+					</td>
+				</tr>
+				</foreach>
+			</tbody>
+		</table>
+		<div class="pagination">{$page}</div>
+	</div>
+	<script src="__STATIC__/js/admin.js"></script>
+</body>
+</html>

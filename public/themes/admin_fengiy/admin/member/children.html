@@ -1,0 +1,74 @@
+<include file="public@header"/></head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="{:url('children',array('pid'=>$pid))}">用户管理</a></li>
+    </ul>
+
+    <form autocomplete="off" class="well form-inline margin-top-20 layui-form" method="get"
+          action="{:url('children',array('pid'=>$pid))}">
+        关键字：
+        <div class="form-group layui-form">
+            <div class="layui-form-item" style="margin-bottom: 0 !important;">
+                <div class="col-md-12">
+                    <div class="layui-inline">
+                        <input type="text" class="form-control" name="name" style="width: 180px;"
+                               value="{:input('request.name/s','')}" placeholder="请输关键字搜索">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" class="layui-btn" style="margin-left: 10px">搜索</button>
+        <a class="layui-btn layui-bg-red" href="{:url('children',array('pid'=>$pid))}">清空</a>
+    </form>
+
+
+    <form autocomplete="off" class="js-ajax-form" method="post">
+
+
+        <table class="table table-hover table-bordered">
+            <thead>
+            <tr>
+
+                <th style="width: 60px">ID</th>
+                <th style="width: 60px">用户信息</th>
+                <th style="width: 60px">姓名</th>
+                <th style="width: 60px">手机号</th>
+                <th style="width: 60px">创建时间</th>
+                <th style="width: 0px">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <foreach name="list" item="vo">
+                <tr>
+                    <td>{$vo.id}</td>
+                    <td>
+                        <if condition="!empty($vo['avatar'])">
+                            <a href="javascript:imagePreviewDialog('{:cmf_get_image_preview_url($vo.avatar)}');">
+                                <img src="{:cmf_get_image_preview_url($vo.avatar)}"
+                                     style="width:30px;height:30px;border-radius:30px;">
+                            </a>
+                        </if>
+                        <span ondblclick="copyContent('{$vo.openid}')">{$vo.nickname}</span>
+                    </td>
+                    <td>{$vo.username}</td>
+                    <td>{$vo.phone}</td>
+                    <td>{$vo.create_time|date='Y-m-d H:i:s'}</td>
+                    <td>
+                        <a class="btn btn-xs btn-primary"
+                           href="javascript:parent.openIframeLayer('{:url('children',array('pid'=>$vo['id']))}','关系',{ area: ['65%', '85%'],move:'.layui-layer-title'});"
+                        >关系</a>
+                    </td>
+                </tr>
+            </foreach>
+            </tbody>
+        </table>
+    </form>
+
+    <div class="pagination">{$page|default=''}</div>
+</div>
+<script src="__STATIC__/js/admin.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,199 @@
+ <include file="public@header"/>
+<style>
+    textarea {
+        border: 0;
+        outline: none;
+        background-color: rgba(0, 0, 0, 0);
+    }
+
+    input {
+        border: 0;
+        outline: none;
+        background-color: rgba(0, 0, 0, 0);
+    }
+
+    .col-sm-6 {
+        margin-top: 7px;
+    }
+</style>
+
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="{:url('find',['id'=>$id,'pid'=>$pid,'params'=>$params])}">查看</a></li>
+    </ul>
+    <form method="post" class="form-horizontal js-ajax-form margin-top-20 layui-form" autocomplete="off"
+          action="{:url('edit_post',['id'=>$id,'page'=>$page,'pid'=>$pid,'params'=>$params])}">
+
+
+        
+
+
+
+            <!--用户-->            <div class="form-group">
+                <label class="col-sm-2 control-label">用户信息:</label>
+                <div class="layui-input-block col-sm-6">
+                                                <if condition='!empty($user_info)'>
+<div style="display: flex;align-items: center;">
+<a href="javascript:imagePreviewDialog('{:cmf_get_asset_url($user_info.avatar)}');">
+<img class='img-rounded' src='{:cmf_get_asset_url($user_info.avatar)}' style='height:40px;'>
+</a>
+<div style="margin-left: 6px;">
+<p ondblclick="copyContent('{$user_info.openid}')">{$user_info.nickname}({$user_info.id})</p>
+<p>{$user_info.phone}</p>
+</div>
+</div>
+<else/>
+已删除
+</if>
+                </div>
+            </div>
+
+
+
+
+
+
+        
+
+
+
+            <!--联系人-->            <div class="form-group">
+                <label class="col-sm-2 control-label">联系人:</label>
+                <div class="layui-input-block col-sm-6">
+                                                {$username|default=''}                                    </div>
+            </div>
+
+
+
+
+
+
+        
+
+
+
+            <!--手机号-->            <div class="form-group">
+                <label class="col-sm-2 control-label">手机号:</label>
+                <div class="layui-input-block col-sm-6">
+                                                {$phone|default=''}                                    </div>
+            </div>
+
+
+
+
+
+
+        
+
+
+
+            <!--标题-->            <div class="form-group">
+                <label class="col-sm-2 control-label">标题:</label>
+                <div class="layui-input-block col-sm-6">
+                                                {$title|default=''}                                    </div>
+            </div>
+
+
+
+
+
+
+        
+
+
+
+            <!--留言内容-->            <div class="form-group">
+                <label class="col-sm-2 control-label">留言内容:</label>
+                <div class="layui-input-block col-sm-6">
+                                                {$content|default=''}                                    </div>
+            </div>
+
+
+
+
+
+
+        
+
+
+
+            <!--图集-->            <div class="form-group">
+                <label class="col-sm-2 control-label">图集:</label>
+                <div class="layui-input-block col-sm-6">
+                                                <if condition='!empty($images)'>
+<foreach name='$images' item='value'>
+<a href="javascript:imagePreviewDialog('{:cmf_get_image_preview_url($value)}');">
+<img src='{:cmf_get_image_preview_url($value)}' style='height:40px;'>
+</a>
+</foreach>
+</if>
+                </div>
+            </div>
+
+
+
+
+
+
+        
+
+
+
+            <!--回复内容-->            <div class="form-group">
+                <label class="col-sm-2 control-label">回复内容:</label>
+                <div class="layui-input-block col-sm-6">
+                                                {$reply_content|default=''}                                    </div>
+            </div>
+
+
+
+
+
+
+        
+
+
+
+            <!--回复时间-->            <div class="form-group">
+                <label class="col-sm-2 control-label">回复时间:</label>
+                <div class="layui-input-block col-sm-6">
+                                                {:isset($reply_time) && $reply_time > 10000 ? date('Y-m-d H:i:s', $reply_time) : ''}                </div>
+            </div>
+
+
+
+
+
+
+        
+
+
+
+            <!--状态:1待处理,2已处理-->            <div class="form-group">
+                <label class="col-sm-2 control-label">状态:</label>
+                <div class="layui-input-block col-sm-6">
+                                                {$status_name|default=''}                                    </div>
+            </div>
+
+
+
+
+
+
+        
+
+        <!-- 主键id -->
+        <input type="text" name="id" value="{$id}" class="form-control post-params item-left" style="display: none">
+
+
+    </form>
+
+</div>
+<script src="__STATIC__/js/admin.js"></script>
+</body>
+</html>
+
+
+

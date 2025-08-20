@@ -1,0 +1,65 @@
+<include file="public@header"/>
+<link href="__TMPL__/public/assets/css/common.css" rel="stylesheet"></head>
+<body>
+<div class="wrap js-check-wrap">
+    <table class="table table-hover table-bordered">
+        <tbody>
+        <tr>
+            <th width="100">退款原因</th>
+            <td>{$info.cancel_reason}</td>
+        </tr>
+        <tr>
+            <th>详细描述</th>
+            <td>{$info.cancel_desc}</td>
+        </tr>
+        <tr>
+            <th>图片</th>
+            <td id="reason-pic">
+                <notempty name="$info.cancel_image">
+                    <foreach name="$info.cancel_image" item="image" key="key">
+                        <img class="img-rounded" src="{$image}"
+                             lay-on="reason-pic"
+                             data-index="{$key}" alt="" width="60"
+                             height="60">
+                    </foreach>
+                </notempty>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <if condition="$info.status == 14 or $info.status == 15 or $info.status == 19">
+        <table class="table table-bordered">
+            <tbody>
+            <tr style="background-color: #f2dede;">
+                <th width="100">管理员回复</th>
+                <td>{$info.refuse_reason}</td>
+            </tr>
+            </tbody>
+        </table>
+    </if>
+</div>
+<script src="__STATIC__/js/admin.js"></script>
+<script>
+    layui.use(function () {
+        var layer = layui.layer;
+        var util = layui.util;
+        //操作
+        util.on('lay-on', {
+            //退款原因———图片
+            'reason-pic': function () {
+                var index = $(this).attr("data-index");
+                //当前图片键值
+                var images = []
+                $('#reason-pic img').each(function () {
+                    images.push({src: $(this).attr('src')});
+                })
+                parent.showPhotos(images, index)
+            },
+        })
+    })
+</script>
+
+
+</body>
+
+</html>

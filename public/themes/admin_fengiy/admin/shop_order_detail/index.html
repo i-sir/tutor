@@ -1,0 +1,155 @@
+ <include file="public@header"/></head>
+<body xmlns="http://www.w3.org/1999/html">
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="{:url('index',['params'=>$params])}">订单详情</a></li>
+
+                    <if condition="cmf_auth_check(cmf_get_current_admin_id(),'admin/ShopOrderDetail/add')">
+            <li><a href="{:url('add',['params'=>$params])}">添加</a></li>
+            </if>
+        
+    </ul>
+
+    <form class="well form-inline margin-top-20 layui-form ajax-form w-form-search" method="get" autocomplete="off">
+        关键字：
+        <div class="form-group layui-form">
+            <div class="layui-form-item" style="margin-bottom: 0 !important;">
+                <div class="col-md-12">
+                    <div class="layui-inline">
+                        <input type="text" class="form-control" name="keyword" style="width: 180px;"
+                               value="{:input('request.keyword/s','')}" placeholder="请输关键字搜索">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" class="layui-btn" style="margin-left: 10px">搜索</button>
+        <a class="layui-btn layui-bg-red" href="{:url('index',['params'=>$params])}">清空</a>
+
+
+        
+
+            <a class="layui-btn layui-bg-blue ajax-export" href="javascript:;">导出</a>
+            <input type="hidden" name="is_export" class="is_export" value="0">
+            </form>
+
+
+    <form class="js-ajax-form" method="post" autocomplete="off">
+
+        <br>
+        <div class="table-actions">
+
+            
+
+        </div>
+
+
+        <table class="table table-hover table-bordered">
+            <thead>
+            <tr>
+                                    <th style="width: 60px">ID</th>
+                                    <th style="width: 60px">店铺</th>
+                                    <th style="width: 60px">用户信息</th>
+                                    <th style="width: 60px">商品</th>
+                                    <th style="width: 60px">规格</th>
+                                    <th style="width: 60px">商品名字</th>
+                                    <th style="width: 60px">规格名字</th>
+                                    <th style="width: 60px">购买数量</th>
+                                    <th style="width: 60px">是否是会员</th>
+                                    <th style="width: 60px">价格/单价</th>
+                                    <th style="width: 60px">会员价/单价   同步到普通单价里面,方便展示</th>
+                                    <th style="width: 60px">会员价/合计   同步到普通合计里面,方便展示</th>
+                                    <th style="width: 60px">优惠金额</th>
+                                    <th style="width: 60px">合计</th>
+                                    <th style="width: 60px">展示图</th>
+                                    <th style="width: 60px">状态</th>
+                                    <th style="width: 60px">订单单号</th>
+                                    <th style="width: 60px">创建时间</th>
+                
+                <th style="width: 80px">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+             <foreach name="list" item="vo">            <tr>
+                                    <td>{$vo.id}</td>
+                                    <td>{$vo.shop_id}</td>
+                                    <td><if condition='!empty($vo.user_info)'>
+<div style="">
+<p>(ID:{$vo.user_info.id})</p>
+<a href="javascript:imagePreviewDialog('{:cmf_get_asset_url($vo.user_info.avatar)}');">
+<img src='{:cmf_get_asset_url($vo.user_info.avatar)}' style='width: 35px;height: 35px;border-radius:30px;'>
+</a>
+<span ondblclick="copyContent('{$vo.user_info.openid}')">{$vo.user_info.nickname}</span>
+</div>
+<else/>
+已删除
+</if>
+</td>
+                                    <td>{$vo.goods_id}</td>
+                                    <td>{$vo.sku_id}</td>
+                                    <td>{$vo.goods_name}</td>
+                                    <td>{$vo.sku_name}</td>
+                                    <td>{$vo.count}</td>
+                                    <td>{$vo.is_vip_text}</td>
+                                    <td>{$vo.goods_price}</td>
+                                    <td>{$vo.vip_price}</td>
+                                    <td>{$vo.vip_amount}</td>
+                                    <td>{$vo.coupon_amount}</td>
+                                    <td>{$vo.total_amount}</td>
+                                    <td><if condition='!empty($vo.image)'>
+<a href="javascript:imagePreviewDialog('{:cmf_get_asset_url($vo.image)}');">
+<img src='{:cmf_get_asset_url($vo.image)}' style='width: 35px;height: 35px'>
+</a>
+<else/>
+暂无上传
+</if>
+</td>
+                                    <td>{$vo.status_text}</td>
+                                    <td>{$vo.order_num}</td>
+                                    <td>{$vo.create_time|date='Y-m-d H:i:s'}</td>
+                
+                <td>
+                                            <if condition="cmf_auth_check(cmf_get_current_admin_id(),'admin/ShopOrderDetail/edit')">
+                        <a class="layui-btn layui-btn-primary layui-border-green layui-btn-xs" href="{:url('edit',['id'=>$vo.id,'params'=>$params])}">编辑</a>
+                        </if>
+                                            <if condition="cmf_auth_check(cmf_get_current_admin_id(),'admin/ShopOrderDetail/find')">
+                        <a class="layui-btn layui-btn-primary layui-border-blue layui-btn-xs"
+                           href="javascript:parent.openIframeLayer('{:url('find',['id'=>$vo.id,'params'=>$params])}','[{$vo.name}]查看',{ area: ['65%', '85%'],move:'.layui-layer-title'});"
+                        >查看</a>
+                        </if>
+                                            <if condition="cmf_auth_check(cmf_get_current_admin_id(),'admin/ShopOrderDetail/delete')">
+                        <a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs js-ajax-delete" href="{:url('delete',['id'=>$vo.id,'params'=>$params])}">删除</a>
+                        </if>
+                    
+
+                </td>
+            </tr>
+            </foreach>            </tbody>
+        </table>
+    </form>
+
+    <div class="pagination">{$page|default=''}</div></div>
+<script src="__STATIC__/js/admin.js"></script>
+</body>
+</html>
+
+
+<!--导出,筛选查询-->
+<script>
+    //导出
+    $(".ajax-export").click(function () {
+        //alert("正在开发中...");
+        $(".is_export").val(1);
+        $(".ajax-form").submit();
+        $(".is_export").val(0);
+        return false;
+    });
+
+    //搜索
+    $(".bt_search").click(function () {
+        $(".w-form-search").removeAttr('action');
+        $(".w-form-search").attr('action', "/index.html");
+        $(".w-form-search").submit();
+    });
+</script>
+

@@ -1,0 +1,173 @@
+<include file="public@header"/></head>
+<body xmlns="http://www.w3.org/1999/html">
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="{:url('index',['pid'=>$pid,'params'=>$params])}">投诉建议</a></li>
+
+
+    </ul>
+
+    <form class="well form-inline margin-top-20 layui-form ajax-form w-form-search" method="get" autocomplete="off">
+        关键字：
+        <div class="form-group layui-form">
+            <div class="layui-form-item" style="margin-bottom: 0 !important;">
+                <div class="col-md-12">
+                    <div class="layui-inline">
+                        <input type="text" class="form-control" name="keyword" style="width: 180px;"
+                               value="{:input('request.keyword/s','')}" placeholder="请输关键字搜索">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" class="layui-btn" style="margin-left: 10px">搜索</button>
+        <a class="layui-btn layui-bg-red" href="{:url('index',['pid'=>$pid,'params'=>$params])}">清空</a>
+
+
+        <!-- 如有导出需把  筛选条件在这里用input回显,input需隐藏-->
+        <input type="hidden" name="is_export" class="is_export" value="0">
+        <input type="hidden" name="pid" value="{$pid}">
+    </form>
+
+
+    <form class="js-ajax-form" method="post" autocomplete="off">
+
+        <br>
+        <div class="table-actions">
+
+
+        </div>
+
+
+        <table class="table table-hover table-bordered">
+            <thead>
+            <tr>
+                <th style="">ID</th>
+                <th style="">用户信息</th>
+                <th style="">联系人</th>
+                <th style="">手机号</th>
+                <th style="">标题</th>
+                <th style="">留言内容</th>
+                <th style="">图片</th>
+                <th style="">回复内容</th>
+                <th style="">状态</th>
+                <th style="">创建时间</th>
+
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <foreach name="list" item="vo">
+                <tr>
+                    <td>{$vo.id|default=''}</td>  <!--本我-->
+                    <td>
+                        <!--用户-->
+                        <if condition='!empty($vo.user_info)'>
+                            <div style="display: flex;align-items: center;">
+                                <a href="javascript:imagePreviewDialog('{:cmf_get_asset_url($vo.user_info.avatar)}');">
+                                    <img class='img-rounded' src='{:cmf_get_asset_url($vo.user_info.avatar)}'
+                                         style='height:40px;'>
+                                </a>
+                                <div style="margin-left: 6px;">
+                                    <p ondblclick="copyContent('{$vo.user_info.openid}')">
+                                        {$vo.user_info.nickname}({$vo.user_info.id})</p>
+                                    <p>{$vo.user_info.phone}</p>
+                                </div>
+                            </div>
+                            <else/>
+                            已删除
+                        </if>
+                    </td>
+                    <td>{$vo.username|default=''}</td>  <!--联系人-->
+                    <td>{$vo.phone|default=''}</td>  <!--手机号-->
+                    <td>{$vo.title|default=''}</td>  <!--标题-->
+                    <td>{$vo.content|default=''}</td>  <!--留言内容-->
+                    <td>
+                        <if condition="!empty($vo.images)">
+                            <foreach name="$vo.images" item="value">
+                                <a href="javascript:imagePreviewDialog('{:cmf_get_image_preview_url($value)}');">
+                                    <img src="{:cmf_get_image_preview_url($value)}"
+                                         style="height:40px; ">
+                                </a>
+                            </foreach>
+                        </if>
+                    </td><!--图片-->
+                    <td>{$vo.reply_content|default=''}</td>  <!--回复内容-->
+                    <td>{$vo.status_name|default=''}</td>  <!--状态:1待处理,2已处理-->
+                    <td>{:isset($vo.create_time) && $vo.create_time > 10000 ? date('Y-m-d H:i:s', $vo.create_time) :
+                        ''}
+                    </td>  <!--创建时间-->
+                    <td>
+
+                        <if condition="empty($vo.reply_content)">
+                            <a class="layui-btn layui-btn-primary layui-border-blue layui-btn-xs"
+                               href="javascript:parent.openIframeLayer('{:url('reply',['id'=>$vo.id,'params'=>$params])}','',{ area: ['65%', '85%'],move:'.layui-layer-title'},true);"
+                            >回复</a>
+                        </if>
+
+
+
+                    </td>
+                </tr>
+            </foreach>
+            </tbody>
+        </table>
+    </form>
+
+    <div class="pagination">{$pagination|default=''}</div>
+</div>
+<script src="__STATIC__/js/admin.js"></script>
+</body>
+</html>
+
+
+<!--修改状态|导出|搜索  js代码-->
+<script>
+
+    //开关板块
+    layui.use(['layer', 'form', 'slider'], function () {
+        var layer = layui.layer, form = layui.form;
+
+
+    });
+
+    //修改状态
+    function batchPost(id, field, value) {
+        $.ajax({
+            url: "{:url('batch_post')}",
+            type: "POST",
+            data: {id: id, [field]: value},
+            success: function (res) {
+                if (res.code === 1) {
+                    layer.msg(res.msg, {icon: 1});
+
+                    //默认关闭刷新页面
+                    // let time1 = setInterval(function () {
+                    //     //页面自动刷新
+                    //     location.reload();
+                    // }, 500);
+                } else {
+                    layer.msg(res.msg, {icon: 7});
+                }
+            }
+        });
+    }
+
+
+    //导出
+    $(".ajax-export").click(function () {
+        //alert("正在开发中...");
+        $(".is_export").val(1);
+        $(".ajax-form").submit();
+        $(".is_export").val(0);
+        return false;
+    });
+
+    //搜索
+    $(".bt_search").click(function () {
+        $(".w-form-search").removeAttr('action');
+        $(".w-form-search").attr('action', "/index.html");
+        $(".w-form-search").submit();
+    });
+</script>
+

@@ -1,0 +1,96 @@
+<include file="public@header"/>
+<style>
+    textarea {
+        border: 0;
+        outline: none;
+        background-color: rgba(0, 0, 0, 0);
+    }
+
+    input {
+        border: 0;
+        outline: none;
+        background-color: rgba(0, 0, 0, 0);
+    }
+
+    .col-md-6 {
+        margin-top: 7px;
+    }
+</style>
+
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="{:url('find',array('id'=>$id,'params'=>$params))}"> 查看</a></li>
+    </ul>
+    <form method="post" class="form-horizontal js-ajax-form margin-top-20 layui-form" autocomplete="off"
+          action="{:url('edit_post',array('id'=>$id,'params'=>$params))}">
+
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label">昵称:</label>
+            <div class="layui-input-block col-sm-6">
+                {$nickname|default=''}
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label">头像:</label>
+            <div class="layui-input-block col-sm-6">
+                <a href="javascript:imagePreviewDialog('{:cmf_get_image_preview_url($avatar)}');">
+                    <img src="{:cmf_get_image_preview_url($avatar)}"
+                         style="width:45px;height:45px;">
+                </a>
+            </div>
+        </div>
+
+
+
+
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label">手机号:</label>
+            <div class="layui-input-block col-sm-6">
+                {$phone|default=''}
+            </div>
+        </div>
+
+
+<!--        <div class="form-group">-->
+<!--            <label class="col-sm-2 control-label">密码:</label>-->
+<!--            <div class="layui-input-block col-sm-6">-->
+<!--                {$pass|default=''}-->
+<!--            </div>-->
+<!--        </div>-->
+
+
+<!--        <div class="form-group">-->
+<!--            <label class="col-sm-2 control-label">余额:</label>-->
+<!--            <div class="layui-input-block col-sm-6">-->
+<!--                {$balance|default=''}-->
+<!--            </div>-->
+<!--        </div>-->
+
+
+<!--        <div class="form-group">-->
+<!--            <label class="col-sm-2 control-label">积分:</label>-->
+<!--            <div class="layui-input-block col-sm-6">-->
+<!--                {$jifen|default=''}-->
+<!--            </div>-->
+<!--        </div>-->
+
+
+        <!-- 主键id -->
+        <input type="text" name="id" value="{$id}" class="form-control item-left"  style="display: none">
+
+
+    </form>
+
+</div>
+<script src="__STATIC__/js/admin.js"></script>
+</body>
+</html>
+
+
+

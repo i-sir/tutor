@@ -1,0 +1,209 @@
+{$head}
+
+<style>
+    textarea {
+        border: 0;
+        outline: none;
+        background-color: rgba(0, 0, 0, 0);
+    }
+
+    input {
+        border: 0;
+        outline: none;
+        background-color: rgba(0, 0, 0, 0);
+    }
+
+    .col-sm-6 {
+        margin-top: 7px;
+    }
+</style>
+
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="{$url_find_id}">查看</a></li>
+    </ul>
+    <form method="post" class="form-horizontal js-ajax-form margin-top-20 layui-form" autocomplete="off"
+          action="{$url_edit_post}">
+
+
+        <foreach name="fields" item="vo" key="key">
+
+
+
+
+            {$vo.annotation_field}
+            <div class="form-group">
+                <label class="col-sm-2 control-label">{$vo.COLUMN_COMMENT}:</label>
+                <div class="layui-input-block col-sm-6">
+                    <switch name="vo.type">
+                        <case value="textarea">
+                        {$vo.value}
+                        </case>
+                        <case value="number">
+                            <input type="number" class="form-control post-params item-left" name="{$vo.COLUMN_NAME}"
+                                   value="{$vo.value}">
+                        </case>
+                        <case value="content">
+                            <script type="text/plain" id="{$vo.COLUMN_NAME}" name="{$vo.COLUMN_NAME}">{$vo.html}
+                            </script>
+                            <script type="text/javascript">
+                                //编辑器路径定义
+                                var editorURL = GV.WEB_ROOT;
+                            </script>
+                            <script type="text/javascript" src="__STATIC__/js/ueditor/ueditor.config.js?v=00001"></script>
+                            <script type="text/javascript" src="__STATIC__/js/ueditor/ueditor.all.min.js"></script>
+                            <!--编辑器支持秀米-->
+                            <script type="text/javascript" src="__STATIC__/js/ueditor/xiumi/xiumi-ue-dialog-v5.js"></script>
+                            <link rel="stylesheet" type="text/css" href="__STATIC__/js/ueditor/xiumi/xiumi-ue-v5.css" />
+                            <script type="text/javascript">
+                                $(function () {
+                                    editorcontent = new baidu.editor.ui.Editor();
+                                    editorcontent.render('{$vo.COLUMN_NAME}');
+                                    try {
+                                        editorcontent.sync();
+                                    } catch (err) {
+                                    }
+                                });
+                            </script>
+                        </case>
+                        <case value="lnglat">
+                            <div style="display: flex;">
+                                <input type="text" class="form-control" name="address" id="address"
+                                       value="address" placeholder="请输入" required>
+                                <a class="btn btn-primary" href="javascript:;" style="margin-left: 10px;"
+                                   onclick="searchAddress()">搜索</a>
+                                <input type="hidden" class="form-control" id="lnglat" name="lnglat"
+                                       value="{$vo.value}">
+                            </div>
+                            <div id="container" style="margin-top:10px;width:600px;height:300px;"></div>
+                            <script src="https://map.qq.com/api/gljs?v=1.exp&key=3JXBZ-6NKWX-RW54N-ZJYDI-OMQEO-74F7X"></script>
+                            <script>
+                                //定义地图中心点坐标
+                                var center = new TMap.LatLng("116.397128, 39.916527")
+                                //定义map变量，调用 TMap.Map() 构造函数创建地图
+                                var map = new TMap.Map(document.getElementById('container'), {
+                                    center: center,//设置地图中心点坐标
+                                    zoom: 17, //设置地图缩放级别
+                                    viewMode: '3D'
+                                });
+                                let markerLayer = new TMap.MultiMarker({
+                                    id: 'marker-layer',
+                                    map: map
+                                });
+                                var clickHandler = function (evt) {
+                                    var lat = evt.latLng.getLat().toFixed(6);
+                                    var lng = evt.latLng.getLng().toFixed(6);
+                                    $("#lnglat").val(lat + "," + lng);
+                                    removeMarker("search_res");
+                                    addMarker(new TMap.LatLng(lat, lng), "search_res");
+                                    let url = "{:url('public/reverse_address')}";
+                                    $.get(url, {lnglat: lat + "," + lng}, function (res) {
+                                        debugger;
+                                        res = JSON.parse(res)
+                                        if (res.status == 0) {
+                                            $("#address").val(res.result.formatted_addresses.recommend);
+                                        }
+                                    });
+                                }
+                                map.on("click", clickHandler)
+
+                                function addMarker(latLng, id) {
+                                    markerLayer.add({
+                                        id: id,
+                                        position: latLng
+                                    });
+                                    let lng = latLng.lng
+                                    let lat = latLng.lat
+                                    map.setCenter(new TMap.LatLng(lat, lng)); // 坐标为天安门
+                                }
+
+                                //移除marker事件
+                                function removeMarker(id) {
+                                    markerLayer.remove(id)
+                                }
+
+                                function searchAddress() {
+                                    let address = $("#address").val();
+                                    let url = "{:url('public/search_address')}";
+                                    $.get(url, {address: address}, function (res) {
+                                        debugger;
+                                        res = JSON.parse(res)
+                                        if (res.status == 0) {
+                                            let location = res.result.location
+                                            $("#lnglat").val(location.lat + "," + location.lng);
+                                            removeMarker("search_res");
+                                            addMarker(new TMap.LatLng(location.lat, location.lng), "searc h_res");
+                                        }
+                                    });
+                                }
+                            </script>
+                        </case>
+
+
+                        <case value="time">
+                            {$vo.value}
+                        </case>
+
+
+                        <case value="date">
+                            {$vo.find_html}
+                        </case>
+
+
+                        <case value="image">
+                            {$vo.find_html}
+                        </case>
+
+
+                        <case value="images">
+                            {$vo.find_html}
+                        </case>
+
+
+                        <case value="video">
+                            {$vo.find_html}
+                        </case>
+
+                        <case value="file">
+                            {$vo.find_html}
+                        </case>
+
+
+                        <case value="user_id">
+                            {$vo.find_html}
+                        </case>
+
+
+                        <default/>
+                        <if condition="!empty($vo.find_html)">
+                            {$vo.find_html}
+                            <else/>
+                            {$vo.value}
+                        </if>
+                    </switch>
+                </div>
+            </div>
+
+
+
+
+
+
+        </foreach>
+
+
+        <!-- 主键id -->
+        <input type="text" name="id" value="{$id}" class="form-control post-params item-left" style="display: none">
+
+
+    </form>
+
+</div>
+<script src="{$admin_js}"></script>
+</body>
+</html>
+
+
+

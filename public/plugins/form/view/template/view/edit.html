@@ -1,0 +1,35 @@
+{$head}
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li><a href="{$url_list}">{$list_name}</a></li>
+        {$menu_add}
+        <li><a href="{$url_add}">添加</a></li>
+        {$end_if}
+        <li class="active"><a href="{$url_edit_id}"> 编辑</a></li>
+    </ul>
+    <form method="post" class="form-horizontal js-ajax-form margin-top-20 layui-form" action="{$url_edit_post}"
+          autocomplete="off">
+
+        <include file="{$controllers_name}/form"/>
+
+        <!-- 主键id -->
+        <input type="text" name="id" value="{$id}" class="form-control post-params item-left" style="display: none">
+        <!--当前页码-->
+        <input type="text" name="page" value="{$page}" class="form-control post-params item-left"
+               style="display: none">
+
+        <div class="col-sm-offset-2 col-sm-10">
+            <button type="submit" class="layui-btn js-ajax-submit" id="save">保存</button>
+            <a class="layui-btn layui-btn-primary" href="javascript:history.back(-1);">返回</a>
+        </div>
+    </form>
+
+</div>
+<script src="{$admin_js}"></script>
+</body>
+</html>
+
+
+

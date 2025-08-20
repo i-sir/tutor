@@ -1,0 +1,869 @@
+<include file="public@header"/>
+<link href="__TMPL__/public/assets/css/common.css" rel="stylesheet">
+<style>
+    .layui-tab-content {
+        margin-top: 15px;
+    }
+
+    .price-summary {
+        padding-top: 10px;
+        width: 200px;
+        margin-left: auto;
+    }
+
+    .price-row {
+        display: flex;
+        justify-content: space-between;
+    }
+
+
+    .price-label {
+        width: 80px;
+        text-align: left;
+    }
+
+    .price-value {
+        width: 120px;
+        text-align: left;
+    }
+</style>
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="{:url('index',array('params'=>$params))}">订单列表</a></li>
+    </ul>
+
+    <form action="{:url('index')}" autocomplete="off"
+          class="well form-inline margin-top-20 layui-form ajax-form w-form-search"
+          method="get">
+        <div>
+            关键字:
+            <input class="form-control" name="keyword" placeholder="请输入关键字搜索" style="width: 200px;"
+                   type="text" value="{:input('keyword/s','')}">
+            用户ID:
+            <input class="form-control" name="user_id" placeholder="请输入用户ID搜索" style="width: 200px;"
+                   type="text" value="{:input('user_id/s','')}">
+            订单号:
+            <input class="form-control" name="order_num" placeholder="请输入订单号" style="width: 200px;"
+                   type="text" value="{:input('order_num/s','')}">
+            商品名称:
+            <input class="form-control" name="goods_name" placeholder="请输入商品名称" style="width: 240px;"
+                   type="text" value="{:input('goods_name/s','')}">
+
+            下单时间:
+            <input class="form-control" id="laydate-range-datetime" name="order_date" placeholder="请选择下单时间段"
+                   style="width: 260px;"
+                   type="text" value="{$order_date}">
+
+
+            <button class="layui-btn" style="margin-left: 10px" type="submit">搜索</button>
+            <!--<a type="button" class="layui-btn layui-bg-blue ajax-export" href="javascript:;">导出</a>-->
+            <a class="layui-btn layui-bg-red" href="{:url('index',array('params'=>$params))}">清空</a>
+
+
+            <input class="is_export" name="is_export" type="hidden" value="0">
+            <input name="page" type="hidden" value="{$page}">
+            <input class="form-control" name="status" style="width: 200px;" type="hidden"
+                   value="{:input('status/s','')}">
+            <input class="form-control" name="type" style="width: 200px;" type="hidden"
+                   value="{:input('type/s','')}">
+        </div>
+
+    </form>
+    <div class="layui-tab layui-tab-brief" lay-filter="LAY-order-tab">
+        <ul class="layui-tab-title order-tab">
+            <li
+            <if condition="!$status">class="layui-this"</if>
+            >
+            <a href="{:url('index',array('page'=>$page,'order_num'=>$order_num,'goods_name'=>$goods_name,'order_date'=>$order_date))}"
+               style='text-decoration:none;color: inherit'>
+                全部
+                <span class="layui-badge layui-bg-orange">{$total}</span>
+            </a>
+            </li>
+            <foreach item="vo" key="key" name="count">
+                <li
+                <if condition="$vo.key == $status">class="layui-this"</if>
+                >
+                <a href="{:url('index',array('page'=>$page,'status'=>$vo.key,'order_num'=>$order_num,'goods_name'=>$goods_name,'order_date'=>$order_date))}"
+                   style='text-decoration:none;color: inherit'>
+                    {$vo.name}
+                    <span class="layui-badge layui-bg-orange">{$vo.count}</span>
+                </a>
+                </li>
+            </foreach>
+        </ul>
+        <div class="layui-tab-content table-responsive">
+            <table class="table order-table">
+                <thead>
+                <tr class="tab-header">
+                    <th width="60%">
+                        <table class="th-table">
+                            <tr>
+                                <th width="5%">ID</th>
+                                <th width="60%">商品信息</th>
+                                <th width="10%">单价</th>
+                                <th width="10%">数量</th>
+                            </tr>
+                        </table>
+                    </th>
+                    <th width="10%">金额</th>
+                    <th width="10%">状态</th>
+                    <th width="10%">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr class="tr-pipe"></tr>
+                </tbody>
+
+                <foreach item="vo" name="list">
+                    <tbody>
+                    <tr class="tr-header">
+                        <td colspan="5">
+                            <span>(ID:{$vo.id})</span>
+                            <!--                            <span style="margin-left:1%;"><b>{$vo.create_time|date="Y-m-d H:i"}</b></span>-->
+                            <span data-toggle="tooltip" title="点击复制订单号" onclick="copyContent('{$vo.order_num}')"
+                                  style="margin-left: 1%;">
+                                <cite>订单号：</cite>{$vo.order_num}
+                            </span>
+
+                            <if condition="!empty($vo.pay_time)">
+                                 <span data-toggle="tooltip" title="点击复制支付单号" onclick="copyContent('{$vo.pay_num}')"
+                                       style="margin-left: 1%;">
+                                    <cite>支付单号：</cite>{$vo.pay_num}
+                                </span>
+                            </if>
+
+                            <span style="margin-left: 1%;">
+                                 <cite>用户:</cite>
+                                 <a href="javascript:imagePreviewDialog('{:cmf_get_image_preview_url($vo.user_info.avatar)}');">
+                                    <img class="img-rounded" src="{$vo.user_info.avatar}"
+                                         width="25">
+                                </a>
+                            </span>
+                            <span ondblclick="copyContent('{$vo.user_info.openid}')">
+                                (ID:{$vo.user_id}) {$vo.user_info.nickname}
+                            </span>
+                            <if condition="!empty($vo.remark)">
+                                <i class="layui-icon layui-icon-reply-fill cursor" data-toggle="tooltip"
+                                   style="color: #FF5722"
+                                   title="{$vo.remark|default=''}"></i>
+                            </if>
+
+                            <span style="margin-left: 1%;">
+                               <cite>店铺:</cite>
+                                <a href="javascript:imagePreviewDialog('{:cmf_get_image_preview_url($vo.shop_info.logo_image)}');">
+                                  <img class="" height="25" width="25" src="{$vo.shop_info.logo_image}">
+                                   </a>
+                                  <span style="margin-right: 10px;">(ID:{$vo.shop_id}) {$vo.shop_info.name}-{$vo.shop_info.phone}</span>
+                            </span>
+
+
+                            <!--                            <span class="layui-btn layui-btn-primary layui-border-green layui-btn-xs"-->
+                            <!--                                  style="margin-left: 20px;">快递发货</span>-->
+
+                            <span style="float: right;" class="layui-btn-xs layui-btn-primary layui-border-green">
+                               <a href="{:url('index',array('page'=>$page,'type'=>$vo.type,'order_num'=>$order_num,'goods_name'=>$goods_name,'order_date'=>$order_date))}">
+                                   {$vo.type_name}
+                               </a>
+                            </span>
+
+                        </td>
+                    </tr>
+                    <tr class="tr-goods">
+                        <td>
+                            <table class="goods-item">
+                                <foreach item="goods" key="key" name="$vo.goods_list">
+                                    <tr>
+                                        <!--<td width="5%" class="text-center">{$vo.id}</td>-->
+                                        <!--id隐藏了,这里为60%-->
+                                        <td width="60%">
+                                            <div style="display: flex;">
+                                                <if condition="$goods.goods_id">
+                                                    <if condition="$goods.image">
+                                                        <div class="img">
+                                                            <a href="javascript:imagePreviewDialog('{:cmf_get_image_preview_url($goods.image)}');">
+                                                                <img alt=""
+                                                                     class="img-rounded" height="70"
+                                                                     src="{:cmf_get_image_preview_url($goods.image)}"
+                                                                     width="70">
+                                                            </a>
+                                                        </div>
+                                                    </if>
+                                                    <div style="width: 120px;">
+                                                        <div class="title">
+                                                            <a href="{:url('index',array('page'=>$page,'type'=>$type,'order_num'=>$order_num,'goods_name'=>$goods.goods_name,'order_date'=>$order_date))}">
+                                                                {$goods.goods_name}
+                                                            </a>
+                                                        </div>
+                                                        <if condition="$goods.sku_name">
+                                                            <span class="tags">{$goods.sku_name}</span>
+                                                        </if>
+                                                        <if condition="$goods.status != 0">
+                                                            <div style="margin-top: 5px;">
+                                                                <a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs"
+                                                                   href="javascript:parent.openIframeLayer('{:url('shop_order_refund/find',array('detail_id'=>$goods.id))}','',{ area: ['65%', '85%'],move:'.layui-layer-title'},false);"
+                                                                >退款原因</a>
+                                                            </div>
+                                                        </if>
+                                                    </div>
+                                                </if>
+                                            </div>
+                                        </td>
+                                        <td class="text-center" width="10%">&yen; {$goods.goods_price}</td>
+                                        <td class="text-center" width="10%">{$goods.count}</td>
+                                    </tr>
+                                </foreach>
+                            </table>
+                        </td>
+
+                        <td class="text-center">
+                            <div class="price-summary">
+                                <div class="price-row">
+                                    <div class="price-label"><cite>优惠：</cite></div>
+                                    <div class="price-value">&yen; {$vo.coupon_amount}</div>
+                                </div>
+                                <div class="price-row">
+                                    <div class="price-label"><cite>运费：</cite></div>
+                                    <div class="price-value">&yen; {$vo.freight_amount}</div>
+                                </div>
+                                <div class="price-row">
+                                    <div class="price-label"><cite>使用积分：</cite></div>
+                                    <div class="price-value">&yen; {$vo.point}</div>
+                                </div>
+                                <div class="price-row">
+                                    <div class="price-label"><cite>积分抵扣：</cite></div>
+                                    <div class="price-value">&yen; {$vo.point_balance}</div>
+                                </div>
+                                <div class="price-row">
+                                    <div class="price-label"><cite>支付金额：</cite></div>
+                                    <div class="price-value">&yen; {$vo.amount}</div>
+                                </div>
+                                <notempty name="$vo.pay_time">
+                                    <div style="margin-bottom: 10px;margin-top: 5px;margin-left:15%;display: flex;">
+                                        <span class="layui-btn layui-btn-primary layui-border-purple layui-btn-xs">{$vo.pay_type_name}</span>
+                                    </div>
+                                </notempty>
+                            </div>
+                        </td>
+
+
+                        <td class="text-center">
+                            <div class="status">
+                                <span class="layui-btn-xs layui-btn layui-btn-primary layui-border-orange{$vo.status_color}">
+                                    {$vo.status_name}
+                                </span>
+                            </div>
+                        </td>
+
+                        <td class="text-center">
+                            <div class="operate">
+                                <!--                                <a class="layui-bg-blue-light layui-circle op-btn"-->
+                                <!--                                   data-id="{$vo.id}"-->
+                                <!--                                   data-notes="{$vo.admin_remark}"-->
+                                <!--                                   data-toggle="tooltip"-->
+                                <!--                                   lay-on="order-tips"-->
+                                <!--                                   title="{$vo.admin_remark?'修改备注':'添加备注'}">-->
+                                <!--                                    <i class="layui-icon layui-icon-edit"></i>-->
+                                <!--                                </a>-->
+
+                                <if condition="$vo.status==2">
+                                    <a class="layui-bg-gray-light layui-circle op-btn"
+                                       data-toggle="tooltip"
+                                       href="javascript:parent.openIframeLayer('{:url('send',['id'=>$vo.id])}','发货',{area: ['80%', '80%']},true)"
+                                       title="发货">
+                                        <i class="layui-icon layui-icon-release"></i>
+                                    </a>
+
+                                    <a class="layui-bg-gray-light layui-circle op-btn"
+                                       data-id="{$vo.id}"
+                                       data-toggle="tooltip"
+                                       lay-on="send-confirm"
+                                       title="确认配送？">
+                                        <i class="layui-icon layui-icon-release"></i>
+                                    </a>
+                                </if>
+
+
+                                <if condition="$vo.status==2">
+                                    <a class="layui-bg-gray-light layui-circle op-btn"
+                                       data-id="{$vo.id}"
+                                       data-toggle="tooltip"
+                                       lay-on="verification_order"
+                                       title="确认核销？">
+                                        <i class="layui-icon layui-icon-unlink"></i>
+                                    </a>
+                                </if>
+
+
+                                <!--                                <if condition="$vo.status==12">-->
+                                <!--                                    <a class="layui-bg-gray-light layui-circle op-btn"-->
+                                <!--                                       data-id="{$vo.id}"-->
+                                <!--                                       data-toggle="tooltip"-->
+                                <!--                                       lay-on="pass-reject"-->
+                                <!--                                       title="确认退款？">-->
+                                <!--                                        <i class="layui-icon layui-icon-face-smile"></i>-->
+                                <!--                                    </a>-->
+
+                                <!--                                    &lt;!&ndash;弹出框填写退款金额&ndash;&gt;-->
+                                <!--                                    <a class="layui-bg-gray-light layui-circle op-btn"-->
+                                <!--                                       data-id="{$vo.id}"-->
+                                <!--                                       data-toggle="tooltip"-->
+                                <!--                                       lay-on="pass-reject2"-->
+                                <!--                                       title="确认退款？">-->
+                                <!--                                        <i class="layui-icon layui-icon-face-smile"></i>-->
+                                <!--                                    </a>-->
+
+                                <!--                                    &lt;!&ndash;无拒绝理由&ndash;&gt;-->
+                                <!--                                    <a class="layui-bg-gray-light layui-circle op-btn"-->
+                                <!--                                       data-id="{$vo.id}"-->
+                                <!--                                       data-toggle="tooltip"-->
+                                <!--                                       lay-on="refund-reject"-->
+                                <!--                                       title="拒绝退款？">-->
+                                <!--                                        <i class="layui-icon layui-icon-face-cry"></i>-->
+                                <!--                                    </a>-->
+
+                                <!--                                    &lt;!&ndash; 拒绝退款填写理由&ndash;&gt;-->
+                                <!--                                    <a class="layui-bg-gray-light layui-circle op-btn"-->
+                                <!--                                       data-toggle="tooltip"-->
+                                <!--                                       href="javascript:parent.openIframeLayer('{:url('refuse',['id'=>$vo.id])}','拒绝',{area: ['80%', '80%']})"-->
+                                <!--                                       title="拒绝">-->
+                                <!--                                        <i class="layui-icon layui-icon-face-cry"></i>-->
+                                <!--                                    </a>-->
+
+                                <!--                                </if>-->
+
+
+                                <a class="layui-bg-gray-light layui-circle op-btn"
+                                   data-toggle="tooltip"
+                                   href="javascript:parent.openIframeLayer('{:url('details',['id'=>$vo.id])}','订单详情',{area: ['80%', '80%']})"
+                                   title="订单详情">
+                                    <i class="layui-icon layui-icon-more"></i>
+                                </a>
+
+
+                                <a class="layui-bg-gray-light layui-circle op-btn"
+                                   data-id="{$vo.id}"
+                                   data-toggle="tooltip"
+                                   lay-on="delete_order"
+                                   title="删除订单？">
+                                    <i class="layui-icon layui-icon-delete"></i>
+                                </a>
+
+
+
+                            </div>
+                        </td>
+
+                    </tr>
+
+
+                    <tr class="tr-footer">
+                        <td colspan="5">
+                            <div style="display: flex;justify-content: space-between;width: 100%;align-items: center;">
+                                <div>
+                                    <div style="display:flex;">
+                                        <div style="width: 90px"><cite>联系人：</cite></div>
+                                        <div>{$vo.username}</div>
+                                    </div>
+                                    <div style="display:flex;">
+                                        <div style="width: 90px"><cite>电话：</cite></div>
+                                        <div>{$vo.phone}</div>
+                                    </div>
+                                    <div style="display:flex;">
+                                        <div style="width: 90px"><cite>地址：</cite></div>
+                                        <div>{$vo.province}-{$vo.city}-{$vo.county}
+                                            {$vo.address}
+                                        </div>
+                                    </div>
+
+                                    <notempty name="$vo.admin_remark">
+                                        <div style="display:flex;">
+                                            <div style="width: 90px"><cite>管理员备注：</cite></div>
+                                            <div class="layui-font-orange">{$vo.admin_remark}</div>
+                                        </div>
+                                    </notempty>
+                                </div>
+
+                                <div>
+                                    <div style="display:flex;text-align: right;">
+                                        <div style="width: 120px"><cite>下单时间：</cite></div>
+                                        <div>{$vo.create_time|date='Y-m-d H:i:s'}</div>
+                                    </div>
+                                    <notempty name="$vo.pay_time">
+                                        <div style="display:flex;text-align: right;">
+                                            <div style="width: 120px"><cite>支付时间：</cite></div>
+                                            <div>{$vo.pay_time|date='Y-m-d H:i:s'}</div>
+                                        </div>
+                                    </notempty>
+
+                                    <notempty name="$vo.send_time">
+                                        <div style="display:flex;text-align: right;">
+                                            <div style="width: 120px"><cite>发货时间：</cite></div>
+                                            <div>{$vo.send_time|date='Y-m-d H:i:s'}</div>
+                                        </div>
+                                    </notempty>
+                                    <notempty name="$vo.accomplish_time">
+                                        <div style="display:flex; text-align: right;">
+                                            <div style="width: 120px"><cite>完成时间：</cite></div>
+                                            <div>{$vo.accomplish_time|date='Y-m-d H:i:s'}</div>
+                                        </div>
+                                    </notempty>
+                                </div>
+
+                            </div>
+                        </td>
+                    </tr>
+
+
+                    <tr class="tr-pipe"></tr>
+                    </tbody>
+                </foreach>
+            </table>
+        </div>
+    </div>
+    <div class="pagination">{$pagination|default=''}</div>
+</div>
+</body>
+</html>
+
+<script src="__STATIC__/js/admin.js"></script>
+<!--导出-->
+<script>
+    //导出
+    $(".ajax-export").click(function () {
+        //alert("正在开发中...");
+        $(".is_export").val(1);
+        $(".ajax-form").submit();
+        $(".is_export").val(0);
+        return false;
+    });
+
+    //搜索
+    $(".bt_search").click(function () {
+        $(".w-form-search").removeAttr('action');
+        $(".w-form-search").attr('action', "/index.html");
+        $(".w-form-search").submit();
+    });
+</script>
+<script>
+    layui.use(function () {
+        var laydate = layui.laydate,
+            element = layui.element,
+            layer = layui.layer,
+            util = layui.util;
+
+        // 日期时间范围
+        laydate.render({
+            elem: '#laydate-range-datetime',
+            type: 'datetime',
+            range: true,
+            format: 'yyyy-MM-dd HH:mm'
+        });
+
+        // hash 地址定位
+        var hashName = 'tabid'; // hash 名称
+        var layid = location.hash.replace(new RegExp('^#' + hashName + '='), ''); // 获取 lay-id 值
+        let host1 = window.location.host;
+        let host2 = document.domain;
+        let host3 = location.hostname;
+        //console.log(host1, host2, host3)
+
+        // 初始切换
+        element.tabChange('LAY-order-tab', layid);
+        // 切换事件
+        element.on('tab(LAY-order-tab)', function (obj) {
+            location.hash = hashName + '=' + obj.index;
+            //console.log(location.hash)
+        });
+
+        //操作订单
+        util.on('lay-on', {
+            //管理员添加备注信息
+            'order-tips': function () {
+                var orderId = $(this).attr("data-id"); //当前订单ID
+                var value = $(this).attr("data-notes"); //当前订单备注信息
+                console.log(orderId)
+                console.log(value)
+
+
+                layer.prompt({title: '请输入备注信息', value, formType: 2}, function (value, index, elem) {
+                    if (value === '') return elem.focus();
+
+                    $.ajax({
+                        type: "POST",
+                        url: "setRemark",
+                        data: {id: orderId, admin_remark: value},
+                        success: function (res) {
+                            if (res.code == 1) {
+                                layer.close(index);
+                                layer.msg(res.msg, {icon: 1, time: 1000}, function () {
+                                    location.reload();
+                                });
+                            } else {
+                                layer.msg(res.msg, {icon: 7});
+                            }
+                        },
+                    })
+                });
+            },
+
+
+            //退款通过填写退款金额
+            'pass-reject2': function () {
+                var orderId = $(this).attr("data-id"); //当前订单ID
+                var value = $(this).attr("data-notes"); //当前订单备注信息
+                console.log(orderId)
+                console.log(value)
+
+
+                layer.prompt({title: '请输入退款金额', value, formType: 3}, function (value, index, elem) {
+                    if (isNaN(value)) {
+                        layer.msg('请输入有效数字！');
+                        return false;
+                    }
+                    if (value === '') {
+                        layer.msg('请输入有效数字！');
+                        return false;
+                    }
+
+                    $.ajax({
+                        type: "POST",
+                        url: "reject_post2",
+                        data: {id: orderId, refund_amount: value},
+                        success: function (res) {
+                            if (res.code == 1) {
+                                layer.close(index);
+                                layer.msg(res.msg, {icon: 1, time: 1000}, function () {
+                                    location.reload();
+                                });
+                            } else {
+                                layer.msg(res.msg, {icon: 7});
+                            }
+                        },
+                    })
+                });
+            },
+
+
+            //处理退款
+            'order-refund': function () {
+                var orderId = $(this).attr("data-id"); //当前订单ID
+
+                layer.confirm('确认要通过审核？', {
+                    btn: ['确定', '拒绝'] //按钮
+                }, function () {
+                    $.ajax({
+                        url: 'confirmCancel',
+                        type: "POST",
+                        data: {id: orderId, status: 1},
+                        success: function (res) {
+                            if (res.code == 1) {
+                                layer.msg(res.msg, {icon: 1, time: 1000}, function () {
+                                    location.reload();
+                                });
+                            } else {
+                                layer.msg(res.msg, {icon: 7});
+                            }
+                        }
+                    });
+                }, function () {
+                    layer.prompt({title: '请输入拒绝原因', formType: 2}, function (value, index, elem) {
+                        if (value === '') return elem.focus();
+
+                        $.ajax({
+                            url: 'confirmCancel',
+                            type: "POST",
+                            data: {id: orderId, status: 2, text: value},
+                            success: function (res) {
+                                if (res.code == 1) {
+                                    layer.close(index);
+                                    layer.msg(res.msg, {icon: 1, time: 1000}, function () {
+                                        location.reload();
+                                    });
+                                } else {
+                                    layer.msg(res.msg, {icon: 7});
+                                }
+                            }
+                        });
+                    });
+                });
+            },
+
+            //删除订单
+            'delete_order': function () {
+                var orderId = $(this).attr("data-id"); //当前订单ID
+                console.log(orderId)
+                layer.confirm('确认将订单删除？', {icon: 3}, function () {
+                    $.ajax({
+                        type: "POST",
+                        url: "delete_order",
+                        data: {id: orderId, status: 11, identity_type: 'buy'},
+                        success: function (res) {
+                            if (res.code == 1) {
+                                layer.msg('操作成功!', {icon: 1, time: 1000}, function () {
+                                    location.reload();
+                                });
+                            } else {
+                                layer.msg(res.msg, {icon: 7});
+                            }
+                        },
+                    })
+                }, function () {
+                    layer.msg('已取消!', {icon: 2});
+                });
+            },
+
+
+
+            //打印小票
+            'order-print': function () {
+                var orderId = $(this).attr("data-id"); //当前订单ID
+
+                layer.confirm('确认要打印小票？', {
+                    btn: ['确定', '取消'] //按钮
+                }, function () {
+                    layer.msg('打印小票操作', {icon: 1});
+                });
+            },
+
+            //核销订单
+            'order-verify': function () {
+                var orderId = $(this).attr("data-id"); //当前订单ID
+
+                layer.confirm('确认要核销此订单？', {
+                    btn: ['确定', '取消'] //按钮
+                }, function () {
+                    layer.msg('核销成功', {icon: 1});
+                });
+            },
+
+            //核销
+            'verification_order': function () {
+                var orderId = $(this).attr("data-id"); //当前订单ID
+                console.log(orderId)
+                layer.confirm('确认核销订单？', {icon: 3}, function () {
+                    $.ajax({
+                        type: "POST",
+                        url: "verification_order",
+                        data: {id: orderId, status: 4},
+                        success: function (res) {
+                            if (res.code == 1) {
+                                layer.msg('操作成功!', {icon: 1, time: 1000}, function () {
+                                    location.reload();
+                                });
+                            } else {
+                                layer.msg(res.msg, {icon: 7});
+                            }
+                        },
+                    })
+                }, function () {
+                    layer.msg('已取消!', {icon: 2});
+                });
+            },
+
+
+            //自动发货按钮
+            'send-confirm': function () {
+                var orderId = $(this).attr("data-id"); //当前订单ID
+                console.log(orderId)
+                layer.confirm('确认配送？', {icon: 3}, function () {
+                    $.ajax({
+                        type: "POST",
+                        url: "send_post",
+                        data: {id: orderId, status: 4},
+                        success: function (res) {
+                            if (res.code == 1) {
+                                layer.msg('操作成功!', {icon: 1, time: 1000}, function () {
+                                    location.reload();
+                                });
+                            } else {
+                                layer.msg(res.msg, {icon: 7});
+                            }
+                        },
+                    })
+                }, function () {
+                    layer.msg('已取消!', {icon: 2});
+                });
+            },
+
+
+            //拒绝退款
+            'refund-reject': function () {
+                var orderId = $(this).attr("data-id"); //当前订单ID
+                console.log(orderId)
+                layer.confirm('确认拒绝退款？', {icon: 3}, function () {
+                    $.ajax({
+                        type: "POST",
+                        url: "reject_post",
+                        data: {id: orderId, status: 14},
+                        success: function (res) {
+                            if (res.code == 1) {
+                                layer.msg('操作成功!', {icon: 1, time: 1000}, function () {
+                                    location.reload();
+                                });
+                            } else {
+                                layer.msg(res.msg, {icon: 7});
+                            }
+                        },
+                    })
+                }, function () {
+                    layer.msg('已取消!', {icon: 2});
+                });
+            },
+
+
+            //同意退款
+            'pass-reject': function () {
+                var orderId = $(this).attr("data-id"); //当前订单ID
+                console.log(orderId)
+                layer.confirm('确认退款？', {icon: 3}, function () {
+                    $.ajax({
+                        type: "POST",
+                        url: "reject_post",
+                        data: {id: orderId, status: 16},
+                        success: function (res) {
+                            if (res.code == 1) {
+                                layer.msg('操作成功!', {icon: 1, time: 1000}, function () {
+                                    location.reload();
+                                });
+                            } else {
+                                layer.msg(res.msg, {icon: 7});
+                            }
+                        },
+                    })
+                }, function () {
+                    layer.msg('已取消!', {icon: 2});
+                });
+            },
+
+
+        })
+    })
+
+    function send(id) {
+        openIframeLayer(`{:url('order/send')}?id=${id}`, '订单发货', {
+            area: ['800px', '600px'],
+            btn: ['确定', '取消'],
+            yes: function (index, layero) {
+
+                var iframeWin = window[layero.find('iframe')[0]['name']];
+                var str = iframeWin.confirm();
+                var data = str['data'];
+
+                if (!str.data.exp_id) {
+                    layer.msg('请选择快递公司');
+                    return;
+                }
+
+                if (!str.data.exp_num) {
+                    layer.msg('请填写快递单号');
+                    return;
+                }
+                $.ajax({
+                    type: "POST",
+                    url: "send",
+                    data: data,
+                    success: function (res) {
+                        if (res.code == 1) {
+                            layer.close(index);
+                            layer.msg(res.msg, {icon: 1, time: 1000}, function () {
+                                location.reload();
+                            });
+                        } else {
+                            layer.msg(res.msg, {icon: 7});
+                        }
+                    },
+                })
+            }
+        });
+    }
+
+    //展示退款图片
+    function showPhotos(images, index) {
+        layer.photos({
+            photos: {
+                "title": "Photos Demo",
+                "start": index,
+                "data": images
+            }
+        });
+    }
+
+
+    //悬浮提示
+    $(function () {
+        var tips;
+        $('.order_num').on({
+            //延时1秒
+            mouseenter: function () {
+                var that = this;
+                tips = layer.tips("<span style='color:black;font-size: 15px;font-weight: 400;'>点击复制订单号</span>", that, {
+                    tips: [1, '#efefef'],
+                    time: 0,
+                    area: 'auto',
+                    maxWidth: 500
+                });
+            },
+
+            //去除
+            mouseleave: function () {
+                layer.close(tips);
+            }
+        });
+
+
+        $('.pay_num').on({
+            //延时1秒
+            mouseenter: function () {
+                var that = this;
+                tips = layer.tips("<span style='color:black;font-size: 15px;font-weight: 400;'>点击复制支付单号</span>", that, {
+                    tips: [1, '#efefef'],
+                    time: 0,
+                    area: 'auto',
+                    maxWidth: 500
+                });
+            },
+
+            //去除
+            mouseleave: function () {
+                layer.close(tips);
+            }
+        });
+
+
+        $('.exp_num').on({
+            mouseenter: function () {
+                var that = this;
+                tips = layer.tips("<span style='color:black;font-size: 15px;font-weight: 400;'>点击复制快递单号</span>", that, {
+                    tips: [1, '#efefef'],
+                    time: 0,
+                    area: 'auto',
+                    maxWidth: 500
+                });
+            },
+            mouseleave: function () {
+                layer.close(tips);
+            }
+        });
+
+
+        $('.address').on({
+            mouseenter: function () {
+                var that = this;
+                tips = layer.tips("<span style='color:black;font-size: 15px;font-weight: 400;'>点击复制地址信息</span>", that, {
+                    tips: [1, '#efefef'],
+                    time: 0,
+                    area: 'auto',
+                    maxWidth: 500
+                });
+            },
+            mouseleave: function () {
+                layer.close(tips);
+            }
+        });
+
+    })
+
+</script>

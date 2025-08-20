@@ -1,0 +1,42 @@
+<include file="public@header"/>
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <form method="post" class="js-ajax-form margin-top-20" action="{:url('Link/listOrder')}">
+        <table class="table table-hover table-bordered table-list">
+            <thead>
+            <tr>
+                <th width="50">操作</th>
+                <th width="50">ID</th>
+                <th>{:lang('NAME')}</th>
+                <th>链接地址</th>
+            </tr>
+            </thead>
+            <tbody>
+            <foreach name="links" item="vo">
+                <tr>
+                    <td><input type="radio" class="js-check" data-yid="js-check-y" data-xid="js-check-x" name="ids[]"
+                               value="{$vo.url}"></td>
+                    <td>{$vo.id}</td>
+                    <td>{$vo.name}</td>
+                    <td>{$vo.url}</td>
+                </tr>
+            </foreach>
+            </tbody>
+        </table>
+    </form>
+</div>
+<script src="__STATIC__/js/admin.js"></script>
+<script>
+    function get_selected_link() {
+        let form = $(".js-ajax-form");
+        if (form.find('input.js-check:checked').length) {
+            return form.find('input.js-check:checked')[0].value;
+        }else{
+            alert("请选择链接！");
+            return false;
+        }
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+<?php
+// +----------------------------------------------------------------------
+// | 模板设置
+// +----------------------------------------------------------------------
+
+return [
+    // +----------------------------------------------------------------------
+    // | CMF 设置
+    // +----------------------------------------------------------------------
+    'cmf_theme_path'          => 'themes/',
+    'cmf_default_theme'       => 'default',
+    'cmf_admin_theme_path'    => 'themes/',
+    //'cmf_admin_default_theme' => 'admin_simpleboot3',
+    'cmf_admin_default_theme' => 'admin_fengiy',
+    'cmf_admin_default_theme' => 'admin_fengiy',
+    'tpl_replace_string'      => [
+        '__STATIC__' => '/static',
+        '__ROOT__'   => '',
+    ]
+];

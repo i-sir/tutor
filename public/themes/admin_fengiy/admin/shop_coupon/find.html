@@ -1,0 +1,193 @@
+ <include file="public@header"/>
+<style>
+    textarea {
+        border: 0;
+        outline: none;
+        background-color: rgba(0, 0, 0, 0);
+    }
+
+    input {
+        border: 0;
+        outline: none;
+        background-color: rgba(0, 0, 0, 0);
+    }
+
+    .col-md-6 {
+        margin-top: 7px;
+    }
+</style>
+
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="{:url('find',['id'=>$id,'params'=>$params])}">查看</a></li>
+    </ul>
+    <form method="post" class="form-horizontal js-ajax-form margin-top-20 layui-form" autocomplete="off"
+          action="{:url('edit_post',['id'=>$id,'params'=>$params])}">
+
+
+        
+            <div class="form-group">
+                <label class="col-sm-2 control-label">优惠券类型:</label>
+                <div class="layui-input-block col-sm-6">
+                                                {$type_name|default=''}
+                    
+                </div>
+            </div>
+
+
+        
+            <div class="form-group">
+                <label class="col-sm-2 control-label">优惠券名称:</label>
+                <div class="layui-input-block col-sm-6">
+                                                {$name|default=''}
+                    
+                </div>
+            </div>
+
+
+        
+            <div class="form-group">
+                <label class="col-sm-2 control-label">满额:</label>
+                <div class="layui-input-block col-sm-6">
+                                                {$full_amount|default=''}
+                    
+                </div>
+            </div>
+
+
+        
+            <div class="form-group">
+                <label class="col-sm-2 control-label">面额:</label>
+                <div class="layui-input-block col-sm-6">
+                                                {$amount|default=''}
+                    
+                </div>
+            </div>
+
+
+        
+            <div class="form-group">
+                <label class="col-sm-2 control-label">数量:</label>
+                <div class="layui-input-block col-sm-6">
+                                                {$count|default=''}
+                    
+                </div>
+            </div>
+
+
+        
+            <div class="form-group">
+                <label class="col-sm-2 control-label">领取数量:</label>
+                <div class="layui-input-block col-sm-6">
+                                                {$select_count|default=''}
+                    
+                </div>
+            </div>
+
+
+        
+            <div class="form-group">
+                <label class="col-sm-2 control-label">限领取数:</label>
+                <div class="layui-input-block col-sm-6">
+                                                {$limit|default=''}
+                    
+                </div>
+            </div>
+
+
+        
+            <div class="form-group">
+                <label class="col-sm-2 control-label">状态:</label>
+                <div class="layui-input-block col-sm-6">
+                                                {$status_name|default=''}
+                    
+                </div>
+            </div>
+
+
+        
+            <div class="form-group">
+                <label class="col-sm-2 control-label">开始时间:</label>
+                <div class="layui-input-block col-sm-6">
+                                                {$start_time|default=''}
+                    
+                </div>
+            </div>
+
+
+        
+            <div class="form-group">
+                <label class="col-sm-2 control-label">结束时间:</label>
+                <div class="layui-input-block col-sm-6">
+                                                {$end_time|default=''}
+                    
+                </div>
+            </div>
+
+
+        
+            <div class="form-group">
+                <label class="col-sm-2 control-label">内容:</label>
+                <div class="layui-input-block col-sm-6">
+                                                <script type="text/plain" id="content" name="content">{:cmf_replace_content_file_url(htmlspecialchars_decode($content))}                            </script>
+                            <script type="text/javascript">
+                                //编辑器路径定义
+                                var editorURL = GV.WEB_ROOT;
+                            </script>
+                            <script type="text/javascript" src="/static/js/ueditor/ueditor.config.js?v=00001"></script>
+                            <script type="text/javascript" src="/static/js/ueditor/ueditor.all.min.js"></script>
+                            <!--编辑器支持秀米-->
+                            <script type="text/javascript" src="/static/js/ueditor/xiumi/xiumi-ue-dialog-v5.js"></script>
+                            <link rel="stylesheet" type="text/css" href="/static/js/ueditor/xiumi/xiumi-ue-v5.css" />
+                            <script type="text/javascript">
+                                $(function () {
+                                    editorcontent = new baidu.editor.ui.Editor();
+                                    editorcontent.render('content');
+                                    try {
+                                        editorcontent.sync();
+                                    } catch (err) {
+                                    }
+                                });
+                            </script>
+                        
+                </div>
+            </div>
+
+
+        
+            <div class="form-group">
+                <label class="col-sm-2 control-label">有效期:</label>
+                <div class="layui-input-block col-sm-6">
+                                                {$indate|default=''}
+                    
+                </div>
+            </div>
+
+
+        
+            <div class="form-group">
+                <label class="col-sm-2 control-label">list_order:</label>
+                <div class="layui-input-block col-sm-6">
+                                                {$list_order|default=''}
+                    
+                </div>
+            </div>
+
+
+        
+
+        <!-- 主键id -->
+        <input type="text" name="id" value="{$id}" class="form-control post-params item-left" style="display: none">
+
+
+    </form>
+
+</div>
+<script src="__STATIC__/js/admin.js"></script>
+</body>
+</html>
+
+
+

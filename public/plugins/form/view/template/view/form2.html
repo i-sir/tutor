@@ -1,0 +1,249 @@
+<foreach name="fields" item="vo" key="key">
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label">{$vo.COLUMN_COMMENT}:</label>
+        <div class="col-md-6 col-sm-10">
+
+            <switch name="vo.type">
+
+                <case value="textarea">
+                    <textarea rows="4" class="form-control item-left" cols="60"
+                              name="{$vo.COLUMN_NAME}">{$vo.value}</textarea>
+                </case>
+
+                <case value="number">
+                    <input type="number" class="form-control item-left" name="{$vo.COLUMN_NAME}"
+                           value="{$vo.value}">
+                </case>
+
+
+                <case value="video">
+                    <input id="file-video_{$key}" class="form-control" type="text" name="{$vo.COLUMN_NAME}"
+                           value="{$vo.value}" style="width: 200px;">
+                    {$vo.html}
+                </case>
+
+
+                <case value="content">
+                    <script type="text/plain" id="{$vo.COLUMN_NAME}" name="{$vo.COLUMN_NAME}">{$vo.value}</script>
+                    <script type="text/javascript">
+                        //编辑器路径定义
+                        var editorURL = GV.WEB_ROOT;
+                    </script>
+                    <script type="text/javascript" src="__STATIC__/js/ueditor/ueditor.config.js?v=00001"></script>
+                    <script type="text/javascript" src="__STATIC__/js/ueditor/ueditor.all.min.js"></script>
+                    <!--编辑器支持秀米-->
+                    <script type="text/javascript" src="__STATIC__/js/ueditor/xiumi/xiumi-ue-dialog-v5.js"></script>
+                    <link rel="stylesheet" type="text/css" href="__STATIC__/js/ueditor/xiumi/xiumi-ue-v5.css" />
+                    <script type="text/javascript">
+                        $(function () {
+                            editorcontent = new baidu.editor.ui.Editor();
+                            editorcontent.render('{$vo.COLUMN_NAME}');
+                            try {
+                                editorcontent.sync();
+                            } catch (err) {
+                            }
+
+                            $('.btn-cancel-thumbnail').click(function () {
+                                $('#thumbnail-preview').attr('src', '__TMPL__/public/assets/images/default-thumbnail.png');
+                                $('#thumbnail').val('');
+                            });
+                        });
+                    </script>
+
+
+                </case>
+
+
+                <case value="lnglat">
+                    <div style="display: flex;">
+                        <input type="text" class="form-control" name="address" id="address"
+                               value="{$data.address|default=''}" placeholder="请输入" required>
+                        <a class="btn btn-primary" href="javascript:;" style="margin-left: 10px;"
+                           onclick="searchAddress()">搜索</a>
+                        <input type="hidden" class="form-control" id="lnglat" name="lnglat"
+                               value="{$vo.value}">
+                    </div>
+                    <div id="container" style="margin-top:10px;width:600px;height:300px;"></div>
+
+
+                    <script src="https://map.qq.com/api/gljs?v=1.exp&key=3JXBZ-6NKWX-RW54N-ZJYDI-OMQEO-74F7X"></script>
+                    <script>
+                        //定义地图中心点坐标
+                        var center = new TMap.LatLng("{$data['latitude']}", "{$data['longitude']}")
+                        //定义map变量，调用 TMap.Map() 构造函数创建地图
+                        var map = new TMap.Map(document.getElementById('container'), {
+                            center: center,//设置地图中心点坐标
+                            zoom: 17, //设置地图缩放级别
+                            viewMode: '3D'
+                        });
+                        let markerLayer = new TMap.MultiMarker({
+                            id: 'marker-layer',
+                            map: map
+                        });
+                        var clickHandler = function (evt) {
+                            var lat = evt.latLng.getLat().toFixed(6);
+                            var lng = evt.latLng.getLng().toFixed(6);
+                            $("#lnglat").val(lat + "," + lng);
+                            removeMarker("search_res");
+                            addMarker(new TMap.LatLng(lat, lng), "search_res");
+                            let url = "{:url('public/reverse_address')}";
+                            $.get(url, {lnglat: lat + "," + lng}, function (res) {
+                                debugger;
+                                res = JSON.parse(res)
+                                if (res.status == 0) {
+                                    $("#address").val(res.result.formatted_addresses.recommend);
+                                }
+                            });
+                        }
+                        map.on("click", clickHandler)
+
+                        function addMarker(latLng, id) {
+                            markerLayer.add({
+                                id: id,
+                                position: latLng
+                            });
+                            let lng = latLng.lng
+                            let lat = latLng.lat
+                            map.setCenter(new TMap.LatLng(lat, lng)); // 坐标为天安门
+                        }
+
+                        //移除marker事件
+                        function removeMarker(id) {
+                            markerLayer.remove(id)
+                        }
+
+                        function searchAddress() {
+                            let address = $("#address").val();
+                            let url = "{:url('public/search_address')}";
+                            $.get(url, {address: address}, function (res) {
+                                debugger;
+                                res = JSON.parse(res)
+                                if (res.status == 0) {
+                                    let location = res.result.location
+                                    $("#lnglat").val(location.lat + "," + location.lng);
+                                    removeMarker("search_res");
+                                    addMarker(new TMap.LatLng(location.lat, location.lng), "searc h_res");
+                                }
+                            });
+                        }
+                    </script>
+                </case>
+
+
+                <case value="image">
+                    <input type="text" name="{$vo.COLUMN_NAME}" id="{$vo.COLUMN_NAME}_{$key}" value="{$vo.value}"
+                           class="form-control item-left">
+                    <input type="hidden" name="{$vo.COLUMN_NAME}_{$key}" id="{$vo.COLUMN_NAME}_{$key}{$key}"
+                           value="{:cmf_get_image_preview_url($vo.value)}">
+                    <button type="button" class="btn btn-primary Preview" style="margin-left: 10px"><i
+                            class="fa fa-search" aria-hidden="true"></i>查看
+                    </button>
+                    <a href="javascript:uploadImage('图片上传','#{$vo.COLUMN_NAME}_{$key}');" class="btn btn-primary">
+                        <i class="fa fa-cloud-upload" aria-hidden="true"></i>
+                        上传图片
+                    </a>
+
+                    <script>
+                        $('.Preview').click(function () {
+                            if ($(this).prev().val()) {
+                                imagePreviewDialog($(this).prev().val());
+                            }
+                        });
+
+                        function uploadImage(dialog_title, input_selector, extra_params, app) {
+                            openUploadDialog(dialog_title, function (dialog, files) {
+                                $(input_selector).val(files[0].filepath);
+                            }, extra_params, 0, 'image', app);
+                        }
+                    </script>
+
+                </case>
+
+
+                <case value="images">
+
+                    <ul class="pic-list list-unstyled form-inline">
+                        {$vo.html}
+                    </ul>
+                    <a href="javascript:uploadMultiImage('图片上传','#photos-goods','photos-goods-item-tpl');"
+                       class="btn btn-sm btn-default">选择图片</a>
+
+                    <script type="text/html" id="photos-goods-item-tpl">
+                        <li id="saved-goods-image{id}">
+                            <div style="float:left; width:90px;">
+                                <input id="photo-goods-{id}" type="hidden" name="{$vo.COLUMN_NAME}[]"
+                                       value="{filepath}">
+                                <img id="photo-goods-{id}-preview" src="{url}" width="80"
+                                     onclick="imagePreviewDialog(this.src);">
+                                <a href="javascript:uploadOneImage('图片上传','#photo-goods-{id}');">替换</a>
+                                <a href="javascript:(function(){$('#saved-goods-image{id}').remove();})();">移除</a>
+                            </div>
+                        </li>
+                    </script>
+
+                </case>
+
+
+                <case value="select">
+                    <select name="{$vo.COLUMN_NAME}" class="form-control item-left">
+                        <volist name="vo.data" id="vd">
+                            <if condition="$vd['value'] eq $vo['value']">
+                                <option value="{$vd.value}" selected="selected">{$vd.name}</option>
+                                <else/>
+                                <option value="{$vd.value}">{$vd.name}</option>
+                            </if>
+                        </volist>
+                    </select>
+                </case>
+
+
+                <case value="radio">
+                    <volist name="vo.data" id="vd">
+                        <if condition="$vd['value'] eq $vo['value']">
+                            <label><input type="radio" name="{$vo.COLUMN_NAME}" value="{$vd.value}"
+                                          checked="checked">{$vd.name}<span>[{$vd.value}]</span></label>
+                            <else/>
+                            <label><input type="radio" name="{$vo.COLUMN_NAME}"
+                                          value="{$vd.value}">{$vd.name}<span>[{$vd.value}]</span></label>
+                        </if>
+                    </volist>
+                </case>
+
+
+                <case value="checkbox">
+                    <volist name="vo.data" id="vd">
+                        <if condition="in_array($vd['value'],(array)$vo['value'])">
+                            <label><input type="checkbox" name="{$vo.COLUMN_NAME}[]" value="{$vd.value}"
+                                          checked="checked">{$vd.name}<span>[{$vd.value}]</span></label>
+                            <else/>
+                            <label><input type="checkbox" name="{$vo.COLUMN_NAME}[]"
+                                          value="{$vd.value}">{$vd.name}<span>[{$vd.value}]</span></label>
+                        </if>
+                    </volist>
+                </case>
+
+
+                <case value="time">
+                    <input type="time" class="form-control item-left" name="{$vo.COLUMN_NAME}"
+                           value="{$vo.value}">
+                </case>
+
+                <case value="date">
+                    <input type="text" class="form-control item-left js-datetime" name="{$vo.COLUMN_NAME}"
+                           value="{$vo.value}">
+                </case>
+
+
+                <default/>
+                <input type="text" name="{$vo.COLUMN_NAME}" class="form-control item-left" value="{$vo.value}">
+            </switch>
+
+
+        </div>
+    </div>
+
+
+</foreach>
+
+

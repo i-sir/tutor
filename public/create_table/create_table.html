@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!--  域名+ /create_table/create_table.html -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=yes">
+    <title>创建表(MySQL)</title>
+    <script src="zbEditTable.js"></script>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <link href="/static/layui/css/layui.css" rel="stylesheet" type="text/css">
+    <script src="/static/layui/layui.js"></script>
+
+    <style>
+        .group {
+            border-radius: 5px;
+            padding: 5px;
+            margin: 5px;
+            background-color: #f8f8f8;
+        }
+
+        .group-translate {
+            border-radius: 5px;
+            padding: 5px;
+            margin: 5px;
+            background-color: #d1d6c7;
+        }
+
+        .gap {
+            margin-top: 5px;
+        }
+
+        .option {
+            height: 45px;
+            line-height: 57px;
+            margin: 5px;
+            padding: 3px;
+            text-align: center;
+            font-size: 16px;
+            background-color: #fff;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        label {
+            font-size: 12px;
+        }
+
+        thead td {
+            text-align: center;
+            font-size: 14px;
+        }
+
+        pre {
+            border-radius: 5px;
+            padding: 5px;
+            margin: 5px;
+            background-color: #f8f8f8;
+        }
+
+        input {
+            height: 18px;
+        }
+
+        code {
+            font-family: 'Arial';
+            font-size: 14px;
+        }
+
+        input {
+            height: 28px;
+            width: 228px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="group-translate">
+    <label>翻译板块</label>
+    <br>
+    <br>
+    中文:
+    <input type="text" id="zh" oninput="disposeFront('zh')" onblur="disposeFront('zh')" ondblclick="copyContent('zh')"
+           placeholder="中文"
+           style="width: 320px;height: 35px;">
+    <input id="zh-en" placeholder="翻译结果 中->英" ondblclick="copyContent('zh-en')"
+           style="width: 320px;height: 35px;">
+    <br>
+    <br>
+    英文:
+    <input type="text" id="en" oninput="disposeFront('en')" onblur="disposeFront('en')" ondblclick="copyContent('en')"
+           placeholder="英文"
+           style="width: 320px;height: 35px;">
+    <input id="en-zh" placeholder="翻译结果 英->中" ondblclick="copyContent('en-zh')"
+           style="width: 320px;height: 35px;">
+
+
+    <textarea id="copy_content" style="position: absolute;top: -40px;left: 0;opacity: 0;z-index: -10;"></textarea>
+</div>
+
+
+<div class="group">
+    <label>基本信息</label>
+    <div id="basic_info" class="gap"></div>
+    <div id="basic_info_desc" class="gap"></div>
+</div>
+
+
+<div class="group">
+    <label>字段信息</label>
+    <div id="fields_info" class="gap"></div>
+    <div id="fields_desc" class="gap"></div>
+</div>
+
+
+<div class="group-translate">
+    <label>翻译板块</label>
+    <br>
+    <br>
+    中文:
+    <input value="" type="text" id="zh-000002" onblur="disposeFront('zh-000002')" oninput="disposeFront('zh-000002')"
+           ondblclick="copyContent('zh-000002')"
+           placeholder="中文"
+           style="width: 320px;height: 35px;">
+    <input id="zh-en-000002" placeholder="翻译结果 中->英" ondblclick="copyContent('zh-en-000002')"
+           style="width: 320px;height: 35px;">
+    <br>
+    <br>
+    英文:
+    <input type="text" id="en-000002" oninput="disposeFront('en-000002')" onblur="disposeFront('en-000002')"
+           onblur="zh_en('en-000002')"
+           ondblclick="copyContent('en-000002')"
+           placeholder="英文"
+           style="width: 320px;height: 35px;">
+    <input id="en-zh-000002" placeholder="翻译结果 英->中" ondblclick="copyContent('en-zh-000002')"
+           style="width: 320px;height: 35px;">
+
+</div>
+
+<br>
+<br>
+<br>
+<div class="group">
+    <label>索引信息</label>
+    <div id="index_info" class="gap"></div>
+    <div id="index_desc" class="gap"></div>
+</div>
+
+<br>
+<br>
+<br>
+<span><button onclick="form_to_sql()" style="width: 145px;height: 45px;">从表单生成SQL</button></span>
+<pre onclick="copyContent('sql')"><code id="sql"></code></pre>
+
+<div style="margin-top: 50px;margin-bottom: 150px;"></div>
+
+
+<script>
+    let timeout = null;
+    let values = null;
+
+    /**
+     * 防抖原理：一定时间内，只有最后一次操作，再过wait毫秒后才执行函数
+     * @param {Function} func 要执行的回调函数
+     * @param {Number} wait 延时的时间
+     * @param {Boolean} immediate 是否立即执行
+     * @return null
+     */
+    function debounce(func, wait = 500, immediate = false) {
+        // 清除定时器
+        if (timeout !== null) clearTimeout(timeout);
+        // 立即执行，此类情况一般用不到
+        if (immediate) {
+            var callNow = !timeout;
+            timeout = setTimeout(function () {
+                timeout = null;
+            }, wait);
+            if (callNow) typeof func === 'function' && func();
+        } else {
+            // 设置定时器，当最后一次操作后，timeout不会再被清除，所以在延时wait毫秒后执行func回调方法
+            timeout = setTimeout(function () {
+                typeof func === 'function' && func();
+            }, wait);
+        }
+    }
+
+
+    //处理前
+    function disposeFront(id) {
+        values = id;
+        debounce(zh_en, 500);
+    }
+
+
+    // 翻译
+    function zh_en() {
+        id = values;//全局参数
+        var value = $('#' + id).val();
+        var c = 0;
+        var turn = '';
+        if (id == 'zh') turn = 'zh-en';
+        if (id == 'en') {
+            turn = 'en-zh';
+            c = 1;
+        }
+
+        if (id == 'zh-000002') turn = 'zh-en-000002';
+        if (id == 'en-000002') {
+            turn = 'en-zh-000002';
+            c = 1;
+        }
+
+
+        $.ajax({
+            url: "https://w.datt.top/api/wxapp/public/translate",
+            data: {
+                'value': value,
+                'c': c
+            },
+            type: "post",
+            dataType: "json",
+            success: function (data) {
+                if (data.data) {
+                    $('#' + turn).val(data.data.replace(/\ /g, "_").toLowerCase());
+                }
+            }
+        });
+    }
+
+
+    //复制变量
+    function copyContent(e) {
+        //获取点击的值
+        var clickContent = $('#' + e).val();
+
+        if (!clickContent) var clickContent = $('#' + e).html();
+
+        //获取要赋值的input的元素
+        var inputElement = document.getElementById("copy_content");
+        //给input框赋值
+        clickContent = clickContent.replace(/<br\s*\/?>/g, "");
+       // console.log(clickContent)
+        inputElement.value = clickContent;
+        //选中input框的内容
+        inputElement.select();
+        // 执行浏览器复制命令
+        document.execCommand("Copy");
+        //提示已复制
+        layer.msg(clickContent + '已复制', {icon: 6, time: 700});
+    }
+
+
+</script>
+
+
+<!--此处仅用来统计访问量使用-->
+<div style="display: none;"><img src="https://article.hearu.top/stat_db_create_table"></div>
+
+<script type="text/javascript">
+    var et = new zbEditTable();
+    et.onClickInput = function () {
+        let table_id = this.getAttribute('table_id');
+        if (!table_id) {
+            return '';
+        }
+
+        let clicked = document.getElementsByClassName('clicked');
+        for (let i = 0; i < clicked.length; i++) {
+            clicked[i].classList.remove('clicked');
+        }
+        this.classList.add('clicked');
+
+        let coordinate = this.getAttribute('coordinate'); //被点击的input的坐标
+        let field_name = this.getAttribute('name'); //被点击的input的name属性
+        let options = [];
+
+        //table_id对应的显示描述信息的div
+        let map_id_desc = {
+            table_basic: 'basic_info_desc',
+            field_list: 'fields_desc',
+            index_list: 'index_desc',
+        };
+        let desc_id = map_id_desc[table_id];
+
+        if (table_id === 'table_basic') {
+            let map_basic = {
+                'table_name': [],
+                'engine': ['InnoDB', 'MyISAM', 'MEMORY'],
+                'charset': ['utf8', 'utf8mb4'],
+                'collate': ['utf8_general_ci', 'utf8mb4_0900_ai_ci', 'utf8mb4_general_ci'],
+                'table_comment': [],
+            }
+
+            options = map_basic[field_name];
+
+            //字符集过滤
+            if (field_name === 'collate') {
+                let charset = et.getInputByCoordinate(table_id, '0,2').value; //取最新的值
+                if (charset) {
+                    options = options.filter(function (item) {
+                        if (item.indexOf(charset + '_') !== -1) {
+                            return true;
+                        }
+                    }, charset)
+                }
+            }
+
+        } else if (table_id === 'field_list') {
+            let map_fields = {
+                'COLUMN_NAME': [],
+                'COLUMN_TYPE': ['tinyint', 'int', 'bigint', 'float(8,2)', 'double(8,2)', 'decimal(8,2)', 'char(20)', 'varchar(225)', 'text', 'date', 'datetime'],
+                'COLUMN_KEY': ['PRI'],
+                'IS_NULLABLE': ['NO', 'YES'],
+                'COLUMN_DEFAULT': ["NULL", '0', 'CURRENT_TIMESTAMP'],
+                'EXTRA': ['AUTO_INCREMENT', 'ON UPDATE CURRENT_TIMESTAMP'],
+                'COLUMN_COMMENT': [],
+            };
+
+            options = map_fields[field_name];
+
+        } else if (table_id === 'index_list' && field_name === 'index_fields') {
+            let inputs = et.getInputByCoordinate('field_list', ',0');
+            for (let i = 0; i < inputs.length; i++) {
+                options.push(inputs[i].value);
+            }
+
+        } else {
+            document.getElementById(desc_id).innerHTML = '';
+            return [];
+        }
+
+        //显示可选值
+        let tpl = '';
+        if (table_id === 'index_list' && field_name === 'index_fields') {
+            tpl = '<span class="option" onclick="copyText(\'{val1}\', 2)" title="点击复制">{val}</span>';
+        } else {
+            tpl = '<span class="option" onclick="copyText(\'{val1}\', 1)" title="点击复制">{val}</span>';
+        }
+        let content = [];
+        for (let i = 0; i < options.length; i++) {
+            let tmp = tpl.replace('{val}', options[i]);
+            tmp = tmp.replace('{val1}', options[i].replace(/(['"])/g, "\\$1"));
+            content.push(tmp);
+        }
+
+        if (content.length > 0) {
+            document.getElementById(desc_id).innerHTML = '<label>可选值: </label>' + content.join(',');
+        }
+
+    }
+</script>
+
+<script type="text/javascript">
+    //构建SQL语句
+    function json_to_sql(basic, field_list, index_list) {
+        //字段
+        let fields = [];
+        let pad = ' ';
+        for (let i = 0; i < field_list.length; i++) {
+            let field = field_list[i];
+            let tmp = [];
+
+            //字段名
+            let field_name = '`' + field['COLUMN_NAME'] + '`';
+            //tmp.push(field_name.padEnd(25, pad));
+            tmp.push(field_name);
+
+            //数据类型
+            tmp.push(field['COLUMN_TYPE']);
+
+            //是否是主键
+            let primary_key = '';
+            if (field['COLUMN_KEY'] === 'PRI') {
+                primary_key = 'PRIMARY KEY';
+            }
+            tmp.push(primary_key);
+
+
+            //是否允许为NULL
+            let is_null = '';
+            if (field['IS_NULLABLE'] === 'NO') {
+                is_null = 'NOT NULL';
+            }
+            tmp.push(is_null);
+
+            //默认值
+            let deft = '';
+            if (field['COLUMN_KEY'] === 'PRI') {
+                deft = '';
+            } else if (field['COLUMN_DEFAULT'] == null) {
+                if (field['IS_NULLABLE'] === 'YES') {
+                    deft = 'DEFAULT NULL';
+                }
+            } else if (field['COLUMN_DEFAULT'].length === 0) {
+                deft = "DEFAULT ''"
+            } else {
+                deft = 'DEFAULT ' + field['COLUMN_DEFAULT'];
+            }
+
+            tmp.push(deft);
+
+            //额外属性: AUTO_INCREMENT, ON UPDATE CURRENT_TIMESTAMP
+            let extra = field['EXTRA'].replace('DEFAULT_GENERATED', '');
+            tmp.push(extra);
+
+            //注释
+            if (field['COLUMN_COMMENT'].length > 0) {
+                tmp.push(" COMMENT '" + field['COLUMN_COMMENT'] + "'");
+            }
+
+            fields.push(tmp.join('   ').trim());
+        }
+
+        //索引
+        for (let i = 0; i < index_list.length; i++) {
+            let index = index_list[i];
+            fields.push('KEY `' + index['index_name'] + '` (' + index['index_fields'] + ')');
+        }
+
+        //开始构建
+        let sql = [];
+        sql.push('CREATE TABLE ' + basic.table_name + '(');
+        sql.push(fields.join(',<br>'));
+        sql.push([
+            ')',
+            basic.engine.length > 0 ? ' ENGINE=' + basic.engine : '',
+            basic.charset.length > 0 ? ' DEFAULT CHARSET=' + basic.charset : '',
+            basic.collate.length > 0 ? ' COLLATE=' + basic.collate : '',
+            basic.table_comment.length > 0 ? ' COMMENT="' + basic.table_comment + '"' : '',
+            ';'
+        ].join(''));
+
+        sql = sql.join('<br>');
+
+        document.getElementById('sql').innerHTML = sql;
+
+        return sql;
+    }
+
+    //根据表单数据生成SQL
+    function form_to_sql() {
+        //获取基本信息
+        let basic = et.getInputsArray('table_basic')[0];
+        basic = et.array_column(basic, 'value', 'name');
+
+        //获取字段信息
+        let field_list = et.getInputsArray('field_list');
+        for (let i = 0; i < field_list.length; i++) {
+            field_list[i] = et.array_column(field_list[i], 'value', 'name');
+        }
+
+        //获取索引信息
+        let index_list = et.getInputsArray('index_list');
+        for (let i = 0; i < index_list.length; i++) {
+            index_list[i] = et.array_column(index_list[i], 'value', 'name');
+        }
+
+        return json_to_sql(basic, field_list, index_list);
+    }
+
+    //显示空白表单
+    function show_empty_form() {
+        //表基本信息
+        let domTable = et.createEditTable({
+            id: 'table_basic',
+            thead: {
+                values: ['表名', '引擎', '默认编码', '字符集', '注释']
+            },
+            tbody: {
+                values: [['', 'InnoDB', 'utf8mb4', 'utf8mb4_general_ci', '']]
+            }
+        });
+        document.getElementById('basic_info').appendChild(domTable);
+        et.setInputAttributes('table_basic', [
+            {coordinate: '0,0', attrs: {name: 'table_name'}},
+            {coordinate: '0,1', attrs: {name: 'engine'}},
+            {coordinate: '0,2', attrs: {name: 'charset'}},
+            {coordinate: '0,3', attrs: {name: 'collate'}},
+            {coordinate: '0,4', attrs: {name: 'table_comment'}},
+        ]);
+
+        //表字段
+        let domFields = et.createResponseEditTable({
+            id: 'field_list',
+            thead: {
+                values: ['字段名', '数据类型', '是否主键', '是否允许NULL', '默认值', '额外设置', '注释']
+            },
+            tbody: {
+                default_row: 1,
+                default_col: 7,
+                values: [
+                    ['id', 'int', 'PRI', 'NO', '0', 'AUTO_INCREMENT', 'ID'],
+                    ['create_time', 'bigint', '', 'YES', 'NULL', '', '创建时间'],
+                    ['update_time', 'bigint', '', 'YES', 'NULL', '', '修改时间'],
+                ]
+            }
+        });
+        document.getElementById('fields_info').appendChild(domFields);
+        et.setInputAttributes('field_list', [
+            {coordinate: ',0', attrs: {name: 'COLUMN_NAME'}}, //字段名
+            {coordinate: ',1', attrs: {name: 'COLUMN_TYPE'}}, //数据类型
+            {coordinate: ',2', attrs: {name: 'COLUMN_KEY'}}, //是否是主键
+            {coordinate: ',3', attrs: {name: 'IS_NULLABLE'}}, //是否可为NULL
+            {coordinate: ',4', attrs: {name: 'COLUMN_DEFAULT'}}, //默认值
+            {coordinate: ',5', attrs: {name: 'EXTRA'}}, //额外, 比如: 自增, 更新时自动更新
+            {coordinate: ',6', attrs: {name: 'COLUMN_COMMENT'}} //字段注释
+        ]);
+
+        //索引
+        let domIndexs = et.createResponseEditTable({
+            id: 'index_list',
+            thead: {
+                values: ['索引名', '字段(多个以逗号隔开)']
+            },
+            tbody: {
+                default_row: 1,
+                default_col: 2,
+                values: [
+                    ['id', 'id'],
+                ]
+            }
+        });
+        document.getElementById('index_info').appendChild(domIndexs);
+        et.setInputAttributes('index_list', [
+            {coordinate: '0,0', attrs: {name: 'index_name'}},
+            {coordinate: '0,1', attrs: {name: 'index_fields'}},
+        ]);
+
+        form_to_sql();
+    }
+
+</script>
+
+<script type="text/javascript">
+    //复制文本
+    function copyText(text, mode = 0, gap = ',') {
+        let textArea = document.createElement("textarea");
+        textArea.style.position = 'fixed';
+        textArea.style.top = '0';
+        textArea.style.left = '0';
+        textArea.style.width = '2em';
+        textArea.style.height = '2em';
+        textArea.style.padding = '0';
+        textArea.style.border = 'none';
+        textArea.style.outline = 'none';
+        textArea.style.boxShadow = 'none';
+        textArea.style.background = 'transparent';
+        textArea.value = text;
+        document.body.appendChild(textArea);
+        textArea.select();
+
+        //https://developer.mozilla.org/en-US/docs/Web/API/Clipboard_API
+        //navigator.clipboard.readText().then(clipText => document.querySelector(".editor").innerText += clipText);
+        document.execCommand('copy');
+
+        document.body.removeChild(textArea);
+
+        let clicked = document.getElementsByClassName('clicked');
+        if (mode === 1) {//替换
+            for (let i = 0; i < clicked.length; i++) {
+                clicked[i].value = text;
+            }
+        } else if (mode === 2) {
+            //追加
+            for (let i = 0; i < clicked.length; i++) {
+                if (clicked[i].value.length === 0) {
+                    clicked[i].value = text;
+                } else {
+                    clicked[i].value += gap + text;
+                }
+
+            }
+        }
+    }
+
+</script>
+
+<script type="text/javascript">
+    //显示默认表结构
+    show_empty_form();
+    //每5秒钟, 将表单中的数据组装成sql
+    setInterval(form_to_sql, 5000);
+</script>
+
+</body>
+</html>

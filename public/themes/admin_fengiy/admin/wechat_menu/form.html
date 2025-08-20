@@ -1,0 +1,96 @@
+<input type="hidden" class="form-control" name="pid" value="{$pid}">
+
+
+<div class="form-group">
+    <label class="col-sm-2 control-label">菜单名称:</label>
+    <div class="layui-input-block col-sm-6">
+        <input type="text" name="name" class="form-control post-params item-left" value="{$name|default=''}">
+    </div>
+</div>
+
+
+<div class="form-group">
+    <label class="col-sm-2 control-label"><span class="form-required">*</span>类型:</label>
+    <div class="col-md-6 col-sm-10">
+        <select name="type" class="form-control" lay-filter="type" id="type">
+            <option value="">无</option>
+            <foreach name="type_list" item="vo">
+                <option value="{$key}"
+                <if condition="isset($type) && $key == $type">selected</if>
+                >{$vo}</option>
+            </foreach>
+        </select>
+    </div>
+</div>
+
+<div class="form-group show_type show_type_click">
+    <label class="col-sm-2 control-label"><span class="form-required">*</span>关键字:</label>
+    <div class="col-md-6 col-sm-10">
+        <input type="text" class="form-control" name="key" value="{$key|default=''}">
+    </div>
+</div>
+
+
+<div class="form-group show_type show_type_click">
+    <label class="col-sm-2 control-label"><span class="form-required">*</span>回复内容:</label>
+    <div class="col-md-6 col-sm-10">
+        <input type="text" class="form-control" name="reply_content" value="{$reply_content|default=''}">
+    </div>
+</div>
+
+<div class="form-group show_type show_type_view">
+    <label class="col-sm-2 control-label"><span class="form-required">*</span>链接:</label>
+    <div class="col-md-6 col-sm-10">
+        <input type="text" class="form-control" name="url" value="{$url|default=''}">
+    </div>
+</div>
+
+<div class="form-group show_type show_type_miniprogram">
+    <label class="col-sm-2 control-label"><span class="form-required">*</span>小程序的appid:</label>
+    <div class="col-md-6 col-sm-10">
+        <input type="text" class="form-control" name="appid" value="{$appid|default=''}">
+    </div>
+</div>
+
+<div class="form-group show_type show_type_miniprogram">
+    <label class="col-sm-2 control-label"><span class="form-required">*</span>小程序页面路径:</label>
+    <div class="col-md-6 col-sm-10">
+        <input type="text" class="form-control" name="pagepath" value="{$pagepath|default=''}">
+    </div>
+</div>
+
+<div class="form-group show_type show_type_media_id">
+    <label class="col-sm-2 control-label"><span class="form-required">*</span>上传图片:</label>
+    <div class="col-md-6 col-sm-10">
+        <input type="hidden" name="thumb" id="thumb" value="{$thumb|default=''}">
+        <a href="javascript:uploadOneImage('图片上传','#thumb');">
+            <notempty name="data.thumb">
+                <img src="{:cmf_get_image_preview_url($thumb)}" id="thumb-preview" width="80"
+                     style="cursor: hand"/>
+                <else/>
+                <img src="__TMPL__/public/assets/images/default-image.png" id="thumb-preview" width="80"
+                     style="cursor: hand"/>
+            </notempty>
+        </a>
+        <input type="button" class="btn btn-sm"
+               onclick="$('#thumb-preview').attr('src','__TMPL__/public/assets/images/default-image.png');$('#thumb').val('');return false;"
+               value="取消图片">
+    </div>
+</div>
+
+
+<script>
+    layui.use(['layer', 'form'], function () {
+        let layer = layui.layer, form = layui.form;
+        const type = $("#type").val();
+        setShow(type)
+        form.on('select(type)', function (data) {
+            setShow(data.value)
+        })
+
+        function setShow(type) {
+            $('.show_type').css('display', 'none');
+            $('.show_type_' + type).css('display', 'block');
+        }
+    });
+</script>

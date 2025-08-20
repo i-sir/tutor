@@ -1,0 +1,3719 @@
+<!--富文本-->
+<!--if ($result["content"]) $result["content"] = htmlspecialchars_decode(cmf_replace_content_file_url($result["content"]));-->
+
+<!--富文本-->
+<div class="form-group">
+    <label class="col-sm-2 control-label">内容:</label>
+    <div class="col-md-6 col-sm-10">
+        <script id="content" name="content" type="text/plain">
+          {:cmf_replace_content_file_url(htmlspecialchars_decode($content))}
+        </script>
+        <script type="text/javascript">
+            //编辑器路径定义
+            var editorURL = GV.WEB_ROOT;
+        </script>
+        <script src="__STATIC__/js/ueditor/ueditor.config.js?v=00001" type="text/javascript"></script>
+        <script src="__STATIC__/js/ueditor/ueditor.all.min.js" type="text/javascript"></script>
+        <!--编辑器支持秀米-->
+        <script src="__STATIC__/js/ueditor/xiumi/xiumi-ue-dialog-v5.js" type="text/javascript"></script>
+        <link href="__STATIC__/js/ueditor/xiumi/xiumi-ue-v5.css" rel="stylesheet" type="text/css"/>
+        <script type="text/javascript">
+            $(function () {
+                editorcontent = new baidu.editor.ui.Editor();
+                editorcontent.render('content');
+                try {
+                    editorcontent.sync();
+                } catch (err) {
+                }
+            });
+        </script>
+    </div>
+</div>
+
+
+<!--number数字框(两个框,一个框最大值,一个框最小值) -->
+<div class="form-group layui-form-item">
+    <label class="col-sm-2 control-label">人数:</label>
+    <div class="layui-input-block col-sm-6 layui-inline">
+        <div class="layui-input-inline" style="width: 100px;">
+            <input autocomplete="off" class="layui-input" lay-affix="number" max="3" min="1" name="number"
+                   placeholder=""
+                   step="1" type="number" value="{$number|default='1'}">
+        </div>
+        <div class="layui-form-mid">-</div>
+        <div class="layui-input-inline" style="width: 100px;">
+            <input autocomplete="off" class="layui-input" lay-affix="number" max="3" min="1" name="number_max"
+                   placeholder="" step="1" type="number" value="{$number_max|default='1'}">
+        </div>
+    </div>
+</div>
+
+
+<!--input带注释-->
+<div class="form-group">
+    <label class="col-sm-2 control-label">有效期天数(天):</label>
+    <div class="layui-input-block col-sm-6">
+        <input type="text" name="indate" class="form-control post-params item-left" value="{$indate|default=''}">
+        <p class="help-block text-danger">若配置此参数，则无需配置开始时间和结束时间，有效期根据领取时间开始，到配置的天数后截止</p>
+    </div>
+</div>
+
+
+<!--文本域textarea-->
+<div class="form-group">
+    <label class="col-sm-2 control-label">备注:</label>
+    <div class="layui-input-block col-sm-6">
+        <textarea class="form-control post-params item-left" name="remark">{$remark|default=''}</textarea>
+    </div>
+</div>
+
+<!--input框-->
+<div class="form-group">
+    <label class="col-sm-2 control-label">礼物名字:</label>
+    <div class="layui-input-block col-sm-6">
+        <input class="form-control post-params item-left" name="name" type="text" value="{$name|default=''}">
+    </div>
+</div>
+
+
+<!--number数字框-->
+<div class="form-group">
+    <label class="col-sm-2 control-label">礼物价格:</label>
+    <div class="layui-input-block col-sm-6">
+        <input class="form-control post-params item-left" min="0.01" name="price" type="number"
+               value="{$price|default=''}">
+    </div>
+</div>
+
+
+
+
+<!--layui 点击事件,给select赋值-->
+<script>
+    //获取数据库列表
+    function get_db_list() {
+        layui.use('form', function () {
+            var form = layui.form;
+            //获取数据库表
+            $.ajax({
+                url: "{:url('/plugin/form/AdminIndex/get_table_name_list')}",
+                type: "post",
+                dataType: "json",
+                success: function (res) {
+                    console.log(res)
+                    if (res.code == 1) {
+                        List = res.data;
+                        var tmp = '<option value="">请选择</option>';
+                        for (var i in List) {
+                            tmp += '<option value="' + List[i].table_name + '"  ' + List[i].selected + '>' + List[i].table_remark + '(' + List[i].table_name + ')' + '</option>';
+                        }
+                        $(".table_name").html(tmp);//赋值一级分类下拉选择
+                    }
+                    form.render('select');
+                }
+            });
+        });
+    }
+</script>
+
+<!--layui 复选框 (checkbox)  -->
+<div class="form-group">
+    <label class="col-sm-2 control-label">复选框:</label>
+    <div class="layui-input-block col-sm-6">
+        <input class="form-control post-params" lay-skin="tag" name="api_controller" title="api控制器" type="checkbox"
+        <if condition="$is_true == 1">
+            checked
+        </if>
+        >
+        <input class="form-control post-params" lay-skin="tag" name="api_paginate" title="api控制器(分页)" type="checkbox"
+        <if condition="$is_true == 1">
+            checked
+        </if>
+        >
+    </div>
+</div>
+
+
+<!--layui多选框,分类列表 (checkbox)  -->
+<!--
+分类列表 edit
+
+        //处理分类多选
+        $class_ids = $this->getParams($result['class_ids']);
+        //分类列表
+        $class_list = $ProjectClassModel->select();
+        foreach ($class_list as $k => $v) {
+            //是否选中问题
+            $v['checked'] = false;
+            if (in_array($v['id'], $class_ids)) $v['checked'] = true;
+        }
+       $this->assign("class_list", $class_list);
+
+
+分类列表 add
+        //分类列表
+        $class_list = $ProjectClassModel->select();
+        foreach ($class_list as $k => $v) {
+            $v['checked'] = false;
+        }
+       $this->assign("class_list", $class_list);
+-->
+<!--
+edit编辑
+
+      //处理分类结果值
+        if ($params['class_ids']) {
+            $class_ids           = array_keys($params['class_ids']);//提取key
+            $params['class_ids'] = $this->setParams($class_ids);
+        }else{
+          $params['class_ids'] = '';
+        }
+-->
+<div class="form-group">
+    <label class="col-sm-2 control-label">分类:</label>
+    <div class="layui-input-block col-sm-6">
+        <foreach item="class_value" name="class_list">
+            <input class="form-control post-params" lay-skin="tag" name="class_ids[{$class_value.id}]"
+                   title="{$class_value.name}"
+                   type="checkbox"
+            <if condition="in_array($class_value.id,$class_ids)">
+                checked
+            </if>
+            >
+        </foreach>
+    </div>
+</div>
+
+
+<!--layui多选框,标签多选 (checkbox)  -->
+<!--
+edit编辑
+
+      //处理分类结果值
+        if ($params['pet']) {
+            $pet           = array_keys($params['pet']);//提取key
+            $params['pet'] = $this->setParams($pet);
+        }
+-->
+<div class="form-group">
+    <label class="col-sm-2 control-label">养宠物吗</label>
+    <div class="layui-input-block col-sm-6">
+        <foreach item="value" name="pet_list">
+            <input class="form-control post-params" lay-skin="tag" name="pet[{$value}]"
+                   title="{$value}"
+                   type="checkbox"
+            <if condition="$value eq $pet">
+                checked
+            </if>
+            >
+        </foreach>
+    </div>
+</div>
+
+
+<!--layui单选框 (radio) -->
+<div class="form-group">
+    <label class="col-sm-2 control-label">实名:</label>
+    <div class="layui-input-block col-sm-6">
+        <input class="form-control post-params" name="is_real" title="是" type="radio" value="1"
+        <if condition="$is_real == 1">
+            checked
+        </if>
+        >
+        <input class="form-control post-params" name="is_real" title="否" type="radio" value="2"
+        <if condition="$is_real == 2">
+            checked
+        </if>
+        >
+    </div>
+</div>
+
+
+<!--layui单选框 (开关) -->
+<!--
+----- edit编辑
+   //实名,1是,2否   ps:默认2否
+        if ($params['is_real']) {
+            $params['is_real'] = 1;
+        }else{
+            $params['is_real'] = 2;
+        }
+ -->
+<div class="form-group">
+    <label class="col-sm-2 control-label">实名:</label>
+    <div class="layui-input-block col-sm-6">
+        <input lay-skin="switch" lay-text="是|否" name="is_real" type="checkbox"
+        <if condition="$is_real == 1">checked</if>
+        >
+    </div>
+</div>
+
+
+<!--图片 (image)-->
+if ($item['image']) $item['image'] = cmf_get_asset_url($item['image']);
+<div class="form-group">
+    <label class="col-sm-2 control-label">图片</label>
+    <div class="layui-input-block col-sm-6">
+        <input class="form-control post-params item-left" id="photo-1000000" name="image" type="hidden"
+               value="{$image|default=''}">
+        <if condition="!empty($image)">
+            <a href="javascript:imagePreviewDialog('{:cmf_get_image_preview_url($image)}');">
+                <img id="photo-1000000-preview"
+                     src="{:cmf_get_image_preview_url($image)}" style="height: 80px">
+            </a>
+            <else/>
+            <img id="photo-1000000-preview"
+                 src="/static/images/default.png" style="height: 80px">
+        </if>
+        <a href="javascript:uploadOneImage('图片上传','#photo-1000000');">上传</a>
+        <a onclick="$('#photo-1000000-preview').attr('src','__TMPL__/public/assets/images/default-thumbnail.png');$('#photo-1000000').val('');return false;">取消图片</a>
+    </div>
+</div>
+
+
+<!--图集 - 换行展示  (images) -->
+if ($item['images']) $item['images'] = $this->getImagesUrl($item['images']);
+<!--轮播图 - 换行展示 可拖拽 -->
+<div class="form-group">
+    <label class="col-sm-2 control-label">图集:</label>
+    <div class="layui-input-block col-sm-6">
+        <div class="help-block text-danger">长按图片可上下拖动,调整图片顺序</div>
+        <if condition="!empty($images)">
+            <ul id="imagesId00001" class="pic-list list-unstyled form-inline">
+                <foreach name="$images" item="vo">
+                    <li id="savedImages-00001-{$key}" style="margin-bottom: 5px;">
+                        <input id="photoImages-00001-{$key}" type="hidden" name="images[{$key}]" value="{$vo}">
+                        <img id="photoImages-00001-{$key}-preview" src="{:cmf_get_image_preview_url($vo)}"
+                             height="50" onclick="parent.imagePreviewDialog(this.src);">
+                        <a href="javascript:uploadOneImage('图片上传','#photoImages-00001-{$key}');">替换</a>
+                        <a href="javascript:(function(){$('#savedImages-00001-{$key}').remove();})();">移除</a>
+                    </li>
+                </foreach>
+            </ul>
+            <else/>
+            <ul id="imagesId00001" class="pic-list list-unstyled form-inline">
+                <li id="savedImages-00001" style="margin-bottom: 5px;">
+                </li>
+            </ul>
+        </if>
+        <a href="javascript:uploadMultiImage('图片上传','#imagesId00001','itemImages-00001');"
+           class="btn btn-sm btn-default">选择图片</a>
+        <script type="text/html" id="itemImages-00001">
+            <li id="savedImages-00001-{id}" style="margin-bottom: 5px;">
+                <input id="photoImages-00001-{id}" type="hidden" name="images[{id}]" value="{filepath}">
+                <img id="photoImages-00001-{id}-preview" src="{url}" height="50"
+                     onclick="imagePreviewDialog(this.src);">
+                <a href="javascript:uploadOneImage('图片上传','#photoImages-00001-{id}');">替换</a>
+                <a href="javascript:(function(){$('#savedImages-00001-{id}').remove();})();">移除</a>
+            </li>
+        </script>
+        <script>
+            // 多图上传支持排序
+            new Sortable(imagesId00001, {
+                animation: 150,
+                ghostClass: 'blue-background-class'
+            });
+        </script>
+    </div>
+</div>
+
+
+<!-- 图集 - 换行展示  (images2 副本)
+imagesId00001 改为 imagesId00002
+将所有00001 改为 00002 即可
+ -->
+if ($item['images']) $item['images'] = $this->getImagesUrl($item['images']);
+<div class="form-group">
+    <label class="col-sm-2 control-label">图集:</label>
+    <div class="layui-input-block col-sm-6">
+        <div class="help-block text-danger">长按图片可上下拖动,调整图片顺序</div>
+        <if condition="!empty($images00002)">
+            <ul id="imagesId00002" class="pic-list list-unstyled form-inline">
+                <foreach name="$images" item="vo">
+                    <li id="savedImages-00002-{$key}" style="margin-bottom: 5px;">
+                        <input id="photoImages-00002-{$key}" type="hidden" name="images00002[{$key}]" value="{$vo}">
+                        <img id="photoImages-00002-{$key}-preview" src="{:cmf_get_image_preview_url($vo)}"
+                             height="50" onclick="parent.imagePreviewDialog(this.src);">
+                        <a href="javascript:uploadOneImage('图片上传','#photoImages-00002-{$key}');">替换</a>
+                        <a href="javascript:(function(){$('#savedImages-00002-{$key}').remove();})();">移除</a>
+                    </li>
+                </foreach>
+            </ul>
+            <else/>
+            <ul id="imagesId00002" class="pic-list list-unstyled form-inline">
+                <li id="savedImages-00002" style="margin-bottom: 5px;">
+                </li>
+            </ul>
+        </if>
+        <a href="javascript:uploadMultiImage('图片上传','#imagesId00002','itemImages-00002');"
+           class="btn btn-sm btn-default">选择图片</a>
+        <script type="text/html" id="itemImages-00002">
+            <li id="savedImages-00002-{id}" style="margin-bottom: 5px;">
+                <input id="photoImages-00002-{id}" type="hidden" name="images00002[{id}]" value="{filepath}">
+                <img id="photoImages-00002-{id}-preview" src="{url}" height="50"
+                     onclick="imagePreviewDialog(this.src);">
+                <a href="javascript:uploadOneImage('图片上传','#photoImages-00002-{id}');">替换</a>
+                <a href="javascript:(function(){$('#savedImages-00002-{id}').remove();})();">移除</a>
+            </li>
+        </script>
+        <script>
+            // 多图上传支持排序
+            new Sortable(imagesId00002, {
+                animation: 150,
+                ghostClass: 'blue-background-class'
+            });
+        </script>
+    </div>
+</div>
+
+
+<!--多文件,轮播图格式-->
+<div class="form-group">
+    <label class="col-sm-2 control-label"><span class="form-required">*</span>宏基因报告:</label>
+    <div class="col-md-6 col-sm-10">
+        <ul id="files" class="pic-list list-unstyled form-inline">
+            <notempty name="data.gene_report">
+                <foreach name="data.gene_report" item="vo">
+                    <php>$file_url=cmf_get_file_download_url($vo['url']);</php>
+                    <li id="saved-file{$key}">
+                        <input id="file-{$key}" type="hidden" name="gene_report_url[]"
+                               value="{$vo.url}">
+                        <input class="form-control" id="file-{$key}-name" type="text"
+                               name="gene_report_name[]"
+                               value="{$vo.name}" style="width: 200px;" title="">
+                        <a id="file-{$key}-preview" href=" " target="_blank">下载</a>
+                        替换
+                        移除
+                    </li>
+                </foreach>
+            </notempty>
+        </ul>
+        <a href="javascript:uploadMultiFile('附件上传','#files','files-item-tpl','file');"
+           class="btn btn-sm btn-default">选择文件</a>
+    </div>
+</div>
+<script type="text/html" id="files-item-tpl">
+    <li id="saved-file{id}">
+        <input id="file-{id}" type="hidden" name="gene_report_url[]" value="{filepath}">
+        <input class="form-control" id="file-{id}-name" type="text" name="gene_report_name[]" value="{name}"
+               style="width: 200px;" title="文件名称">
+        <a id="file-{id}-preview" href=" " target="_blank">下载</a>
+        替换
+        移除
+    </li>
+</script>
+
+
+<!--多视频,轮播图格式-->
+<div class="form-group">
+    <label class="col-sm-2 control-label"><span class="form-required">*</span>宏基因报告:</label>
+    <div class="col-md-6 col-sm-10">
+        <ul id="files" class="pic-list list-unstyled form-inline">
+            <notempty name="data.gene_report">
+                <foreach name="data.gene_report" item="vo">
+                    <php>$file_url=cmf_get_file_download_url($vo['url']);</php>
+                    <li id="saved-file{$key}">
+                        <input id="file-{$key}" type="hidden" name="gene_report_url[]"
+                               value="{$vo.url}">
+                        <input class="form-control" id="file-{$key}-name" type="text"
+                               name="gene_report_name[]"
+                               value="{$vo.name}" style="width: 200px;" title="">
+                        <a id="file-{$key}-preview" href=" " target="_blank">下载</a>
+                        替换
+                        移除
+                    </li>
+                </foreach>
+            </notempty>
+        </ul>
+        <a href="javascript:uploadMultiFile('视频上传','#files','files-item-tpl','video');"
+           class="btn btn-sm btn-default">选择文件</a>
+    </div>
+</div>
+<script type="text/html" id="files-item-tpl">
+    <li id="saved-file{id}">
+        <input id="file-{id}" type="hidden" name="gene_report_url[]" value="{filepath}">
+        <input class="form-control" id="file-{id}-name" type="text" name="gene_report_name[]" value="{name}"
+               style="width: 200px;" title="文件名称">
+        <a id="file-{id}-preview" href=" " target="_blank">下载</a>
+        替换
+        移除
+    </li>
+</script>
+
+
+<!--时间处理;开始时间 Y-m-d H:i-->
+if($params['begin_time']) $params['begin_time'] = strtotime($params['begin_time']);
+if($params['end_time']) $params['end_time'] = strtotime($params['end_time']);
+<div class="form-group">
+    <label class="col-sm-2 control-label">开始时间:</label>
+    <div class="layui-input-block col-sm-6">
+        <input class="form-control post-params item-left js-datetime" name="begin_time" required
+               type="text"
+               value="{:isset($begin_time) && $begin_time > 10000 ? date('Y-m-d H:i', $begin_time) : ''}">
+    </div>
+</div>
+
+<!--时间处理;结束时间 Y-m-d H:i-->
+if($params['begin_time']) $params['begin_time'] = strtotime($params['begin_time']);
+if($params['end_time']) $params['end_time'] = strtotime($params['end_time']);
+<div class="form-group">
+    <label class="col-sm-2 control-label">结束时间:</label>
+    <div class="layui-input-block col-sm-6">
+        <input class="form-control post-params item-left js-datetime" name="end_time" required
+               type="text"
+               value="{:isset($end_time) && $end_time > 10000 ? date('Y-m-d H:i', $end_time) : ''}">
+    </div>
+</div>
+
+
+<!--时间处理;开始时间 Y-m-d  (begin_time) -->
+if($params['begin_time']) $params['begin_time'] = strtotime($params['begin_time']);
+if($params['end_time']) $params['end_time'] = strtotime($params['end_time']." 23:59:59");
+<div class="form-group">
+    <label class="col-sm-2 control-label">开始时间:</label>
+    <div class="layui-input-block col-sm-6">
+        <input class="form-control post-params item-left js-date" name="end_time" required
+               type="text"
+               value="{:isset($end_time) && $end_time > 10000 ? date('Y-m-d H:i', $end_time) : ''}">
+    </div>
+</div>
+
+<!--时间处理;结束时间 Y-m-d (end_time)  -->
+if($params['begin_time']) $params['begin_time'] = strtotime($params['begin_time']);
+if($params['end_time']) $params['end_time'] = strtotime($params['end_time']." 23:59:59");
+<div class="form-group">
+    <label class="col-sm-2 control-label">结束时间:</label>
+    <div class="layui-input-block col-sm-6">
+        <input class="form-control post-params item-left js-date" name="end_time" required
+               type="text"
+               value="{:isset($end_time) && $end_time > 10000 ? date('Y-m-d H:i', $end_time) : ''}">
+    </div>
+</div>
+
+
+<!--自定义表单 图片+input框  -->
+
+
+<!--控制器写法
+
+        //处理自定义标签
+        $data_key   = $params['data_image'];
+        $data_value = $params['data_value'];
+        if (!empty($data_key) && !empty($data_value)) {
+            $post_data = [];
+            foreach ($data_key as $key => $value) {
+                if ($value && $data_value[$key]) {
+                    $post_data[$key]['key']   = $value;
+                    $post_data[$key]['value'] = $data_value[$key];
+                }
+            }
+        }
+        $params['post_data'] = serialize($post_data);
+
+
+        //查询详情
+        if ($item['post_data']) $item['post_data'] = unserialize($item['post_data']);
+-->
+<style>
+    .custom-form-container {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+
+    .custom-form-group {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .form-image-preview {
+        height: 45px;
+        width: 45px;
+        cursor: pointer;
+    }
+
+    .form-actions {
+        gap: 5px;
+    }
+
+    .data-value {
+        margin-left: 30px;
+    }
+
+    .layui-btn .layui-icon {
+        vertical-align: middle !important;
+    }
+</style>
+<div class="form-group">
+    <div class="layui-form-item">
+        <label class="col-sm-2 control-label">服务内容:</label>
+        <div class="col-md-6 col-sm-10" id="data_value_container">
+            <!-- 已有数据循环 -->
+            <if condition="!empty($post_data)">
+                <foreach item="value" key="key" name="$post_data">
+                    <div class="custom-form-container">
+                        <div class="custom-form-group">
+                            <input class="form-control post-params" id="photo_{$key}" name="data_image[]" type="hidden"
+                                   value="{$value.image|default=''}">
+                            <a href="javascript:imagePreviewDialog('{:cmf_get_image_preview_url($value.image)}');">
+                                <img class="form-image-preview" id="photo_{$key}-preview"
+                                     src="{:cmf_get_image_preview_url($value.image)}"
+                                     onerror="this.src='/static/images/default.png'">
+                            </a>
+                            <div class="form-actions">
+                                <a href="javascript:uploadOneImage('图片上传','#photo_{$key}');">上传</a>
+                                <br>
+                                <a onclick="resetImage('#photo_{$key}')">取消</a>
+                            </div>
+                        </div>
+                        <div class="custom-form-group data-value">
+                            <input class="form-control post-params" name="data_value[]" placeholder="值" type="text"
+                                   value="{$value.value}">
+                            <button class="layui-btn layui-btn-danger layui-btn-sm remove-item" type="button">
+                                <i class="layui-icon">&#xe67e;</i>
+                            </button>
+                        </div>
+                    </div>
+                </foreach>
+            </if>
+
+            <!-- 新增项模板 -->
+            <div class="custom-form-container">
+                <div class="custom-form-group">
+                    <input class="form-control post-params" id="photo_new_aa99999" name="data_image[]" type="hidden">
+                    <img class="form-image-preview" id="photo_new_aa99999-preview" src="/static/images/default.png">
+                    <div class="form-actions">
+                        <a href="javascript:uploadOneImage('图片上传','#photo_new_aa99999');">上传</a>
+                        <br>
+                        <a onclick="resetImage('#photo_new_aa99999')">取消</a>
+                    </div>
+                </div>
+                <div class="custom-form-group data-value">
+                    <input class="form-control post-params" name="data_value[]" placeholder="值" type="text">
+                    <button class="layui-btn layui-btn-warm layui-btn-sm add-item" type="button">
+                        <i class="layui-icon">&#xe654;</i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    layui.use(['jquery', 'form'], function () {
+        var $ = layui.$,
+            form = layui.form;
+
+        // 计数器用于生成唯一ID
+        var itemCounter = 1;
+
+        // 重置图片函数
+        window.resetImage = function (selector) {
+            $(selector + '-preview').attr('src', '/static/images/default.png');
+            $(selector).val('');
+        };
+
+        // 添加新项
+        $('body').on('click', '.add-item', function () {
+            var newId = 'photo_new_' + itemCounter++;
+            var newItem = `
+        <div class="custom-form-container">
+            <div class="custom-form-group">
+                <input class="form-control post-params" id="${newId}" name="data_image[]" type="hidden">
+                <img class="form-image-preview" id="${newId}-preview" src="/static/images/default.png"  onclick="imagePreviewDialog(this.src);">
+                <div class="form-actions" style="display: block;!important;">
+                    <a href="javascript:uploadOneImage('图片上传','#${newId}');">上传</a>
+                    <br>
+                    <a onclick="resetImage('#${newId}')">取消</a>
+                </div>
+            </div>
+            <div class="custom-form-group data-value">
+                <input class="form-control post-params" name="data_value[]" placeholder="值" type="text">
+                <button class="layui-btn layui-btn-danger layui-btn-sm remove-item" type="button">
+                    <i class="layui-icon">&#xe67e;</i>
+                </button>
+            </div>
+        </div>
+        `;
+
+            $('#data_value_container').append(newItem);
+            form.render();
+        });
+
+        // 删除项
+        $('body').on('click', '.remove-item', function () {
+            $(this).closest('.custom-form-container').remove();
+        });
+    });
+
+
+</script>
+
+
+<!--自定义表单 一个input-->
+<style>
+    .layui-btn .layui-icon {
+        vertical-align: middle !important;
+    }
+</style>
+<div class="form-group">
+    <div class="layui-form-item">
+        <label class="col-sm-2 control-label">佣金比例(%):</label>
+        <div class="col-md-6 col-sm-10" id="data_value00001" style="">
+            <if condition="!empty($value)">
+                <foreach item="data_val" key="data_key" name="$value">
+                    <div>
+                        <div class="layui-inline">
+                            <input class="form-control post-params" name="value[]" placeholder="佣金" type="number"
+                                   value="{$data_val}">
+                        </div>
+                        <div class="layui-inline">
+                            <button class="layui-btn layui-btn-danger layui-btn-sm removeclass"
+                                    type="button">
+                                <i class="layui-icon">&#xe67e;</i></button>
+                        </div>
+                    </div>
+                </foreach>
+            </if>
+
+            <div>
+                <div class="layui-inline">
+                    <input class="form-control post-params" name="value[]" placeholder="佣金" type="number">
+                </div>
+                <div class="layui-inline">
+                    <button class="layui-btn layui-btn-warm layui-btn-sm" id="button_data_value00001"
+                            type="button">
+                        <i class="layui-icon">&#xe654; </i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--自定义表单 js部分-->
+<script>
+    layui.use(['element', 'jquery', 'layer', 'form', 'laydate'], function () {
+            var form = layui.form
+                , element = layui.element
+                , laydate = layui.laydate
+                , $ = layui.$;
+
+            //删除动态添加的input输入框
+            $("body").on('click', ".removeclass", function () {
+                //元素移除前校验是否被引用
+                var approvalName = $(this).parent().prev('div.layui-input-inline').children().val();
+                var parentEle = $(this).parent().parent();
+                parentEle.remove();
+            });
+
+            var o = 0;
+            $("#button_data_value00001").click(function () {
+                var this_craft = this.value;
+                var str = '<div >' +
+                    '<div class="layui-inline">' +
+                    '<input type="number" name="value[]" class="form-control post-params" placeholder="佣金">' +
+                    '</div>' +
+                    '<div class="layui-inline">' +
+                    '<button type="button" class="layui-btn layui-btn-danger layui-btn-sm removeclass" style="margin-left: 5px;"> <i class="layui-icon">&#xe67e;</i> </button>' +
+                    '</div>' +
+                    '</div>';
+                $("#data_value00001").append(str);
+                form.render('select');
+            });
+        }
+    )
+</script>
+
+<!--自定义表单 多个input框,自定义可删除,可添加-->
+<!--表头-->
+<style>
+    .layui-btn .layui-icon {
+        vertical-align: middle !important;
+    }
+</style>
+<div class="form-group" style="min-height: 1px;">
+    <label class="col-sm-2 control-label" style="min-height: 1px;"></label>
+    <div class="layui-input-block col-sm-6" style="min-height: 1px;">
+        <div class="layui-input-block col-md-2" style="margin-top: 10px;min-height: 1px;">
+            名称
+        </div>
+        <div class="layui-input-block col-md-2" style="margin-top: 10px;min-height: 1px;">
+            值
+        </div>
+        <div class="layui-input-block col-md-2" style="margin-top: 10px;min-height: 1px;">
+            值2
+        </div>
+    </div>
+</div>
+<!--信息-->
+<span>
+    <style>
+    .layui-btn .layui-icon {
+        vertical-align: middle !important;
+    }
+</style>
+<div class="form-group">
+    <label class="col-sm-2 control-label">标签:</label>
+    <div class="layui-input-block col-sm-6" id="value">
+        <if condition="!empty($tag)">
+            <foreach item="tag_val" key="tag_key" name="$tag">
+                <div class="layui-form-item" style="display: flex">
+                    <input class="form-control post-params" name="tag[]"
+                           type="text" value="{$tag_val}">
+                    <div style="margin-left: 55px;">
+                        <button class="layui-btn layui-btn-danger layui-btn-sm removeclass"
+                                type="button">
+                            <i class="layui-icon">&#xe67e;</i></button>
+                    </div>
+                </div>
+            </foreach>
+        </if>
+        <div class="layui-form-item" style="display: flex">
+            <input class="form-control post-params" name="tag[]" type="text">
+            <div style="margin-left: 55px;">
+                <button class="layui-btn layui-btn-warm layui-btn-sm" id="value_000001"
+                        type="button">
+                    <i class="layui-icon">&#xe654; </i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    layui.use(['element', 'jquery', 'layer', 'form', 'laydate'], function () {
+            var form = layui.form
+                , element = layui.element
+                , laydate = layui.laydate
+                , $ = layui.$;
+
+            //删除动态添加的input输入框
+            $("body").on('click', ".removeclass", function () {
+                //元素移除前校验是否被引用
+                var approvalName = $(this).parent().prev('div.layui-input-inline').children().val();
+                var parentEle = $(this).parent().parent();
+                parentEle.remove();
+            });
+
+            //超大件 体积
+            var o = 0;
+
+            $("#value_000001").click(function () {
+                var this_craft = this.value;
+                var str = '<div class="layui-form-item" style="display: flex">' +
+                    ' <input type="text" name="tag[]"  class="form-control post-params" >' +
+                    '<div class="layui-input-block" style="margin-left: 55px">' +
+                    '<button type="button" class="layui-btn layui-btn-danger layui-btn-sm removeclass"> <i class="layui-icon">&#xe67e;</i> </button>' +
+                    '</div>' +
+                    '</div>' +
+                    '</div>';
+                $("#value").append(str);
+                form.render('select');
+            });
+        }
+    )
+</script>
+</span>
+
+<!--自定义表单 2.0+复选框 ,input可以添加,删除,复选框也是-->
+<span>
+    <style>
+    .layui-btn .layui-icon {
+        vertical-align: middle !important;
+    }
+</style>
+<div class="form-group">
+    <label class="col-sm-2 control-label">值:</label>
+
+    <div class="layui-input-block col-sm-6" id="value">
+        <if condition="!empty($values)">
+            <foreach item="val" key="key" name="$values">
+                <div class="layui-form-item" style="display: flex">
+                    <div class="col-md-10 col-sm-10">
+                        <div class="col-md-3 col-sm-10">
+                            <in name="$key" value="$val.answer">
+                                <input checked="checked" class="form-control post-params" name="answer[]"
+                                       style="width: 20px"
+                                       type="checkbox">
+                                <else/>
+                                <input class="form-control post-params" name="answer[]" style="width: 20px"
+                                       type="checkbox">
+                            </in>
+                        </div>
+                        <div class="col-md-3 col-sm-10">
+                            <input class="form-control post-params" name="option[]" placeholder="选择"
+                                   style="width: 140px;margin-right: 450px;" type="text" value="{$val.option}">
+                        </div>
+                    </div>
+                    <div style="margin-left: 45px;">
+                        <button class="layui-btn layui-btn-danger layui-btn-sm removeclass"
+                                type="button">
+                            <i class="layui-icon">&#xe67e;</i></button>
+                    </div>
+                </div>
+            </foreach>
+        </if>
+
+        <div class="layui-form-item" style="display: flex">
+            <div class="col-md-10 col-sm-10">
+                <div class="col-md-3 col-sm-10">
+                    <input class="form-control post-params" name="answer[]" style="width: 20px"
+                           type="checkbox">
+                </div>
+                <div class="col-md-3 col-sm-10">
+                    <input class="form-control post-params" name="option[]" placeholder="选择"
+                           style="width: 140px;margin-right: 450px;"
+                           type="text">
+                </div>
+            </div>
+            <div style="margin-left: 45px;">
+                <button class="layui-btn layui-btn-warm layui-btn-sm" id="value_1"
+                        type="button">
+                    <i class="layui-icon">&#xe654; </i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        layui.use(['element', 'jquery', 'layer', 'form', 'laydate'], function () {
+                var form = layui.form
+                    , element = layui.element
+                    , laydate = layui.laydate
+                    , $ = layui.$;
+
+                //删除动态添加的input输入框
+                $("body").on('click', ".removeclass", function () {
+                    //元素移除前校验是否被引用
+                    var approvalName = $(this).parent().prev('div.layui-input-inline').children().val();
+                    var parentEle = $(this).parent().parent();
+                    parentEle.remove();
+                });
+
+
+                //超大件 体积
+                var o = 0;
+
+                $("#value_1").click(function () {
+                    var this_craft = this.value;
+
+                    var str = '<div class="layui-form-item" style="display: flex">' +
+                        '<div class="col-md-10 col-sm-10">' +
+                        '<div class="col-md-3 col-sm-10">' +
+                        ' <input type="checkbox"  name="answer[]"   style="width: 20px" class="form-control post-params" > ' +
+                        '</div>' +
+                        '<div class="col-md-3 col-sm-10">' +
+                        ' <input type="text" name="option[]" style="width: 140px;margin-right: 450px;" placeholder="选择"' +
+                        '                           lay-verify="required" value=""' +
+                        '                           class="form-control post-params" >' +
+                        '</div>' +
+                        '</div>' +
+                        '<div class="layui-input-block" style="margin-left: 45px">' +
+                        '<button type="button" class="layui-btn layui-btn-danger layui-btn-sm removeclass"> <i class="layui-icon">&#xe67e;</i> </button>' +
+                        '</div>' +
+                        '</div>' +
+                        '</div>';
+
+                    $("#value").append(str);
+                    form.render();
+                });
+            }
+        )
+    </script>
+</div>
+</span>
+
+
+<!--自定义表单 两个input,横向排序-->
+<style>
+    .layui-btn .layui-icon {
+        vertical-align: middle !important;
+    }
+</style>
+<!--控制器写法
+
+        //处理自定义标签
+        $data_key   = $params['data_key'];
+        $data_value = $params['data_value'];
+        if (!empty($data_key) && !empty($data_value)) {
+            $post_data = [];
+            foreach ($data_key as $key => $value) {
+                if ($value && $data_value[$key]) {
+                    $post_data[$key]['key']   = $value;
+                    $post_data[$key]['value'] = $data_value[$key];
+                }
+            }
+        }
+        $params['post_data'] = serialize($post_data);
+
+-->
+<div class="form-group">
+    <div class="layui-form-item">
+        <label class="col-sm-2 control-label">记录信息:</label>
+        <div class="col-md-6 col-sm-10" id="data_value00001" style="">
+            <if condition="!empty($post_data)">
+                <foreach item="data_val" key="data_key" name="$post_data">
+                    <div>
+                        <div class="layui-inline">
+                            <input class="form-control post-params" name="data_key[]" placeholder="名称" type="text"
+                                   value="{$data_val.key}">
+                        </div>
+                        <div class="layui-inline">
+                            <input class="form-control post-params" name="data_value[]" placeholder="值" type="text"
+                                   value="{$data_val.value}">
+                        </div>
+                        <div class="layui-inline">
+                            <button class="layui-btn layui-btn-danger layui-btn-sm removeclass"
+                                    type="button">
+                                <i class="layui-icon">&#xe67e;</i></button>
+                        </div>
+                    </div>
+                </foreach>
+            </if>
+
+            <div>
+                <div class="layui-inline">
+                    <input class="form-control post-params" name="data_key[]" placeholder="名称" type="text">
+                </div>
+                <div class="layui-inline">
+                    <input class="form-control post-params" name="data_value[]" placeholder="值" type="text">
+                </div>
+                <div class="layui-inline">
+                    <button class="layui-btn layui-btn-warm layui-btn-sm" id="button_data_value00001"
+                            type="button">
+                        <i class="layui-icon">&#xe654; </i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--自定义表单 js部分-->
+<script>
+    layui.use(['element', 'jquery', 'layer', 'form', 'laydate'], function () {
+            var form = layui.form
+                , element = layui.element
+                , laydate = layui.laydate
+                , $ = layui.$;
+
+            //删除动态添加的input输入框
+            $("body").on('click', ".removeclass", function () {
+                //元素移除前校验是否被引用
+                var approvalName = $(this).parent().prev('div.layui-input-inline').children().val();
+                var parentEle = $(this).parent().parent();
+                parentEle.remove();
+            });
+
+            //超大件 体积
+            var o = 0;
+
+            $("#button_data_value00001").click(function () {
+                var this_craft = this.value;
+                var str = '<div >' +
+                    '<div class="layui-inline">' +
+                    '<input type="text" name="data_key[]" class="form-control post-params" placeholder="名称">' +
+                    '</div>' +
+                    '<div class="layui-inline">' +
+                    '<input type="text" name="data_value[]" class="form-control post-params" placeholder="值" style="margin-left: 2px;">' +
+                    '</div>' +
+                    '<div class="layui-inline">' +
+                    '<button type="button" class="layui-btn layui-btn-danger layui-btn-sm removeclass" style="margin-left: 5px;"> <i class="layui-icon">&#xe67e;</i> </button>' +
+                    '</div>' +
+                    '</div>';
+                $("#data_value00001").append(str);
+                form.render();
+            });
+        }
+    )
+</script>
+
+
+<!--自定义表单 两个一个input,一个文本域,横向排序-->
+<style>
+    .layui-btn .layui-icon {
+        vertical-align: middle !important;
+    }
+</style>
+<!--控制器写法
+
+        //处理自定义标签
+        $data_key   = $params['data_key'];
+        $data_value = $params['data_value'];
+        if (!empty($data_key) && !empty($data_value)) {
+            $post_data = [];
+            foreach ($data_key as $key => $value) {
+                if ($value && $data_value[$key]) {
+                    $post_data[$key]['key']   = $value;
+                    $post_data[$key]['value'] = $data_value[$key];
+                }
+            }
+        }
+       $params['post_data'] = serialize($post_data);
+
+-->
+<div class="form-group">
+    <div class="layui-form-item">
+        <label class="col-sm-2 control-label">症状成因:</label>
+        <div class="col-md-6 col-sm-10" id="data_value00001" style="">
+            <if condition="!empty($post_data)">
+                <foreach item="data_val" key="data_key" name="$post_data">
+                    <div>
+                        <div class="layui-inline">
+                            <input class="form-control post-params" name="data_key[]" placeholder="名称" type="text"
+                                   value="{$data_val.key}">
+                        </div>
+                        <div class="layui-inline">
+                             <textarea class="form-control post-params item-left" cols="60" name="data_value[]"
+                                       placeholder="简介"
+                                       rows="4">{$data_val.value}</textarea>
+                        </div>
+                        <div class="layui-inline">
+                            <button class="layui-btn layui-btn-danger layui-btn-sm removeclass"
+                                    type="button">
+                                <i class="layui-icon">&#xe67e;</i></button>
+                        </div>
+                    </div>
+                </foreach>
+            </if>
+
+            <div>
+                <div class="layui-inline">
+                    <input class="form-control post-params" name="data_key[]" placeholder="名称" type="text">
+                </div>
+                <div class="layui-inline">
+                     <textarea class="form-control post-params item-left" cols="60" name="data_value[]" placeholder="简介"
+                               rows="4"></textarea>
+                </div>
+                <div class="layui-inline">
+                    <button class="layui-btn layui-btn-warm layui-btn-sm" id="button_data_value00001"
+                            type="button">
+                        <i class="layui-icon">&#xe654; </i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--自定义表单 js部分-->
+<script>
+    layui.use(['element', 'jquery', 'layer', 'form', 'laydate'], function () {
+            var form = layui.form
+                , element = layui.element
+                , laydate = layui.laydate
+                , $ = layui.$;
+
+            //删除动态添加的input输入框
+            $("body").on('click', ".removeclass", function () {
+                //元素移除前校验是否被引用
+                var approvalName = $(this).parent().prev('div.layui-input-inline').children().val();
+                var parentEle = $(this).parent().parent();
+                parentEle.remove();
+            });
+
+            //超大件 体积
+            var o = 0;
+
+            $("#button_data_value00001").click(function () {
+                var this_craft = this.value;
+                var str = '<div >' +
+                    '<div class="layui-inline">' +
+                    '<input type="text" name="data_key[]" class="form-control post-params" placeholder="名称">' +
+                    '</div>' +
+                    '<div class="layui-inline">' +
+                    '   <textarea rows="4" class="form-control post-params item-left" cols="60" placeholder="简介"\n' +
+                    '                               name="data_value[]"></textarea>' +
+                    '</div>' +
+                    '<div class="layui-inline">' +
+                    '<button type="button" class="layui-btn layui-btn-danger layui-btn-sm removeclass" style="margin-left: 5px;"> <i class="layui-icon">&#xe67e;</i> </button>' +
+                    '</div>' +
+                    '</div>';
+                $("#data_value00001").append(str);
+                form.render();
+            });
+        }
+    )
+</script>
+
+<!--多图展示  图片展示 (images)-->
+if ($item['images']) $item['images'] = $this->getImagesUrl($item['images']);
+<div class="form-group">
+    <label class="col-sm-2 control-label">多图:</label>
+    <div class="layui-input-block col-sm-6">
+        <notempty name="$vo.images">
+            <foreach item="val" name="$vo.images">
+                <li id="saved-goods-image{$key}">
+                    <div style="float:left; margin-top: 2px;margin-left: 2px;">
+                        <a href="javascript:imagePreviewDialog('{:cmf_get_image_preview_url($val)}');">
+                            <img id="photo-goods-{$key}-preview" onclick="parent.imagePreviewDialog(this.src);"
+                                 src="{:cmf_get_image_preview_url($val)}"
+                                 style="width: 35px;height: 35px;">
+                        </a>
+                    </div>
+                </li>
+            </foreach>
+        </notempty>
+    </div>
+</div>
+
+
+<!--下拉框-类型 (gender)(固定值) 男/女 -->
+<div class="form-group">
+    <label class="col-sm-2 control-label">性别:</label>
+    <div class="layui-input-block col-sm-6" style="">
+        <select class="post-params" lay-search lay-filter="gender" name="gender">
+            <option value="男"
+            <if condition="$gender eq '男' ">selected</if>
+            >男</option>
+
+            <option value="女"
+            <if condition="$gender eq '女' ">selected</if>
+            >女</option>
+        </select>
+    </div>
+</div>
+
+
+<!--下拉框-类型 (type)(type_list) 数组格式转给后台是key  展示的数组的值 -->
+<div class="form-group">
+    <label class="col-sm-2 control-label">类型:</label>
+    <div class="layui-input-block col-sm-6" style="">
+        <if condition="!empty($type)">
+            <select class="form-control post-params" lay-search lay-filter="type" name="type">
+                <foreach item="vo" key="key" name="type_list">
+                    <option value="{$key}"
+                    <if condition="$type eq $key ">selected</if>
+                    >{$vo}</option>
+                </foreach>
+            </select>
+            <else/>
+            <select class="form-control post-params" lay-search lay-filter="type" name="type">
+                <foreach item="vo" key="key" name="type_list">
+                    <option value="{$key}">{$vo}</option>
+                </foreach>
+            </select>
+        </if>
+    </div>
+</div>
+
+
+<!--下拉框-类型 (type)(type_list) 数组格式转给后台是value  展示的数组的值 -->
+<div class="form-group">
+    <label class="col-sm-2 control-label">类型:</label>
+    <div class="layui-input-block col-sm-6" style="">
+        <if condition="!empty($type)">
+            <select class="form-control post-params" lay-search lay-filter="type" name="type">
+                <foreach item="vo" key="key" name="type_list">
+                    <option value="{$vo}"
+                    <if condition="$type eq $vo ">selected</if>
+                    >{$vo}</option>
+                </foreach>
+            </select>
+            <else/>
+            <select class="form-control post-params" lay-search lay-filter="type" name="type">
+                <foreach item="vo" key="key" name="type_list">
+                    <option value="{$vo}">{$vo}</option>
+                </foreach>
+            </select>
+        </if>
+    </div>
+</div>
+
+
+<!--下拉框-分类 (class_id)(class_list) 传给后台的是id值 展示的name -->
+<div class="form-group">
+    <label class="col-sm-2 control-label">分类:</label>
+    <div class="layui-input-block col-sm-6" style="">
+        <if condition="!empty($class_id)">
+            <select class="form-control post-params" lay-search lay-filter="class_id" name="class_id">
+                <foreach item="vo" key="key" name="class_list">
+                    <option value="{$vo.id}"
+                    <if condition="$class_id eq $vo.id ">selected</if>
+                    >{$vo.name}</option>
+                </foreach>
+            </select>
+            <else/>
+            <select class="form-control post-params" lay-search lay-filter="class_id" name="class_id">
+                <foreach item="vo" key="key" name="class_list">
+                    <option value="{$vo.id}">{$vo.name}</option>
+                </foreach>
+            </select>
+        </if>
+    </div>
+</div>
+
+
+<!--下拉框-门店 (shop_id)(shop_list) 传给后台的是id值 展示的name -->
+<div class="form-group">
+    <label class="col-sm-2 control-label">门店:</label>
+    <div class="layui-input-block col-sm-6" style="">
+        <if condition="!empty($shop_id)">
+            <select class="form-control post-params" lay-search lay-filter="shop_id" name="shop_id">
+                <foreach item="vo" key="key" name="shop_list">
+                    <option value="{$vo.id}"
+                    <if condition="$shop_id eq $vo.id ">selected</if>
+                    >{$vo.name}</option>
+                </foreach>
+            </select>
+            <else/>
+            <select class="form-control post-params" lay-search lay-filter="shop_id" name="shop_id">
+                <foreach item="vo" key="key" name="shop_list">
+                    <option value="{$vo.id}">{$vo.name}</option>
+                </foreach>
+            </select>
+        </if>
+    </div>
+</div>
+
+
+<!-- 用户选择 (user_id)(user_list) 传给后台的是用户id值 展示的是id,nickname,phone-->
+<div class="form-group">
+    <label class="col-sm-2 control-label">用户:</label>
+    <div class="layui-input-block col-sm-6" style="">
+        <if condition="!empty($user_id)">
+            <select class="form-control post-params" lay-search lay-filter="user_id" name="user_id">
+                <foreach item="vo" key="key" name="user_list">
+                    <option value="{$vo.id}"
+                    <if condition="$user_id eq $vo.id ">selected</if>
+                    >(ID:{$vo.id})-{$vo.nickname}-{$vo.phone}</option>
+                </foreach>
+            </select>
+            <else/>
+            <select class="form-control post-params" lay-search lay-filter="user_id" name="user_id">
+                <foreach item="vo" key="key" name="user_list">
+                    <option value="{$vo.id}">(ID:{$vo.id})-{$vo.nickname}-{$vo.phone}</option>
+                </foreach>
+            </select>
+        </if>
+    </div>
+</div>
+
+
+<!--二级下拉    模板用这个-->
+<div class="form-group">
+    <div class="layui-form-item">
+        <label class="col-sm-2 control-label">分类:</label>
+        <div class="col-md-6 col-sm-10">
+            <div class="layui-inline">
+                <if condition="!empty($class_id)">
+                    <select class="form-control post-params one" lay-filter="one" lay-search name="class_id">
+                        <option value="-1">暂不选择</option>
+                        <foreach item="vo" key="key" name="class_list">
+                            <option value="{$vo.id}"
+                            <if condition="$class_id eq $vo.id ">selected</if>
+                            >{$vo.name}</option>
+                        </foreach>
+                    </select>
+                    <else/>
+                    <select class="form-control post-params" lay-filter="one" lay-search name="class_id">
+                        <option value="-1">暂不选择</option>
+                        <foreach item="vo" key="key" name="class_list">
+                            <option value="{$vo.id}">{$vo.name}</option>
+                        </foreach>
+                    </select>
+                </if>
+            </div>
+            <!--下拉框4.0   三级联动多选框  二级框-->
+            <div class="layui-inline">
+                <select class="form-control post-params two" lay-filter="two" lay-search name="class_two_id">
+                </select>
+            </div>
+        </div>
+        <!--编辑获取id值-->
+        <input id="item_id" type="hidden" value="{$id}">
+    </div>
+
+    <script>
+        /**
+         * 后台控制 添加方法
+
+         //获取一级二级列表
+         public function get_class_list()
+         {
+       $params = $this->request->param();
+        //用户
+        $ShopGoodsModel      = new \initmodel\ShopGoodsModel(); //商品管理   (ps:InitModel)
+        $ShopGoodsClassModel = new \initmodel\ShopGoodsClassModel(); //分类管理   (ps:InitModel)
+
+        //查询二级,三级分类条件.
+        $map = [];
+        if ($params['one_id']) $map[] = ['pid', '=', $params['one_id']];//查询二级列表
+        if ($params['two_id']) $map[] = ['pid', '=', $params['two_id']];//查询三级列表
+        if (empty(count($map))) $this->success('请求成功');
+
+        //二级列表
+        $two_list = $ShopGoodsClassModel->where($map)->order('id desc')->select();
+        //查询数据,方便展示二级下拉框选中值
+        if ($params['item_id']) {
+            $item_info = $ShopGoodsModel->where(['id' => $params['item_id']])->find();
+            if ($item_info) {
+                foreach ($two_list as $k => &$v) {
+                    $v['selected'] = false;
+                    //这里的branch_id 更改为二级,三级id
+                    if ($params['one_id'] && $item_info['class_two_id'] == $v['id']) $v['selected'] = 'selected';//选中
+                    //if ($params['two_id'] && $item_info['class_three_id'] == $v['id']) $v['selected'] = 'selected';//选中
+                }
+            }
+        }
+        $this->success('请求成功', '', $two_list);
+   }
+
+
+
+         //find展示代码
+         $one_info        = $ClassModel->where('id', '=', $item['class_id'])->find();
+         $two_info = $ClassModel->where('id', '=', $item['class_two_id'])->find();
+         if ($one_info) $item['class_name'] = $one_info['name'];
+         if ($two_info) $item['class_name'] = $two_info['name'];
+         if ($two_info && $one_info) $item['class_name'] = $one_info['name'] . ' - ' . $two_info['name'];
+
+
+         //edit代码
+         if ($params['class_id']) $params['search_class_id'] = $params['class_id'];
+         if ($params['class_two_id']) $params['search_class_id'] = $params['class_two_id'];
+
+         *
+         **/
+
+        layui.use(['form', 'element'], function () {
+            var form = layui.form,
+                element = layui.element;
+
+            //获取默认值
+            var one = $(".one").val();//一级值
+            var item_id = $("#item_id").val();
+
+            //读取二级值
+            $.ajax({
+                url: "{:url('get_class_list')}",
+                type: "GET",
+                data: {
+                    'one_id': one,//获取子级分类
+                    'item_id': item_id,
+                },
+                async: false,
+                success: function (res) {
+                    if (res.code == 1) {
+                        List = res.data;
+                        tmp_option = '<option value=""  >' + '暂不选择' + '</option>';
+                        tmp = '';
+                        tmp += '<option value=""  >' + '暂不选择' + '</option>';
+                        for (var i in List) {
+                            tmp += '<option value="' + List[i].id + '"  ' + List[i].selected + '>' + List[i].name + '</option>';
+                        }
+                        $(".two").html(tmp);
+                        $(".three").html(tmp_option);//初始第三级
+                    }
+                    form.render();
+                }
+            });
+
+
+            var two = $(".two").val();//二级值
+            //读取三级值
+            $.ajax({
+                url: "{:url('get_class_list')}",
+                type: "GET",
+                data: {
+                    'two_id': two,//获取子级分类
+                    'item_id': item_id,
+                },
+                async: false,
+                success: function (res) {
+                    if (res.code == 1) {
+                        List = res.data;
+                        tmp = '';
+                        tmp += '<option value=""  >' + '暂不选择' + '</option>';
+                        for (var i in List) {
+                            tmp += '<option value="' + List[i].id + '"  ' + List[i].selected + '>' + List[i].name + '</option>';
+                        }
+                        $(".three").html(tmp);
+                    }
+                    form.render();
+                }
+            });
+
+
+            //选中一级下拉框,展示二级下拉框
+            form.on('select(one)', function (data) {
+                // console.log(data.elem); //得到select原始DOM对象
+                // console.log(data.value); //得到被选中的值
+
+
+                //一级为空,初始化二级下拉框
+                if (!data.value) {
+                    tmp_option = '<option value=""  >' + '暂不选择' + '</option>';
+                    $(".two").html(tmp_option);
+                    form.render();
+
+                    return false;
+                }
+
+
+                $.ajax({
+                    url: "{:url('get_class_list')}",
+                    type: "GET",
+                    data: {
+                        'one_id': data.value
+                    },
+                    async: false,
+                    success: function (res) {
+                        if (res.code == 1) {
+                            List = res.data;
+                            tmp_option = '<option value=""  >' + '暂不选择' + '</option>';
+                            tmp = '';
+                            tmp += '<option value=""  >' + '暂不选择' + '</option>';
+                            for (var i in List) {
+                                tmp += '<option value="' + List[i].id + '"  ' + List[i].selected + '>' + List[i].name + '</option>';
+                            }
+                            $(".two").html(tmp);
+                            $(".three").html(tmp_option);//初始第三级
+                        }
+                        form.render();
+                    }
+                });
+            });
+
+
+        });
+    </script>
+
+</div>
+
+
+<!--下拉框3.0   二级联动下拉框,如二级不存在隐藏 layui  不可用废弃-->
+<div class="form-group">
+    <div class="layui-form-item">
+        <label class="col-sm-2 control-label">分类:</label>
+        <div class="col-md-6 col-sm-10" style="">
+            <div class="layui-inline">
+                <if condition="!empty($class_id)">
+                    <select class="form-control post-params class_id" lay-filter="class_id" lay-search name="class_id">
+                        <foreach item="vo" key="key" name="class_list">
+                            <option value="{$vo.id}"
+                            <if condition="$class_id eq $vo.id ">selected</if>
+                            >{$vo.name}</option>
+                        </foreach>
+                    </select>
+                    <else/>
+                    <select class="form-control post-params" lay-filter="class_id" lay-search name="class_id">
+                        <foreach item="vo" key="key" name="class_list">
+                            <option value="{$vo.id}">{$vo.name}</option>
+                        </foreach>
+                    </select>
+                </if>
+            </div>
+
+            <div class="layui-inline">
+                <select class="form-control post-params second_class" lay-filter="class_two_id" lay-search
+                        name="class_two_id">
+                </select>
+            </div>
+
+
+        </div>
+    </div>
+
+    <!--    上级id 和编辑id-->
+    <!--   后台代码
+
+        字段:
+        class_two_id :二级分类id
+        class_id :分类id
+        search_class_id :用于搜索
+
+
+
+
+    public function initialize()
+    {
+        //套餐管理
+        parent::initialize();
+        //所有参数 赋值
+        $params = $this->request->param();
+        foreach ($params as $k => $v) {
+            $this->assign($k, $v);
+        }
+        //处理 get参数
+        $get              = $this->request->get();
+        $this->params_url = "?" . http_build_query($get);
+
+        $PlayClassModel = new \initmodel\PlayClassModel(); //分类管理   (ps:InitModel)
+        $map = [];
+        $map[] = ['pid','=',0];
+        $this->assign("class_list", $PlayClassModel->where($map)->select());
+    }
+
+
+          public function get_class_list()
+    {
+        $PlayClassModel   = new \initmodel\PlayClassModel(); //分类管理   (ps:InitModel)
+        $PlayPackageModel = new \initmodel\PlayPackageModel(); //商品信息   (ps:InitModel)
+
+
+        $params    = $this->request->param();
+        $parent_id = $PlayClassModel->where('pid', '=', 0)->order('id desc')->value('id');//默认值
+        if ($params['class_id']) $parent_id = $params['class_id'];
+        $where   = [];
+        $where[] = ['pid', '=', $parent_id];
+
+
+        /** 查询数据库信息,匹配二级分类选中状态 **/
+        $info = $PlayPackageModel->where('id', '=', $params['id'])->find();
+
+
+        $result = $PlayClassModel
+            ->where($where)
+            ->select()
+            ->each(function ($item, $key) use ($info) {
+                //如果详情中,分类存在,回显
+                if ($info['class_two_id'] == $item['id']) $item['selected'] = 'selected';
+                return $item;
+            });
+        if (empty(count($result))) $this->error('暂无数据!');
+        $this->success("list", '', $result);
+    }
+
+
+       //find展示代码
+        $one_info        = $PlayClassModel->where('id', '=', $item['class_id'])->find();
+        $two_info = $PlayClassModel->where('id', '=', $item['class_two_id'])->find();
+        if ($one_info) $item['class_name'] = $one_info['name'];
+        if ($two_info) $item['class_name'] = $two_info['name'];
+        if ($two_info && $one_info) $item['class_name'] = $one_info['name'] . ' - ' . $two_info['name'];
+
+
+       //edit代码
+        if ($params['class_id']) $params['search_class_id'] = $params['class_id'];
+        if ($params['class_two_id']) $params['search_class_id'] = $params['class_two_id'];
+       -->
+
+    <input class="post-params" id="class_id" type="hidden" value="{$class_id|default=''}">
+    <input class="post-params" id="class_two_id" type="hidden" value="{$class_two_id|default=''}">
+    <input class="post-params" id="id" type="hidden" value="{$id|default=''}">
+    <script>
+        $(".class_two_id").hide();//默认隐藏二级分类
+
+        //加载页面自动执行
+        layui.use(['form', 'element'], function () {
+            var form = layui.form,
+                element = layui.element;
+
+            var class_id = $("#class_id").val();//当前分类id
+            var id = $("#id").val();
+
+            $.ajax({
+                url: "{:url('get_class_list')}",
+                type: "GET",
+                data: {
+                    'class_id': class_id,
+                    'id': id,
+                },
+                async: false,
+                success: function (res) {
+                    //console.log(res);
+                    if (res.code == 1) {
+                        $(".class_two_id").show();//二级分类展示
+                        List = res.data;
+                        var tmp = '<option value="">请选择</option>';
+                        for (var i in List) {
+                            // tmp += '<option value="' + List[i].name + '"   "selected=' + List[i].selected + '">' + List[i].name + '</option>';
+                            tmp += '<option value="' + List[i].id + '"  ' + List[i].selected + '>' + List[i].name + '</option>';
+                        }
+                        $(".second_class").html(tmp);//赋值一级分类下拉选择
+                    } else {
+                        $(".second_class").hide();//没有二级分类隐藏
+                        $("#class_two_id").val(0);//二级分类赋值0
+                    }
+                    form.render('select');
+                }
+            });
+
+
+            //一级选中执行
+            form.on('select(class_id)', function (data) {
+                console.log(data.elem); //得到select原始DOM对象
+                console.log(data.value); //得到被选中的值
+                $.ajax({
+                    url: "{:url('get_class_list')}",
+                    type: "GET",
+                    data: {
+                        'class_id': data.value
+                    },
+                    async: false,
+                    success: function (res) {
+                        if (res.code == 1) {
+                            $(".class_two_id").show();//展示二级分类
+                            List = res.data;
+                            var tmp = '<option value="">请选择</option>';
+                            for (var i in List) {
+                                tmp += '<option value="' + List[i].id + '"  ' + List[i].selected + '>' + List[i].name + '</option>';
+                            }
+                            $(".second_class").html(tmp);//赋值一级分类下拉选择
+                        } else {
+                            $(".second_class").hide();//二级分类隐藏
+                            $("#class_two_id").val(0);//二级分类赋值0
+                        }
+                        form.render('select');
+                    }
+                });
+            });
+        });
+    </script>
+</div>
+
+
+<!--下拉框5.0   二级联动下拉框  横向排列两个input框,可回显,没问题    -->
+<div class="form-group">
+    <div class="layui-form-item">
+        <label class="col-sm-2 control-label">银行信息:</label>
+        <div class="col-md-6 col-sm-10" style="">
+            <div class="layui-inline">
+                <if condition="!empty($bank_id)">
+                    <select class="form-control post-params one" lay-filter="one" lay-search name="bank_id">
+                        <foreach item="vo" key="key" name="bank_list">
+                            <option value="{$vo.id}"
+                            <if condition="$bank_id eq $vo.id ">selected</if>
+                            >{$vo.name}</option>
+                        </foreach>
+                    </select>
+                    <else/>
+                    <select class="form-control post-params" lay-filter="one" lay-search name="bank_id">
+                        <foreach item="vo" key="key" name="bank_list">
+                            <option value="{$vo.id}">{$vo.name}</option>
+                        </foreach>
+                    </select>
+                </if>
+            </div>
+            <!--下拉框4.0   二级联动多选框  二级框-->
+            <div class="layui-inline">
+                <select class="form-control post-params two" lay-search name="branch_id">
+                </select>
+            </div>
+        </div>
+
+        <!--编辑获取id值-->
+        <input id="item_id" type="hidden" value="{$id}">
+
+
+        <script>
+            /**
+             * 后台控制 添加方法
+
+             //获取一级二级列表
+             public function get_one_and_two_list()
+             {
+                    $params = $this->request->param();
+                    //用户
+                    $MemberInit     = new \init\MemberInit();//会员管理  (本控制器)
+                    $BankInit       = new \init\BankInit();//银行管理    (一级)
+                    $BankBranchInit = new \init\BankBranchInit();//网点名称  (二级)
+
+                    //查询二级分类条件.
+                    $map  = [];//查询二级列表
+                    $map2 = [];//如一级没有选择,默认读取第一条信息
+                    if ($params['one_id']) $map[] = ['pid', '=', $params['one_id']];
+                    if (empty($params['one_id'])) {
+                        $map2[]     = ['id', '>', 0];
+                        $map2[]   = ['pid', '=', 0];
+                        $one_info = $BankInit->get_find($map2);
+                        $map[]      = ['pid', '=', $one_info['id']];
+                    }
+                    //二级列表
+                    $two_list = $BankBranchInit->get_list($map);
+                    //查询数据,方便展示二级下拉框选中值
+                    if ($params['item_id']) {
+                        $item_info = $MemberInit->get_find(['id' => $params['item_id']]);
+                        if ($item_info) {
+                            foreach ($two_list as $k => &$v) {
+                                $v['selected'] = false;
+                                //这里的branch_id 更改为二级id
+                                if ($item_info['这里的branch_id'] == $v['id']) $v['selected'] = 'selected';//选中
+                            }
+                        }
+                    }
+                    $this->success('请求成功', '', $two_list);
+                }
+
+             *
+             **/
+
+            layui.use(['form', 'element'], function () {
+                var form = layui.form,
+                    element = layui.element;
+
+                //获取默认值
+                var one = $(".one").val();
+                var item_id = $("#item_id").val();
+                $.ajax({
+                    url: "{:url('get_one_and_two_list')}",
+                    type: "GET",
+                    data: {
+                        'one_id': one,//获取子级分类
+                        'item_id': item_id,
+                    },
+                    async: false,
+                    success: function (res) {
+                        if (res.code == 1) {
+                            List = res.data;
+                            tmp = '';
+                            for (var i in List) {
+                                tmp += '<option value="' + List[i].id + '"  ' + List[i].selected + '>' + List[i].name + '</option>';
+                            }
+                            $(".two").html(tmp);
+                        }
+                        form.render();
+                    }
+                });
+
+                //选中select
+                form.on('select(one)', function (data) {
+                    console.log(data.elem); //得到select原始DOM对象
+                    console.log(data.value); //得到被选中的值
+                    $.ajax({
+                        url: "{:url('get_one_and_two_list')}",
+                        type: "GET",
+                        data: {
+                            'one_id': data.value
+                        },
+                        async: false,
+                        success: function (res) {
+                            if (res.code == 1) {
+                                List = res.data;
+                                tmp = '';
+                                for (var i in List) {
+                                    tmp += '<option value="' + List[i].id + '"  ' + List[i].selected + '>' + List[i].name + '</option>';
+                                }
+                                $(".two").html(tmp);
+                            }
+                            form.render();
+                        }
+                    });
+                });
+            });
+        </script>
+    </div>
+</div>
+
+
+<!--下拉框,选中显示隐藏    显示隐藏 直显示一个    -->
+<span>
+
+
+
+普通写法
+<div class="form-group">
+    <label class="col-sm-2 control-label"><span class="form-required">*</span>数据类型:</label>
+    <div class="col-md-6 col-sm-10">
+        <select name="type" class="form-control" lay-filter="type" id="type">
+            <option value="1">测试</option>
+            <option value="2">测试222</option>
+        </select>
+    </div>
+</div>
+
+
+
+
+$this->assign('show_type_list', $RecommendInit->show_type);
+后台循环写法   show_type_list:数组
+<div class="form-group">
+    <label class="col-sm-2 control-label">显示类型:</label>
+    <div class="layui-input-block col-sm-6" style="">
+        <if condition="!empty($show_type)">
+            <select class="form-control post-params" name="show_type" lay-filter="show_type" id="show_type">
+                <foreach item="vo" key="key" name="show_type_list">
+                    <option value="{$key}"
+                    <if condition="$show_type eq $key ">selected</if>
+                    >{$vo}</option>
+                </foreach>
+            </select>
+            <else/>
+            <select class="form-control post-params" name="show_type" lay-filter="show_type" id="show_type">
+                <foreach item="vo" key="key" name="show_type_list">
+                    <option value="{$key}">{$vo}</option>
+                </foreach>
+            </select>
+        </if>
+    </div>
+</div>
+
+
+<div class="form-group show_type show_type1">
+    <label class="col-sm-2 control-label">内容11111:</label>
+    <div class="layui-input-block col-sm-6">
+         <input type="text" name="nickname" class="form-control post-params item-left" value="{$nickname|default=''}">
+        <textarea name="content" class="form-control post-params item-left">{$content|default=''}</textarea>
+    </div>
+</div>
+<div class="form-group show_type show_type2">
+    <label class="col-sm-2 control-label">内容222222:</label>
+    <div class="layui-input-block col-sm-6">
+        <input type="text" name="nickname" class="form-control post-params item-left" value="{$nickname|default=''}">
+        <textarea name="content" class="form-control post-params item-left">{$content|default=''}</textarea>
+    </div>
+</div>
+
+
+<script>
+    layui.use(['layer', 'form'], function () {
+        let layer = layui.layer, form = layui.form;
+        const showType = $("#show_type").val();
+        setShow(showType)
+        form.on('select(show_type)', function (data) {
+            setShow(data.value)
+        })
+
+        function setShow(showType) {
+            $('.show_type').css('display', 'none');
+            $('.show_type' + showType).css('display', 'block');
+            //可以初始化值为空
+        }
+    });
+</script>
+</span>
+
+
+<!--下拉框4.0  二级联动 二级复选框-->
+<span>
+<div class="form-group">
+    <div class="layui-form-item">
+        <label class="col-sm-2 control-label">所属学校:</label>
+        <div class="col-md-6 col-sm-10" style="">
+            <div class="layui-inline">
+                <if condition="!empty($school_id)">
+                    <select class="form-control post-params school_id" lay-filter="school_id" lay-search
+                            name="school_id">
+                        <foreach item="vo" key="key" name="shool_list">
+                            <option value="{$vo.id}"
+                            <if condition="$school_id eq $vo.id ">selected</if>
+                            >{$vo.name}</option>
+                        </foreach>
+                    </select>
+                    <else/>
+                    <select class="form-control post-params school_id" lay-filter="school_id" lay-search
+                            name="school_id">
+                        <foreach item="vo" key="key" name="shool_list">
+                            <option value="{$vo.id}">{$vo.name}</option>
+                        </foreach>
+                    </select>
+                </if>
+            </div>
+        </div>
+        <input class="form-control post-params item-left" id="goods_id" type="hidden" value="{$id|default=''}">
+        <script>
+            layui.use(['form', 'element'], function () {
+                var form = layui.form,
+                    element = layui.element;
+
+
+                var school_id = $(".school_id").val();
+                var id = $("#goods_id").val();
+                console.log(school_id)
+
+
+                $.ajax({
+                    url: "{:url('get_grade_list')}",
+                    type: "GET",
+                    data: {
+                        'school_id': school_id,
+                        'id': id,
+                    },
+                    async: false,
+                    success: function (res) {
+                        //console.log(res);
+                        if (res.code == 1) {
+
+                            List = res.data;
+                            tmp = '';
+                            for (var i in List) {
+                                tmp += '<input type="checkbox"   name="grade[' + List[i].name + ']" title="' + List[i].name + '"  ' + List[i].selected + '>';
+                                // tmp += '<option value="' + List[i].name + '"  ' + List[i].selected + '>' + List[i].name + '</option>';
+                            }
+                            console.log(tmp);
+                            $(".grade").html(tmp);
+                        }
+                        form.render();
+                    }
+                });
+
+
+                //选中select
+                form.on('select(school_id)', function (data) {
+                    console.log(data.elem); //得到select原始DOM对象
+                    console.log(data.value); //得到被选中的值
+                    $.ajax({
+                        url: "{:url('get_grade_list')}",
+                        type: "GET",
+                        data: {
+                            'school_id': data.value
+                        },
+                        async: false,
+                        success: function (res) {
+                            //console.log(res);
+                            if (res.code == 1) {
+                                List = res.data;
+                                tmp = '';
+                                for (var i in List) {
+                                    tmp += '<input type="checkbox"   name="grade[' + List[i].name + ']" title="' + List[i].name + '"  ' + List[i].selected + '>';
+                                    // tmp += '<option value="' + List[i].name + '"  ' + List[i].selected + '>' + List[i].name + '</option>';
+                                }
+                                console.log(tmp);
+
+                                $(".grade").html(tmp);
+                            }
+                            form.render();
+
+                        }
+                    });
+                });
+            });
+        </script>
+    </div>
+</div>
+    <!--下拉框4.0  二级联动 复选框-->
+<div class="form-group">
+    <label class="col-sm-2 control-label">班级:</label>
+    <div class="layui-input-block col-sm-6">
+        <span class="grade">
+        </span>
+    </div>
+</div>
+</span>
+
+<!--视频-->
+<div class="form-group">
+    <label class="col-sm-2 control-label">视频:</label>
+    <div class="layui-input-block col-sm-6">
+        <input id="video-00000001" class="form-control post-params" type="text" name="video"
+               readonly="readonly" value="{$video|default=''}" placeholder="请上传视频">
+        <notempty name="$video">
+            <a id="video-preview" href="{:cmf_get_file_download_url($video)}"
+               target="_blank">下载</a>
+        </notempty>
+        <a href="javascript:uploadOne('视频上传','#video-00000001','video');">上传</a>
+        <a onclick="$('#video-00000001').val('');return false;">取消</a>
+    </div>
+</div>
+
+
+<!--文件-->
+<div class="form-group">
+    <label class="col-sm-2 control-label">文件:</label>
+    <div class="layui-input-block col-sm-6">
+        <input id="file-00000002" class="form-control post-params" type="text" name="video"
+               readonly="readonly" value="{$video|default=''}" placeholder="请上传文件">
+        <notempty name="$video">
+            <a id="file-preview" href="{:cmf_get_file_download_url($video)}"
+               target="_blank">下载</a>
+        </notempty>
+        <a href="javascript:uploadOne('文件上传','#file-00000002','file');">上传</a>
+        <a onclick="$('#file-00000002').val('');return false;">取消</a>
+    </div>
+</div>
+
+
+<!--音频|mp3-->
+<div class="form-group">
+    <label class="col-sm-2 control-label">视频:</label>
+    <div class="layui-input-block col-sm-6">
+        <input id="audio-00000001" class="form-control post-params" type="text" name="mp3"
+               readonly="readonly" value="{$mp3|default=''}" placeholder="请上传视频">
+        <notempty name="$mp3">
+            <a id="audio-preview" href="{:cmf_get_file_download_url($mp3)}"
+               target="_blank">下载</a>
+        </notempty>
+        <a href="javascript:uploadOne('视频上传','#audio-00000001','audio');">上传</a>
+        <a onclick="$('#audio-00000001').val('');return false;">取消</a>
+    </div>
+</div>
+
+
+<!--radio单选-->
+<div class="form-group">
+    <label class="col-sm-2 control-label">是否为团长:</label>
+    <div class="layui-input-block col-sm-6">
+        <if condition="isset($is_team)">
+            <input name="is_team" type="radio" value="1"
+            <if condition="$is_team eq 1">checked</if>
+            title='是'>是
+            <input name="is_team" type="radio" value="0"
+            <if condition="$is_team eq 0">checked</if>
+            title='否'>否
+            <else/>
+            <input checked name="is_team" title='是' type="radio" value="1">是
+            <input name="is_team" title='否' type="radio" value="0">否
+        </if>
+    </div>
+</div>
+
+
+<!--radio单选 隐藏显示input-->
+<div class="form-group">
+    <label class="col-sm-2 control-label">会员限购:</label>
+    <div class="layui-input-block col-sm-6">
+        <if condition="isset($vip_goods)">
+            <input name="vip_goods" onclick="showdiv()" type="radio" value="1"
+            <if condition="$vip_goods eq 1">checked</if>
+            title='是'>是
+            <input name="vip_goods" onclick="hidediv()" type="radio" value="0"
+            <if condition="$vip_goods eq 0">checked</if>
+            title='否'>否
+            <else/>
+            <input name="vip_goods" onclick="showdiv()" title='是' type="radio" value="1">是
+            <input checked name="vip_goods" onclick="hidediv()" title='否' type="radio" value="0">否
+        </if>
+    </div>
+</div>
+
+
+<div class="form-group" id="vip_goods_number">
+    <label class="col-sm-2 control-label">限购数量:</label>
+    <div class="col-md-6 col-sm-10">
+        <input class="form-control post-params item-left" id="goods_number" name="vip_goods_number" type="number"
+               value="{$vip_goods_number|default=''}">
+
+        <input id="vip_goods_a" type="hidden"
+               value="{$vip_goods|default=''}">
+    </div>
+
+    <script>
+        function showdiv() {
+            document.getElementById('vip_goods_number').style.display = 'block';
+        }
+
+        function hidediv() {
+            document.getElementById('vip_goods_number').style.display = 'none';
+            document.getElementById('goods_number').value = '';
+        }
+
+        (function () {
+            var vip_goods = document.getElementById('vip_goods_a').value;
+            console.log(vip_goods)
+            if (vip_goods == 1) {
+                showdiv();
+            } else {
+                hidediv();
+            }
+        })();
+    </script>
+</div>
+
+
+<!--select下拉 显示隐藏input-->
+<span>
+<div class="form-group">
+    <label class="col-sm-2 control-label">商品类型:</label>
+    <div class="layui-input-block col-sm-6" style="">
+        <if condition="!empty($type)">
+            <select class="form-control post-params" lay-filter="type" lay-search name="type">
+                <foreach item="vo" key="key" name="type_list">
+                    <option value="{$key}"
+                    <if condition="$type eq $key ">selected</if>
+                    >{$vo}</option>
+                </foreach>
+            </select>
+            <else/>
+            <select class="form-control post-params" lay-filter="type" lay-search name="type">
+                <foreach item="vo" key="key" name="type_list">
+                    <option value="{$key}">{$vo}</option>
+                </foreach>
+            </select>
+        </if>
+    </div>
+</div>
+
+<div class="form-group" id="vip_goods_number">
+    <label class="col-sm-2 control-label">结束时间:</label>
+    <div class="col-md-6 col-sm-10">
+        <if condition="!empty($end_time)">
+            <input class="form-control post-params item-left js-date" id="vip_goods" name="end_time" type="text"
+                   value="{$end_time|date='Y-m-d'}">
+            <else/>
+            <input class="form-control post-params item-left js-date" id="vip_goods" name="end_time" type="text"
+                   value="{$end_time|default=''}">
+        </if>
+
+        <input id="vip_goods_a" type="hidden"
+               value="{$type|default=''}">
+    </div>
+
+    <script>
+        layui.use(['form', 'element'], function () {
+            var form = layui.form,
+                element = layui.element;
+            form.on('select(type)', function (data) {
+                console.log(data.elem); //得到select原始DOM对象
+                console.log(data.value); //得到被选中的值
+                if (data.value == 2) {
+                    showdiv();
+                } else {
+                    hidediv();
+                }
+            });
+        });
+
+        function showdiv() {
+            document.getElementById('vip_goods_number').style.display = 'block';
+        }
+
+        function hidediv() {
+            document.getElementById('vip_goods_number').style.display = 'none';
+            document.getElementById('vip_goods').value = '';
+        }
+
+        (function () {
+            var vip_goods = document.getElementById('vip_goods_a').value;
+            console.log(vip_goods)
+            if (vip_goods == 2) {
+                showdiv();
+            } else {
+                hidediv();
+            }
+        })();
+    </script>
+</div>
+</span>
+
+<!--二级下拉 纯input,不建议-->
+<div class="form-group">
+    <label class="col-sm-2 control-label">商品分类:</label>
+    <div class="col-md-10 col-sm-10">
+        <div class="col-md-3 col-sm-10" style="margin-left: -15px;">
+            <if condition="!empty($class)">
+                <select class="form-control post-params" id="class" name="class" onchange="classs()">
+                    <foreach item="vo" key="key" name="class_array">
+                        <option value="{$key}"
+                        <if condition="$class eq $key ">selected</if>
+                        >{$vo}</option>
+                    </foreach>
+                </select>
+
+                <else/>
+                <select class="form-control post-params" id="class" name="class" onchange="classs()">
+                    <foreach item="vo" key="key" name="class_array">
+                        <option value="{$key}">{$vo}</option>
+                    </foreach>
+                </select>
+            </if>
+        </div>
+
+        <div class="col-md-3 col-sm-10" style="">
+            <input id="p_class_s" name="p_class_s" type="hidden" value="{$p_class|default=''}">
+            <select class="form-control post-params" id="p_class" name="p_class">
+                <option value="">暂无分类</option>
+            </select>
+        </div>
+    </div>
+
+    <script>
+
+        function classs() {
+            var pid = $("#class").val();
+            $.ajax({
+                type: 'POST',
+                url: "{:url('/api/wxapp/shop_goods/find_goods_p_class_list')}",
+                data: {
+                    pid: pid
+                    //将name值在赋给一个名字为names后面接收就要接收$names=$_POST[‘names’];这个样子。
+                },
+                dataType: 'json',
+                success: function (data) {
+                    var all = data.data;
+                    var name = "<option value=''>" + "选择分类" + "</option>";
+                    for (var i = 0; i < all.length; i++) {
+                        name += "<option value='" + all[i].id + "'>" + all[i].name + "</option>";
+                    }
+                    //控制台测试
+                    $("#p_class").html(name);
+                    //将值返回到框内
+                }
+            });
+        }
+
+        (function () {
+            var pid = $("#class").val();
+            var p_class_s = $("#p_class_s").val();
+            $.ajax({
+                type: 'POST',
+                url: "{:url('/api/wxapp/shop_goods/find_goods_p_class_list')}",
+                data: {
+                    pid: pid
+                    //将name值在赋给一个名字为names后面接收就要接收$names=$_POST[‘names’];这个样子。
+                },
+                dataType: 'json',
+                success: function (data) {
+                    var all = data.data;
+                    var name = "<option value=''>" + "选择分类" + "</option>";
+                    for (var i = 0; i < all.length; i++) {
+                        if (p_class_s == all[i].id) {
+                            name += "<option value='" + all[i].id + "' selected>" + all[i].name + "</option>";
+                        } else {
+                            name += "<option value='" + all[i].id + "'>" + all[i].name + "</option>";
+                        }
+                    }
+                    //控制台测试
+                    $("#p_class").html(name);
+                    //将值返回到框内
+                }
+            });
+        })();
+    </script>
+</div>
+
+
+<!--三级下拉 (分类)-->
+<div class="form-group">
+    <div class="layui-form-item">
+        <label class="col-sm-2 control-label">分类:</label>
+        <div class="col-md-6 col-sm-10">
+            <div class="layui-inline">
+                <if condition="!empty($class_id)">
+                    <select class="form-control post-params one" lay-filter="one" lay-search name="class_id">
+                        <option value="">暂不选择</option>
+                        <foreach item="vo" key="key" name="class_list">
+                            <option value="{$vo.id}"
+                            <if condition="$class_id eq $vo.id ">selected</if>
+                            >{$vo.name}</option>
+                        </foreach>
+                    </select>
+                    <else/>
+                    <select class="form-control post-params" lay-filter="one" lay-search name="class_id">
+                        <option value="">暂不选择</option>
+                        <foreach item="vo" key="key" name="class_list">
+                            <option value="{$vo.id}">{$vo.name}</option>
+                        </foreach>
+                    </select>
+                </if>
+            </div>
+            <!--下拉框4.0   三级联动多选框  二级框-->
+            <div class="layui-inline">
+                <select class="form-control post-params two" lay-filter="two" lay-search name="class_two_id">
+                </select>
+            </div>
+
+            <!--下拉框4.0   三级联动多选框  三级框-->
+            <div class="layui-inline">
+                <select class="form-control post-params three" lay-search lay-filter="class_three_id"
+                        name="class_three_id">
+                    <option value="">暂不选择</option>
+                </select>
+            </div>
+        </div>
+
+        <!--编辑获取id值-->
+        <input id="item_id" type="hidden" value="{$id}">
+    </div>
+
+
+    <script>
+        /**
+         * 后台控制 添加方法
+
+         //获取一级二级列表
+         public function get_class_list()
+         {
+       $params = $this->request->param();
+        //用户
+        $ShopGoodsModel      = new \initmodel\ShopGoodsModel(); //商品管理   (ps:InitModel)
+        $ShopGoodsClassModel = new \initmodel\ShopGoodsClassModel(); //分类管理   (ps:InitModel)
+
+        //查询二级,三级分类条件.
+        $map = [];
+        if ($params['one_id']) $map[] = ['pid', '=', $params['one_id']];//查询二级列表
+        if ($params['two_id']) $map[] = ['pid', '=', $params['two_id']];//查询三级列表
+        if (empty(count($map))) $this->success('请求成功');
+
+        //二级列表
+        $two_list = $ShopGoodsClassModel->where($map)->order('id desc')->select();
+        //查询数据,方便展示二级下拉框选中值
+        if ($params['item_id']) {
+            $item_info = $ShopGoodsModel->where(['id' => $params['item_id']])->find();
+            if ($item_info) {
+                foreach ($two_list as $k => &$v) {
+                    $v['selected'] = false;
+                    //这里的branch_id 更改为二级,三级id
+                    if ($params['one_id'] && $item_info['class_two_id'] == $v['id']) $v['selected'] = 'selected';//选中
+                    if ($params['two_id'] && $item_info['class_three_id'] == $v['id']) $v['selected'] = 'selected';//选中
+                }
+            }
+        }
+        $this->success('请求成功', '', $two_list);
+   }
+
+
+
+         //find展示代码
+         $one_info        = $ShopGoodsClassModel->where('id', '=', $item['class_id'])->find();
+         $two_info = $ShopGoodsClassModel->where('id', '=', $item['class_two_id'])->find();
+         $three_info = $ShopGoodsClassModel->where('id', '=', $item['class_three_id'])->find();
+         if ($one_info) $item['class_name'] = $one_info['name'];
+         if ($two_info) $item['class_name'] = $two_info['name'];
+         if ($two_info && $one_info) $item['class_name'] = $one_info['name'] . ' - ' . $two_info['name'];
+         if ($three_info && $two_info && $one_info) $item['class_name'] = $one_info['name'] . ' - ' . $two_info['name'] . ' - ' . $three_info['name'];
+
+
+         //edit代码
+         if ($params['class_id']) $params['search_class_id'] = $params['class_id'];
+         if ($params['class_two_id']) $params['search_class_id'] = $params['class_two_id'];
+
+         *
+         **/
+
+        layui.use(['form', 'element'], function () {
+            var form = layui.form,
+                element = layui.element;
+
+            //获取默认值
+            var one = $(".one").val();//一级值
+            var item_id = $("#item_id").val();
+
+            //读取二级值
+            $.ajax({
+                url: "{:url('get_class_list')}",
+                type: "GET",
+                data: {
+                    'one_id': one,//获取子级分类
+                    'item_id': item_id,
+                },
+                async: false,
+                success: function (res) {
+                    if (res.code == 1) {
+                        List = res.data;
+                        tmp_option = '<option value=""  >' + '暂不选择' + '</option>';
+                        tmp = '';
+                        tmp += '<option value=""  >' + '暂不选择' + '</option>';
+                        for (var i in List) {
+                            tmp += '<option value="' + List[i].id + '"  ' + List[i].selected + '>' + List[i].name + '</option>';
+                        }
+                        $(".two").html(tmp);
+                        $(".three").html(tmp_option);//初始第三级
+                    }
+                    form.render();
+                }
+            });
+
+
+            var two = $(".two").val();//二级值
+            //读取三级值
+            $.ajax({
+                url: "{:url('get_class_list')}",
+                type: "GET",
+                data: {
+                    'two_id': two,//获取子级分类
+                    'item_id': item_id,
+                },
+                async: false,
+                success: function (res) {
+                    if (res.code == 1) {
+                        List = res.data;
+                        tmp = '';
+                        tmp += '<option value=""  >' + '暂不选择' + '</option>';
+                        for (var i in List) {
+                            tmp += '<option value="' + List[i].id + '"  ' + List[i].selected + '>' + List[i].name + '</option>';
+                        }
+                        $(".three").html(tmp);
+                    }
+                    form.render();
+                }
+            });
+
+
+            //选中一级下拉框,展示二级下拉框
+            form.on('select(one)', function (data) {
+                // console.log(data.elem); //得到select原始DOM对象
+                // console.log(data.value); //得到被选中的值
+
+                //一级没有值,初始化二级,三级下拉框
+                if (!data.value) {
+                    tmp_option = '<option value=""  >' + '暂不选择' + '</option>';
+
+                    $(".two").html(tmp_option);
+                    $(".three").html(tmp_option);//初始第三级
+                    form.render();
+
+                    return false;
+                }
+
+
+                $.ajax({
+                    url: "{:url('get_class_list')}",
+                    type: "GET",
+                    data: {
+                        'one_id': data.value
+                    },
+                    async: false,
+                    success: function (res) {
+                        if (res.code == 1) {
+                            List = res.data;
+                            tmp_option = '<option value=""  >' + '暂不选择' + '</option>';
+                            tmp = '';
+                            tmp += '<option value=""  >' + '暂不选择' + '</option>';
+                            for (var i in List) {
+                                tmp += '<option value="' + List[i].id + '"  ' + List[i].selected + '>' + List[i].name + '</option>';
+                            }
+                            $(".two").html(tmp);
+                            $(".three").html(tmp_option);//初始第三级
+                        }
+                        form.render();
+                    }
+                });
+            });
+
+            //选中二级下拉框,展示三级下拉框
+            form.on('select(two)', function (data) {
+                // console.log(data.elem); //得到select原始DOM对象
+                // console.log(data.value); //得到被选中的值
+                $.ajax({
+                    url: "{:url('get_class_list')}",
+                    type: "GET",
+                    data: {
+                        'two_id': data.value
+                    },
+                    async: false,
+                    success: function (res) {
+                        if (res.code == 1) {
+                            List = res.data;
+                            tmp = '';
+                            tmp += '<option value=""  >' + '暂不选择' + '</option>';
+                            for (var i in List) {
+                                tmp += '<option value="' + List[i].id + '"  ' + List[i].selected + '>' + List[i].name + '</option>';
+                            }
+                            $(".three").html(tmp);
+                        }
+                        form.render();
+                    }
+                });
+            });
+        });
+    </script>
+
+</div>
+
+
+<!--三级下拉 (省市区)-->
+<div class="form-group">
+    <label class="col-sm-2 control-label">地区:</label>
+    <div class="col-md-10 col-sm-10">
+        <div class="col-md-3 col-sm-10" style="margin-left: -15px;">
+            <if condition="!empty($item['province_id'])">
+                <select class="form-control post-params" id="province" name="province_id" onchange="citys()">
+                    <foreach item="vo" key="key" name="province_array">
+                        <option value="{$vo.id}"
+                        <if condition="$item['province_id'] eq $vo.id ">selected</if>
+                        >{$vo.name}</option>
+                    </foreach>
+                </select>
+
+                <else/>
+                <select class="form-control post-params" id="province" name="province_id" onchange="citys()">
+                    <foreach item="vo" key="key" name="province_array">
+                        <option value="{$vo.id}">{$vo.name}</option>
+                    </foreach>
+                </select>
+            </if>
+        </div>
+
+        <div class="col-md-3 col-sm-10" style="">
+            <input id="p_city" name="p_city" type="hidden" value="{$item.city_id|default=''}">
+            <select class="form-control post-params" id="city" lay-search lay-filter="area_id" name="city_id"
+                    onchange="districts()"
+                    required>
+                <option value="">选择地区</option>
+            </select>
+        </div>
+
+
+        <div class="col-md-3 col-sm-10" style="">
+            <input id="p_area" name="p_area" type="hidden" value="{$item.area_id|default=''}">
+            <select class="form-control post-params" id="area" lay-filter="area_id" lay-search name="area_id" required>
+                <option value="">选择地区</option>
+            </select>
+        </div>
+
+
+    </div>
+    <script>
+
+
+        // 三级联动后台使用
+        // public function area()
+        // {
+        //     $pid  = $this->request->param('pid');
+        //     $area = Db::name('region')->where('parent_id', $pid)->select();
+        //     $this->success('list', $area);
+        // }
+
+        function citys() {
+            var pid = $("#province").val();
+            $.ajax({
+                type: 'POST',
+                url: "{:url('/api/wxapp/public/area')}",
+                data: {
+                    pid: pid
+                    //将name值在赋给一个名字为names后面接收就要接收$names=$_POST[‘names’];这个样子。
+                },
+                dataType: 'json',
+                success: function (data) {
+                    var all = data.data;
+                    var name = "<option value=''>" + "选择地区" + "</option>";
+                    for (var i = 0; i < all.length; i++) {
+                        name += "<option value='" + all[i].id + "'>" + all[i].name + "</option>";
+                    }
+                    //控制台测试
+                    $("#city").html(name);
+                    //将值返回到框内
+                }
+            });
+        }
+
+        function districts() {
+            var pid = $("#city").val();
+            $.ajax({
+                type: 'POST',
+                url: "{:url('/api/wxapp/public/area')}",
+                data: {
+                    pid: pid
+                    //将name值在赋给一个名字为names后面接收就要接收$names=$_POST[‘names’];这个样子。
+                },
+                dataType: 'json',
+                success: function (data) {
+                    var all = data.data;
+                    var name = "<option value=''>" + "选择地区" + "</option>";
+                    for (var i = 0; i < all.length; i++) {
+                        name += "<option value='" + all[i].id + "'>" + all[i].name + "</option>";
+                    }
+                    //控制台测试
+                    $("#area").html(name);
+                    //将值返回到框内
+                }
+            });
+        }
+
+        (function () {
+            var pid = $("#province").val();
+            var p_class_s = $("#p_city").val();
+
+            $.ajax({
+                type: 'POST',
+                url: "{:url('/api/wxapp/public/area')}",
+                data: {
+                    pid: pid
+                    //将name值在赋给一个名字为names后面接收就要接收$names=$_POST[‘names’];这个样子。
+                },
+                dataType: 'json',
+                success: function (data) {
+                    var all = data.data;
+                    var name = "<option value=''>" + "选择地区" + "</option>";
+                    for (var i = 0; i < all.length; i++) {
+                        if (p_class_s == all[i].id) {
+                            name += "<option value='" + all[i].id + "' selected>" + all[i].name + "</option>";
+                        } else {
+                            name += "<option value='" + all[i].id + "'>" + all[i].name + "</option>";
+                        }
+                    }
+                    console.log(name)
+                    //控制台测试
+                    $("#city").html(name);
+
+                    //将值返回到框内
+                }
+            });
+
+            //三级显示
+            var spid = $("#p_city").val();
+            var sp_class_s = $("#p_area").val();
+            $.ajax({
+                type: 'POST',
+                url: "{:url('/api/wxapp/public/area')}",
+                data: {
+                    pid: spid
+                    //将name值在赋给一个名字为names后面接收就要接收$names=$_POST[‘names’];这个样子。
+                },
+                dataType: 'json',
+                success: function (data) {
+                    var all = data.data;
+                    var name = "<option value=''>" + "选择地区" + "</option>";
+                    for (var i = 0; i < all.length; i++) {
+                        if (sp_class_s == all[i].id) {
+                            name += "<option value='" + all[i].id + "' selected>" + all[i].name + "</option>";
+                        } else {
+                            name += "<option value='" + all[i].id + "'>" + all[i].name + "</option>";
+                        }
+                    }
+                    //控制台测试
+                    $("#area").html(name);
+                    //将值返回到框内
+                }
+            });
+        })();
+    </script>
+</div>
+
+
+<!--layui三级联动,省市区(只是省市区)-->
+<div class="form-group">
+    <div class="layui-form-item">
+        <label class="col-sm-2 control-label">地区:</label>
+        <div class="col-md-6 col-sm-10" style="">
+            <div class="layui-inline">
+                <select class="province_code" lay-filter="province_code" lay-search lay-verify="required"
+                        name="province_code">
+                    <option value="{$province_code}">{$province}</option>
+                </select>
+            </div>
+            <div class="layui-inline">
+                <select class="city_code" lay-filter="city_code" lay-search lay-verify="required" name="city_code">
+                    <option value="{$city_code}">{$city}</option>
+                </select>
+            </div>
+            <div class="layui-inline">
+                <select class="county_code" lay-search lay-filter="county_code" lay-verify="required"
+                        name="county_code">
+                    <option value="{$county_code}">{$county}</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!--地区三级联动 layui-->
+    <script>
+        /**
+         *
+
+
+         -----数据库字段名----
+         province:省
+         city:市
+         county:区
+         province_code:省code
+         city_code:市code
+         county_code:区code
+         可有可无字段:
+         province_id:省id
+         city_id:市id
+         county_id:区id
+         lnglat:经纬度
+         lng:经度
+         lat:纬度
+
+
+
+
+         ------后台控制器增加方法-----
+
+         public function getArea()
+         {
+        if (cache('admin_region_list')) {
+            $area = cache('admin_region_list');
+        } else {
+            $area = Db::name('region')->where('parent_id', '=', 10000000)->field('id,name,code')->select()->each(function ($item, $key) {
+                $item['cityList'] = Db::name("region")->where(['parent_id' => $item['id']])->field('id,name,code')->select()->each(function ($item1, $key) {
+                    $item1['areaList'] = Db::name("region")->where(['parent_id' => $item1['id']])->field('id,name,code')->select()->each(function ($item2, $key) {
+                        return $item2;
+                    });
+                    return $item1;
+                });
+                return $item;
+            });
+            cache("admin_region_list", $area);
+        }
+        $this->success('list', '', $area);
+    }
+
+
+         -----编辑处理数据----
+
+         //经纬度单独存
+         $lnglat        = explode(',', $params['lnglat']);
+         $params['lng'] = $lnglat[0];//经度
+         $params['lat'] = $lnglat[1];//纬度
+         //省市区基本信息
+         $province_info = Db::name('region')->where('code', '=', $params['province_code'])->find();
+         $city_info     = Db::name('region')->where('code', '=', $params['city_code'])->find();
+         $county_info   = Db::name('region')->where('code', '=', $params['county_code'])->find();
+         //name
+         $params['province'] = $province_info['name'];
+         $params['city']     = $city_info['name'];
+         $params['county']   = $county_info['name'];
+         //id
+         $params['province_id'] = $province_info['id'];
+         $params['city_id']     = $city_info['id'];
+         $params['county_id']   = $county_info['id'];
+
+         **/
+
+
+        layui.use(['form', 'element'], function () {
+            var form = layui.form,
+                element = layui.element;
+            var provinceList;
+            $.ajax({
+                url: "{:url('getArea')}",
+                type: "GET",
+                async: false,
+                success: function (res) {
+                    console.log(res);
+                    if (res.code == 1) {
+                        provinceList = res.data;
+                    } else {
+                        layer.msg(res.msg, {icon: 7});
+                    }
+                }
+            });
+
+            var province = $(".province_code");
+
+            //初始将省份数据赋予
+            for (var i = 0; i < provinceList.length; i++) {
+                addEle(province, provinceList[i].name, provinceList[i].code);
+            }
+
+            //向select中 追加内容
+            function addEle(ele, value, code) {
+                var optionStr = "";
+                optionStr = "<option value=" + code + " >" + value + "</option>";
+                ele.append(optionStr);
+            }
+
+            //重新渲染select
+            form.render('select');
+
+            //移除select中所有项
+            function removeEle(ele) {
+                ele.find("option").remove();
+                var optionStar = "<option value=''>" + "请选择" + "</option>";
+                ele.append(optionStar);
+            }
+
+            var provinceText,
+                cityText,
+                cityItem;
+            //选定省份后 将该省份的数据读取追加上
+            form.on('select(province_code)', function (data) {
+                console.log(data);
+                var city = $(data.elem).parents(".layui-form-item").find(".city_code"),
+                    district = $(data.elem).parents(".layui-form-item").find(".county_code");
+                provinceText = data.value;
+
+                $.each(provinceList, function (i, item) {
+                    if (provinceText == item.code) {
+                        cityItem = i;
+                        return cityItem;
+                    }
+                });
+                removeEle(city);
+                removeEle(district);
+                $.each(provinceList[cityItem].cityList, function (i, item) {
+                    addEle(city, item.name, item.code);
+                })
+                form.render('select');
+            })
+
+            //选定后 将对应的数据读取追加上
+            form.on('select(city_code)', function (data) {
+                var district = $(data.elem).parents(".layui-form-item").find(".county_code");
+                cityText = data.value;
+                removeEle(district);
+                $.each(provinceList, function (i, item) {
+                    if (provinceText == item.code) {
+                        cityItem = i;
+                        return cityItem;
+                    }
+                });
+                $.each(provinceList[cityItem].cityList, function (i, item) {
+                    if (cityText == item.code) {
+                        for (var n = 0; n < item.areaList.length; n++) {
+                            addEle(district, item.areaList[n]['name'], item.areaList[n]['code']);
+                        }
+                    }
+                })
+                form.render('select');
+            })
+        })
+    </script>
+</div>
+
+
+<!--经纬度选取位置+省市区筛选(腾讯地图)-->
+<div>
+    <!--layui三级联动,省市区-->
+    <div class="form-group">
+        <div class="layui-form-item">
+            <label class="col-sm-2 control-label">地区:</label>
+            <div class="col-md-6 col-sm-10" style="">
+                <div class="layui-inline">
+                    <select class="province_code" lay-filter="province_code" lay-search lay-verify="required"
+                            name="province_code">
+                        <option value="{$province_code}">{$province}</option>
+                    </select>
+                </div>
+                <div class="layui-inline">
+                    <select class="city_code" lay-filter="city_code" lay-search lay-verify="required" name="city_code">
+                        <option value="{$city_code}">{$city}</option>
+                    </select>
+                </div>
+                <div class="layui-inline">
+                    <select class="county_code" lay-search lay-filter="county_code" lay-verify="required"
+                            name="county_code">
+                        <option value="{$county_code}">{$county}</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+
+        <!--地区三级联动 layui-->
+        <script>
+            /**
+             *
+
+
+             -----数据库字段名----
+             province:省
+             city:市
+             county:区
+             province_code:省code
+             city_code:市code
+             county_code:区code
+             可有可无字段:
+             province_id:省id
+             city_id:市id
+             county_id:区id
+             lnglat:经纬度
+             lng:经度
+             lat:纬度
+
+
+
+
+             ------后台控制器增加方法-----
+
+             public function getArea()
+             {
+        if (cache('admin_region_list')) {
+            $area = cache('admin_region_list');
+        } else {
+            $area = Db::name('region')->where('parent_id', '=', 10000000)->field('id,name,code')->select()->each(function ($item, $key) {
+                $item['cityList'] = Db::name("region")->where(['parent_id' => $item['id']])->field('id,name,code')->select()->each(function ($item1, $key) {
+                    $item1['areaList'] = Db::name("region")->where(['parent_id' => $item1['id']])->field('id,name,code')->select()->each(function ($item2, $key) {
+                        return $item2;
+                    });
+                    return $item1;
+                });
+                return $item;
+            });
+            cache("admin_region_list", $area);
+        }
+        $this->success('list', '', $area);
+    }
+
+
+             -----编辑处理数据----
+
+             //经纬度单独存
+             $lnglat        = explode(',', $params['lnglat']);
+             $params['lng'] = $lnglat[0];//经度
+             $params['lat'] = $lnglat[1];//纬度
+             //省市区基本信息
+             $province_info = Db::name('region')->where('code', '=', $params['province_code'])->find();
+             $city_info     = Db::name('region')->where('code', '=', $params['city_code'])->find();
+             $county_info   = Db::name('region')->where('code', '=', $params['county_code'])->find();
+             //name
+             $params['province'] = $province_info['name'];
+             $params['city']     = $city_info['name'];
+             $params['county']   = $county_info['name'];
+             //id
+             $params['province_id'] = $province_info['id'];
+             $params['city_id']     = $city_info['id'];
+             $params['county_id']   = $county_info['id'];
+
+             **/
+
+
+            layui.use(['form', 'element'], function () {
+                var form = layui.form,
+                    element = layui.element;
+                var provinceList;
+                $.ajax({
+                    url: "{:url('getArea')}",
+                    type: "GET",
+                    async: false,
+                    success: function (res) {
+                        console.log(res);
+                        if (res.code == 1) {
+                            provinceList = res.data;
+                        } else {
+                            layer.msg(res.msg, {icon: 7});
+                        }
+                    }
+                });
+
+                var province = $(".province_code");
+
+                //初始将省份数据赋予
+                for (var i = 0; i < provinceList.length; i++) {
+                    addEle(province, provinceList[i].name, provinceList[i].code);
+                }
+
+                //向select中 追加内容
+                function addEle(ele, value, code) {
+                    var optionStr = "";
+                    optionStr = "<option value=" + code + " >" + value + "</option>";
+                    ele.append(optionStr);
+                }
+
+                //重新渲染select
+                form.render('select');
+
+                //移除select中所有项
+                function removeEle(ele) {
+                    ele.find("option").remove();
+                    var optionStar = "<option value=''>" + "请选择" + "</option>";
+                    ele.append(optionStar);
+                }
+
+                var provinceText,
+                    cityText,
+                    cityItem;
+                //选定省份后 将该省份的数据读取追加上
+                form.on('select(province_code)', function (data) {
+                    console.log(data);
+                    var city = $(data.elem).parents(".layui-form-item").find(".city_code"),
+                        district = $(data.elem).parents(".layui-form-item").find(".county_code");
+                    provinceText = data.value;
+
+                    $.each(provinceList, function (i, item) {
+                        if (provinceText == item.code) {
+                            cityItem = i;
+                            return cityItem;
+                        }
+                    });
+                    removeEle(city);
+                    removeEle(district);
+                    $.each(provinceList[cityItem].cityList, function (i, item) {
+                        addEle(city, item.name, item.code);
+                    })
+                    form.render('select');
+                })
+
+                //选定后 将对应的数据读取追加上
+                form.on('select(city_code)', function (data) {
+                    var district = $(data.elem).parents(".layui-form-item").find(".county_code");
+                    cityText = data.value;
+                    removeEle(district);
+                    $.each(provinceList, function (i, item) {
+                        if (provinceText == item.code) {
+                            cityItem = i;
+                            return cityItem;
+                        }
+                    });
+                    $.each(provinceList[cityItem].cityList, function (i, item) {
+                        if (cityText == item.code) {
+                            for (var n = 0; n < item.areaList.length; n++) {
+                                addEle(district, item.areaList[n]['name'], item.areaList[n]['code']);
+                            }
+                        }
+                    })
+                    form.render('select');
+                })
+            })
+        </script>
+
+
+    </div>
+
+
+    <!--地址转经纬板块-->
+    <div class="form-group">
+        <label class="col-sm-2 control-label">地址</label>
+        <div class="col-md-6 col-sm-10">
+            <div style="display: flex;">
+                <input class="form-control post-params" id="address" name="address" onblur="searchAddress()"
+                       placeholder="请输入详细地址" required
+                       type="text" value="{$address}">
+                <a class="btn btn-primary" href="javascript:" onclick="searchAddress()"
+                   style="margin-left: 10px;">搜索</a>
+            </div>
+            <div id="container" style="margin-top:10px;width:600px;height:300px;"></div>
+        </div>
+    </div>
+    <div class="form-group">
+        <!-- sql
+         DROP TABLE IF EXISTS `cmf_shop`;
+         CREATE TABLE `cmf_shop`  (
+          `id` int(11) NOT NULL AUTO_INCREMENT,
+          `user_id` int(11) NULL DEFAULT NULL COMMENT '关联用户',
+          `class_id` int(11) NULL DEFAULT NULL COMMENT '分类id',
+          `shop_type` tinyint(4) NULL DEFAULT NULL COMMENT '类型:1全屋整装,2装修建材,3智能电器,5家具软装 ',
+          `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '店铺名字',
+          `logo_image` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT 'logo',
+          `images` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '轮播图',
+          `introduce` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '介绍',
+          `phone` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '手机号',
+          `time` varchar(80) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '营业时间',
+          `address` varchar(300) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '地址信息',
+          `lng` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '经度',
+          `lat` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '纬度',
+          `lnglat` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '经纬度',
+          `province_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '省id',
+          `city_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '市id',
+          `county_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '区id',
+          `province` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '省name',
+          `city` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '市name',
+          `county` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '区name',
+          `province_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '省code',
+          `city_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '市code',
+          `county_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '区code',
+          `list_order` int(11) NULL DEFAULT 0 COMMENT '人气',
+          `is_recommend` tinyint(2) NULL DEFAULT 1 COMMENT '推荐:1是,2否',
+          `create_time` bigint(20) NULL DEFAULT NULL COMMENT '创建时间',
+          `update_time` bigint(20) NULL DEFAULT NULL COMMENT '更新时间',
+          `delete_time` bigint(20) NULL DEFAULT 0 COMMENT '删除时间',
+          PRIMARY KEY (`id`) USING BTREE
+        ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '店铺管理' ROW_FORMAT = Compact;
+        SET FOREIGN_KEY_CHECKS = 1;
+          -->
+
+
+        <!--
+        控制器
+
+       ----- 插入处理数据方法 -----
+             edit_post方法:
+
+
+           //经纬度单独存
+             $lnglat        = explode(',', $params['lnglat']);
+             $params['lng'] = $lnglat[0];//经度
+             $params['lat'] = $lnglat[1];//纬度
+             //省市区基本信息
+             $province_info = Db::name('region')->where('code', '=', $params['province_code'])->find();
+             $city_info     = Db::name('region')->where('code', '=', $params['city_code'])->find();
+             $county_info   = Db::name('region')->where('code', '=', $params['county_code'])->find();
+             //name
+             $params['province'] = $province_info['name'];
+             $params['city']     = $city_info['name'];
+             $params['county']   = $county_info['name'];
+             //id
+             $params['province_id'] = $province_info['id'];
+             $params['city_id']     = $city_info['id'];
+             $params['county_id']   = $county_info['id'];
+
+
+
+            本控制器增加三个方法
+             public function getArea()
+            {
+                if (cache('admin_region_list')) {
+                    $area = cache('admin_region_list');
+                } else {
+                    $area = Db::name('region')->where('parent_id', '=', 10000000)->field('id,name,code')->select()->each(function ($item, $key) {
+                        $item['cityList'] = Db::name("region")->where(['parent_id' => $item['id']])->field('id,name,code')->select()->each(function ($item1, $key) {
+                            $item1['areaList'] = Db::name("region")->where(['parent_id' => $item1['id']])->field('id,name,code')->select()->each(function ($item2, $key) {
+                                return $item2;
+                            });
+                            return $item1;
+                        });
+                        return $item;
+                    });
+                    cache("admin_region_list", $area);
+                }
+                $this->success('list', '', $area);
+            }
+
+
+
+    /**
+     * 经纬度获取地址(腾迅地图)
+     */
+    public function reverse_address_i()
+    {   //经纬度转地址
+        $lnglat = $this->request->param('lnglat');
+        $url    = "https://apis.map.qq.com/ws/geocoder/v1/?location={$lnglat}&key=GGVBZ-DUV6J-N33FQ-FX3AE-HTJ56-N6FDP";//&get_poi=1 附近信息
+        $result = file_get_contents($url);
+        $result = json_decode($result, true);
+        $this->success('', '', $result['result']['formatted_addresses']['recommend']);
+    }
+
+
+    /**
+     * 地址转经纬度(腾迅地图)
+     */
+    public function search_address_i()
+    {   //地址转经纬度
+        $address  = $this->request->param('address');
+        $url      = "https://apis.map.qq.com/ws/geocoder/v1/?key=GGVBZ-DUV6J-N33FQ-FX3AE-HTJ56-N6FDP&address={$address}";
+        $result   = file_get_contents($url);
+        $result   = json_decode($result, true);
+        $location = $result['result']['location'];
+        $this->success('', '', $location);
+    }
+
+        计算距离
+        $field_lat = 'lat';// 数据库字段名 - 纬度  -90°到90°
+        $field_lng = 'lng';// 数据库字段名 - 经度  -180°到180°
+        $lat       = $params['lat'];// 数据库字段名 - 纬度  -90°到90°
+        $lng       = $params['lng'];// 数据库字段名 - 经度  -180°到180°
+        if (!empty($lat) && !empty($lng)) {
+            $field           = "*, (6378.138 * 2 * asin(sqrt(pow(sin(({$field_lng} * pi() / 180 - {$lng} * pi() / 180) / 2),2) + cos({$field_lng} * pi() / 180) * cos({$lng} * pi() / 180) * pow(sin(({$field_lat} * pi() / 180 - {$lat} * pi() / 180) / 2),2))) * 1000) as distance";
+            $params['order'] = 'distance asc,id desc';
+            $params['field'] = $field;
+
+            //方法2 规定距离范围
+            // ->field("*")
+            //            ->field("{$distanceFormula} as distance")
+            //            ->having("distance BETWEEN 10000 AND 20000")
+            //            ->order('distance')
+            //            ->select();
+        }
+
+
+        //$item['distance']  = '0km';
+        if ($item['distance']) $item['distance'] = round($item['distance'] / 100, 2) . 'km';
+         -->
+
+        <label class="col-sm-2 control-label">经纬度</label>
+        <input id="lng" name="lng" type="hidden" value="{$lng}">
+        <input id="lat" name="lat" type="hidden" value="{$lat}">
+        <div class="col-md-6 col-sm-10">
+            <input class="form-control post-params" id="lnglat" name="lnglat" placeholder="" readonly required
+                   type="text"
+                   value="{$lnglat}">
+        </div>
+
+
+        <!--地址转经纬度-->
+        <script src="https://map.qq.com/api/gljs?v=1.exp&key=XQABZ-Z6GWP-OWEDN-V3K2Y-W43D6-D4B5P"></script>
+        <script>
+            //定义地图中心点坐标
+
+            var already_lat = $("#lat").val();
+            var already_lng = $("#lng").val();
+
+            if (already_lat == '') {
+                already_lat = 39.916706;
+                already_lng = 116.403119;
+            }
+            var center = new TMap.LatLng(already_lat, already_lng);
+            //定义map变量，调用 TMap.Map() 构造函数创建地图
+            var map = new TMap.Map(document.getElementById('container'), {
+                center: center,//设置地图中心点坐标
+                zoom: 17, //设置地图缩放级别
+                viewMode: '3D'
+            });
+            let markerLayer = new TMap.MultiMarker({
+                id: 'marker-layer',
+                map: map
+            });
+            var clickHandler = function (evt) {
+                var lat = evt.latLng.getLat().toFixed(6);
+                var lng = evt.latLng.getLng().toFixed(6);
+                $("#lnglat").val(lng + "," + lat);
+                removeMarker("search_res");
+                addMarker(new TMap.LatLng(lat, lng), "search_res");
+
+                let url = "{:url('reverse_address_i')}";
+                $.get(url, {lnglat: lat + "," + lng}, function (res) {
+                    //debugger;
+                    $("#address").val(res.data);
+                });
+            };
+            map.on("click", clickHandler);
+
+            function addMarker(latLng, id) {
+                markerLayer.add({
+                    id: id,
+                    position: latLng
+                });
+                let lng = latLng.lng;
+                let lat = latLng.lat;
+
+
+                map.setCenter(new TMap.LatLng(lat, lng)); // 坐标为天安门
+            }
+
+            //移除marker事件
+            function removeMarker(id) {
+                markerLayer.remove(id)
+            }
+
+            function searchAddress() {
+                var province = $(".province option:selected").text();
+                var city = $(".city option:selected").text();
+                var district = $(".district option:selected").text();
+
+                if (province == '省份') {
+                    layer.msg('请选择地区');
+                    return;
+                }
+                if (city == '请选择' || district == '请选择') {
+                    layer.msg('请选择地区');
+                    return;
+                }
+
+                let address = $("#address").val();
+                var full_address = province + city + district + address;
+                let url = "{:url('search_address_i')}";
+                $.get(url, {address: full_address}, function (res) {
+                    // debugger;
+                    let location = res.data;
+                    $("#lnglat").val(location.lng + "," + location.lat);
+                    removeMarker("search_res");
+                    addMarker(new TMap.LatLng(location.lat, location.lng), "search_res");
+                });
+            }
+        </script>
+    </div>
+</div>
+
+
+<!--经纬度选取位置+省市区筛选(高德地图)-->
+<!--layui三级联动,省市区-->
+<gaodeditu>
+    <div class="form-group">
+        <div class="layui-form-item">
+            <label class="col-sm-2 control-label">地区:</label>
+            <div class="col-md-6 col-sm-10" style="">
+                <div class="layui-inline">
+                    <select class="province_code" lay-filter="province_code" lay-search lay-verify="required"
+                            name="province_code">
+                        <option value="{$province_code}">{$province}</option>
+                    </select>
+                </div>
+                <div class="layui-inline">
+                    <select class="city_code" lay-filter="city_code" lay-search lay-verify="required" name="city_code">
+                        <option value="{$city_code}">{$city}</option>
+                    </select>
+                </div>
+                <div class="layui-inline">
+                    <select class="county_code" lay-search lay-filter="county_code" lay-verify="required"
+                            name="county_code">
+                        <option value="{$county_code}">{$county}</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <!--地区三级联动 layui-->
+        <script>
+            /**
+             *
+
+
+             -----数据库字段名----
+             province:省
+             city:市
+             county:区
+             province_code:省code
+             city_code:市code
+             county_code:区code
+             可有可无字段:
+             province_id:省id
+             city_id:市id
+             county_id:区id
+             lnglat:经纬度
+             lng:经度
+             lat:纬度
+
+
+
+
+             ------后台控制器增加方法-----
+
+             public function getArea()
+             {
+        if (cache('admin_region_list')) {
+            $area = cache('admin_region_list');
+        } else {
+            $area = Db::name('region')->where('parent_id', '=', 10000000)->field('id,name,code')->select()->each(function ($item, $key) {
+                $item['cityList'] = Db::name("region")->where(['parent_id' => $item['id']])->field('id,name,code')->select()->each(function ($item1, $key) {
+                    $item1['areaList'] = Db::name("region")->where(['parent_id' => $item1['id']])->field('id,name,code')->select()->each(function ($item2, $key) {
+                        return $item2;
+                    });
+                    return $item1;
+                });
+                return $item;
+            });
+            cache("admin_region_list", $area);
+        }
+        $this->success('list', '', $area);
+    }
+
+
+             -----编辑处理数据----
+
+             //经纬度单独存
+             $lnglat        = explode(',', $params['lnglat']);
+             $params['lng'] = $lnglat[0];//经度
+             $params['lat'] = $lnglat[1];//纬度
+             //省市区基本信息
+             $province_info = Db::name('region')->where('code', '=', $params['province_code'])->find();
+             $city_info     = Db::name('region')->where('code', '=', $params['city_code'])->find();
+             $county_info   = Db::name('region')->where('code', '=', $params['county_code'])->find();
+             //name
+             $params['province'] = $province_info['name'];
+             $params['city']     = $city_info['name'];
+             $params['county']   = $county_info['name'];
+             //id
+             $params['province_id'] = $province_info['id'];
+             $params['city_id']     = $city_info['id'];
+             $params['county_id']   = $county_info['id'];
+
+             **/
+
+
+            layui.use(['form', 'element'], function () {
+                var form = layui.form,
+                    element = layui.element;
+                var provinceList;
+                $.ajax({
+                    url: "{:url('getArea')}",
+                    type: "GET",
+                    async: false,
+                    success: function (res) {
+                        //console.log(res);
+                        if (res.code == 1) {
+                            provinceList = res.data;
+                        } else {
+                            layer.msg(res.msg, {icon: 7});
+                        }
+                    }
+                });
+
+                var province = $(".province_code");
+
+                //初始将省份数据赋予
+                for (var i = 0; i < provinceList.length; i++) {
+                    addEle(province, provinceList[i].name, provinceList[i].code);
+                }
+
+                //向select中 追加内容
+                function addEle(ele, value, code) {
+                    var optionStr = "";
+                    optionStr = "<option value=" + code + " >" + value + "</option>";
+                    ele.append(optionStr);
+                }
+
+                //重新渲染select
+                form.render('select');
+
+                //移除select中所有项
+                function removeEle(ele) {
+                    ele.find("option").remove();
+                    var optionStar = "<option value=''>" + "请选择" + "</option>";
+                    ele.append(optionStar);
+                }
+
+                var provinceText,
+                    cityText,
+                    cityItem;
+                //选定省份后 将该省份的数据读取追加上
+                form.on('select(province_code)', function (data) {
+                    console.log(data);
+                    var city = $(data.elem).parents(".layui-form-item").find(".city_code"),
+                        district = $(data.elem).parents(".layui-form-item").find(".county_code");
+                    provinceText = data.value;
+
+                    $.each(provinceList, function (i, item) {
+                        if (provinceText == item.code) {
+                            cityItem = i;
+                            return cityItem;
+                        }
+                    });
+                    removeEle(city);
+                    removeEle(district);
+                    $.each(provinceList[cityItem].cityList, function (i, item) {
+                        addEle(city, item.name, item.code);
+                    })
+                    form.render('select');
+                })
+
+                //选定后 将对应的数据读取追加上
+                form.on('select(city_code)', function (data) {
+                    var district = $(data.elem).parents(".layui-form-item").find(".county_code");
+                    cityText = data.value;
+                    removeEle(district);
+                    $.each(provinceList, function (i, item) {
+                        if (provinceText == item.code) {
+                            cityItem = i;
+                            return cityItem;
+                        }
+                    });
+                    $.each(provinceList[cityItem].cityList, function (i, item) {
+                        if (cityText == item.code) {
+                            for (var n = 0; n < item.areaList.length; n++) {
+                                addEle(district, item.areaList[n]['name'], item.areaList[n]['code']);
+                            }
+                        }
+                    })
+                    form.render('select');
+                })
+            })
+        </script>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label">地址</label>
+        <div class="col-md-6 col-sm-10">
+            <div style="display: flex;">
+                <input class="form-control post-params item-left" id="address" name="address"
+                       onblur="searchAddress()"
+                       placeholder="请输入详细地址" required
+                       type="text" value="{$address}">
+                <a class="btn btn-primary" href="javascript:" onclick="searchAddress()"
+                   style="margin-left: 10px;">搜索</a>
+            </div>
+            <div id="container" style="margin-top:10px;width:800px;height:400px;"></div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label">经纬度</label>
+        <input class="form-control post-params item-left" id="lng" name="lng" type="hidden" value="{$lng}">
+        <input class="form-control post-params item-left" id="lat" name="lat" type="hidden" value="{$lat}">
+        <div class="col-md-6 col-sm-10">
+            <input class="form-control post-params" id="lnglat" name="lnglat" placeholder="" readonly required
+                   type="text"
+                   value="{$lnglat}">
+        </div>
+    </div>
+    <!--
+    控制器
+
+    ----- 插入处理数据方法 -----
+         edit_post方法:
+
+         //经纬度单独存
+         $lnglat        = explode(',', $params['lnglat']);
+         $params['lng'] = $lnglat[0];//经度
+         $params['lat'] = $lnglat[1];//纬度
+         //省市区基本信息
+         $province_info = Db::name('region')->where('code', '=', $params['province_code'])->find();
+         $city_info     = Db::name('region')->where('code', '=', $params['city_code'])->find();
+         $county_info   = Db::name('region')->where('code', '=', $params['county_code'])->find();
+         //name
+         $params['province'] = $province_info['name'];
+         $params['city']     = $city_info['name'];
+         $params['county']   = $county_info['name'];
+         //id
+         $params['province_id'] = $province_info['id'];
+         $params['city_id']     = $city_info['id'];
+         $params['county_id']   = $county_info['id'];
+
+
+        本控制器增加三个方法
+         public function getArea()
+        {
+            if (cache('admin_region_list')) {
+                $area = cache('admin_region_list');
+            } else {
+                $area = Db::name('region')->where('parent_id', '=', 10000000)->field('id,name,code')->select()->each(function ($item, $key) {
+                    $item['cityList'] = Db::name("region")->where(['parent_id' => $item['id']])->field('id,name,code')->select()->each(function ($item1, $key) {
+                        $item1['areaList'] = Db::name("region")->where(['parent_id' => $item1['id']])->field('id,name,code')->select()->each(function ($item2, $key) {
+                            return $item2;
+                        });
+                        return $item1;
+                    });
+                    return $item;
+                });
+                cache("admin_region_list", $area);
+            }
+            $this->success('list', '', $area);
+        }
+
+
+
+
+        /**
+         * 地址转换为坐标(高德地图)
+         */
+        public function search_address_ii()
+        {
+            $address = $this->request->param('address');
+            $key     = "0f7cbfb881a2bea61d912a4cc920b663";
+
+            $url    = "https://restapi.amap.com/v3/geocode/geo?address={$address}&key={$key}";
+            $result = file_get_contents($url);
+            $result = json_decode($result, true);
+            if ($result['status'] == 1) {
+
+                $geocodes = $result['geocodes'];
+                $return   = [];
+                foreach ($geocodes as $item) {
+                    $location = explode(',', $item['location']);
+                    $return[] = ['lon' => $location[0], 'lat' => $location[1]];
+                }
+                $this->success('', '', $return);
+            } else {
+                $this->success('', '', $result['info']);
+            }
+        }
+
+        /**
+         * 坐标转换地址(高德地图)
+         */
+        public function reverse_address_ii()
+        {
+            $lng = $this->request->param('lng');
+            $lat = $this->request->param('lat');
+            $key = "0f7cbfb881a2bea61d912a4cc920b663";
+            $url = "https://restapi.amap.com/v3/geocode/regeo?location={$lng},{$lat}&key={$key}";
+
+            $result = file_get_contents($url);
+            $result = json_decode($result, true);
+            if ($result['status'] == 1) {
+
+                $regeocode         = $result['regeocode'];
+                $formatted_address = $regeocode['formatted_address'];
+                $this->success('', '', $formatted_address);
+            } else {
+                $this->success('', '', $result['info']);
+            }
+        }
+
+
+
+        计算距离
+        $field_lat = 'lat';// 数据库字段名 - 纬度  -90°到90°
+        $field_lng = 'lng';// 数据库字段名 - 经度  -180°到180°
+        $lat       = $params['lat'];// 数据库字段名 - 纬度  -90°到90°
+        $lng       = $params['lng'];// 数据库字段名 - 经度  -180°到180°
+        if (!empty($lat) && !empty($lng)) {
+            $field           = "*, (6378.138 * 2 * asin(sqrt(pow(sin(({$field_lng} * pi() / 180 - {$lng} * pi() / 180) / 2),2) + cos({$field_lng} * pi() / 180) * cos({$lng} * pi() / 180) * pow(sin(({$field_lat} * pi() / 180 - {$lat} * pi() / 180) / 2),2))) * 1000) as distance";
+            $params['order'] = 'distance asc,id desc';
+            $params['field'] = $field;
+
+
+            //方法2 规定距离范围
+            // ->field("*")
+            //            ->field("{$distanceFormula} as distance")
+            //            ->having("distance BETWEEN 10000 AND 20000")
+            //            ->order('distance')
+            //            ->select();
+        }
+
+        //$item['distance']  = '0km';
+        if ($item['distance']) $item['distance'] = round($item['distance'] / 100, 2) . 'km';
+     -->
+    <!--高德地图板块-->
+    <script src="https://webapi.amap.com/maps?v=1.4.15&key=0f7cbfb881a2bea61d912a4cc920b663"></script>
+    <script>
+
+        //定义地图中心点坐标
+        var already_lat = $("#lat").val();
+        var already_lng = $("#lng").val();
+
+        if (already_lat == '') {
+            already_lat = 39.916706;
+            already_lng = 116.403119;
+        }
+
+        var map = new AMap.Map('container', {
+            center: [already_lng, already_lat],
+            zoom: 16
+        });
+
+        var marker;
+        //设置圆形位置
+        // var center = new AMap.LngLat(already_lng, already_lat);
+        //设置圆的半径大小
+        // var radius = $("#delivery_distance").val() //单位:px
+        // radius = radius * 1000
+
+        //创建圆形 Circle 实例
+        // var circle = new AMap.Circle({
+        //     center: center, //圆心
+        //     radius: radius, //半径
+        //     borderWeight: 3, //描边的宽度
+        //     strokeColor: "", //轮廓线颜色
+        //     strokeOpacity: 1, //轮廓线透明度
+        //     strokeWeight: 6, //轮廓线宽度
+        //     fillOpacity: 0.4, //圆形填充透明度
+        //     strokeStyle: "dashed", //轮廓线样式
+        //     strokeDasharray: [10, 10],
+        //     fillColor: "#1791fc", //圆形填充颜色
+        //     zIndex: 50, //圆形的叠加顺序
+        // });
+
+        //圆形 Circle 对象添加到 Map
+        //map.add(circle);//不需要画圆
+        //根据覆盖物范围调整视野
+        //map.setFitView([circle]);//这里也不需要覆盖
+
+
+        map.on('click', function (e) {
+            // console.log(e)
+            // console.log('cccccccccccc')
+            var lng = e.lnglat.lng
+            var lat = e.lnglat.lat
+
+            let url = "{:url('reverse_address_ii')}";
+            $.get(url, {lng: lng, lat: lat}, function (res) {
+                // debugger;
+                //console.log(res)
+                if (res.code == 1) {
+                    let address = res.data;
+                    $("#lnglat").val(lng + "," + lat);
+                    $("#address").val(address);
+                    addMarker(lng, lat);
+                } else {
+                    layer.msg(res.msg);
+                }
+            });
+
+        });
+
+        addMarker(already_lng, already_lat)
+
+        function searchAddress() {
+            var province_code = $("#province_code option:selected").text();
+            var city_code = $("#city_code option:selected").text();
+            var district = $("#county_code option:selected").text();
+
+            // if(province_code == '请选择'){
+            //     layer.msg('请选择地区');
+            //     return;
+            // }
+            // if(city_code == '请选择' || district == '请选择'){
+            //     layer.msg('请选择地区');
+            //     return;
+            // }
+            let address = $("#address").val();
+            var full_address = province_code + city_code + district + address;//可以根据具体位置直接搜索
+            let url = "{:url('search_address_ii')}";
+            $.get(url, {address: full_address}, function (res) {
+                // debugger;
+                if (res.code == 1) {
+                    let location = res.data;
+                    console.log(location)
+                    $("#lnglat").val(location[0].lon + "," + location[0].lat);
+                    addMarker(location[0].lon, location[0].lat);//画图标
+                } else {
+                    layer.msg(res.msg);
+                }
+            });
+        }
+
+        function addMarker(lng, lat) {
+            console.log(11)
+            clearMarker();
+            var position = new AMap.LngLat(lng, lat);
+
+            map.setCenter([lng, lat])
+            marker = new AMap.Marker({
+                //icon: "//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-red.png",
+                position: position,
+            });
+            map.add(marker);
+        }
+
+        //移除marker事件
+        function clearMarker() {
+            if (marker) {
+                marker.setMap(null);
+                marker = null;
+            }
+        }
+    </script>
+</gaodeditu>
+
+

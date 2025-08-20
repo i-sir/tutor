@@ -1,0 +1,57 @@
+<include file="public@header"/>
+</head>
+<body>
+<div class="wrap js-check-wrap">
+	<ul class="nav nav-tabs">
+		<li><a href="{:url('link/index')}">{:lang('ADMIN_LINK_INDEX')}</a></li>
+		<li class="active"><a href="{:url('link/add')}">{:lang('ADMIN_LINK_ADD')}</a></li>
+	</ul>
+	<form method="post" action="javascript:jg()" class="form-horizontal js-ajax-form margin-top-20 layui-form" >
+		<div class="form-group">
+			<label class="col-sm-2 control-label">名称</label>
+			<div class="layui-input-block col-md-4 col-sm-10">
+				<input type="text" class="form-control post-params" id="input-name" name="name">
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label class="col-sm-2 control-label">请选择地区</label>
+			<div class="col-md-2 col-sm-3">
+				<select name="province" id="province" lay-verify="required" lay-search lay-filter="province">
+					<option value="">省份</option>
+				</select>
+			</div>
+			<div class="col-md-2 col-sm-3">
+				<select name="city" id="city" lay-verify="required" lay-search lay-filter="city">
+					<option value="">地级市</option>
+				</select>
+			</div>
+			<div class="col-md-2 col-sm-3">
+				<select name="district" id="district" lay-verify="required" lay-search>
+					<option value="">县/区</option>
+				</select>
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="col-sm-offset-2 col-sm-10">
+				<button type="submit" class="layui-btn ">提交</button>
+			</div>
+		</div>
+<!--		<div class="form-group">-->
+<!--			<div class="col-sm-offset-2 col-sm-10">-->
+<!--				<button type="submit" class="btn btn-primary js-ajax-submit">{:lang('ADD')}</button>-->
+<!--				<a class="btn btn-default" href="javascript:history.back(-1);">{:lang('BACK')}</a>-->
+<!--			</div>-->
+<!--		</div>-->
+	</form>
+</div>
+<script src="__STATIC__/js/admin.js"></script>
+<script src="__STATIC__/layui/js/area.js"></script>
+<script src="__STATIC__/layui/js/select.js"></script>
+<script type="text/javascript">
+    function jg(){
+        alert($("#province").val()+$("#city").val()+$("#district").val());
+    }
+</script>
+</body>
+</html>

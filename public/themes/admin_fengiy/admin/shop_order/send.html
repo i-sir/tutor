@@ -1,0 +1,141 @@
+<include file="public@header"/></head>
+<body>
+<div class="wrap js-check-wrap">
+    <form method="post" id="moods_form" class="form-horizontal js-ajax-form margin-top-20" autocomplete="off"
+          action="{:url('send_post',['id'=>$id,'params'=>$params])}" onsubmit="return false">
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label">联系人:</label>
+            <div class="col-md-6 col-sm-10">
+                <input type="text" class="form-control" name="username"
+                       value="{$username|default=''}" readonly>
+            </div>
+        </div>
+        <div class="form-group"><label class="col-sm-2 control-label">联系方式:</label>
+            <div class="col-md-6 col-sm-10">
+                <input type="text" class="form-control" name="phone"
+                       value="{$phone|default=''}" readonly>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">地址:</label>
+            <div class="col-md-6 col-sm-10">
+                <input type="text" class="form-control" name="address"
+                       value="{$address|default=''}" readonly>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">
+                <span class="form-required">*</span>快递公司:</label>
+            <div class="col-md-6 col-sm-10">
+                <select name="exp_id" class="form-control post-params">
+                    <foreach name="express" item="vo">
+                        <option value="{$vo.id}">{$vo.name}</option>
+                    </foreach>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">
+                <span class="form-required">*</span>单号:</label>
+            <div class="col-md-6 col-sm-10">
+                <input type="text" class="form-control post-params" name="exp_num">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <input type="hidden" class="post-params" name="id" value="{$id}">
+                <input type="hidden" class="post-params" name="order_num" value="{$order_num}">
+                <button type="submit" class="layui-btn js-ajax-submit" style="display: none;">保存</button>
+                <button type="button" class="layui-btn js-ajax-submit" id="save">保存</button>
+            </div>
+        </div>
+    </form>
+</div>
+</body>
+</html>
+<script src="__STATIC__/js/admin.js"></script>
+
+
+<script>
+    function preventEnterSubmit(event) {
+        // 检查是否按下了回车键
+        if (event.key === 'Enter') {
+            event.preventDefault(); // 阻止默认行为
+        }
+    }
+
+    // 当文档加载完成后，设置事件监听
+    document.addEventListener('DOMContentLoaded', function() {
+        var form = document.getElementById('moods_form');
+        form.addEventListener('keypress', preventEnterSubmit);
+    });
+</script>
+
+
+<!--弹框体积,父页面自动刷新-->
+<script>
+    // 封装方法，获取到form表单的数据。使用此方法，表单元素必须存在那么属性。
+    //el:元素的class名称。
+    function getParameter(el) {
+        var obj = {};
+        $(el).each(function (index, item) {
+            obj[$(this).attr("name")] = $(this).val();
+            // 判断元素的类型
+            if (item.type == "text" || item.type == "password" || item.type == "select-one" || item.type == "tel" ||
+                item.type == "search" || item.type == "range" || item.type == "number" || item.type == "month" ||
+                item.type == "email" || item.type == "datetime-local" || item.type == "datetime" || item.type == "date" ||
+                item.type == "color" || item.type == "hidden") {
+                //获取到name的值,name的值就是向后台传递的数据
+                obj[$(this).attr("name")] = $(this).val();
+            } else if (item.type == "checkbox") {
+                var stamp = false;
+                if ($(this).attr("name") && !stamp) {
+                    stamp = false;
+                    // 获取到复选框选中的元素
+                    var checkboxEl = $("input[name=" + $(item).attr('name') + "]:checked");
+                    if (checkboxEl) {
+                        var checkboxArr = [];
+                        // 取出复选框选中的值
+                        checkboxEl.each(function (idx, itm) {
+                            checkboxArr.push($(itm).val());
+                        });
+                        obj[$(this).attr("name")] = checkboxArr.join(",");
+                    }
+
+                }
+            } else if (item.type == "radio") {
+                // 获取到单选框选中的值
+                var radio_val = $("input[name=" + $(item).attr('name') + "]:checked").val();
+                if (radio_val) {
+                    obj[$(item).attr("name")] = radio_val;
+                }
+            }
+        });
+        return obj;
+    }
+
+    // 调用方法
+    $("#save").click(function () {
+        var parameter = getParameter(".post-params");
+        $.ajax({
+            type: 'POST',
+            url: "{:url('send_post')}",
+            data: parameter,
+            dataType: 'json',
+            success: function (data) {
+                layer.msg(data.msg);
+
+                if (data.code == 1) {
+                    let time1 = setInterval(function () {
+                        //父级弹框关闭
+                        parent.layer.closeAll();
+                        //父页面自动刷新
+                    }, 500);
+                }
+
+            }
+        });
+    });
+</script>

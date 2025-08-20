@@ -1,0 +1,34 @@
+ <include file="public@header"/></head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li><a href="{:url('index',['page'=>$page,'pid'=>$pid,'type'=>'goods','params'=>$params])}">分类管理</a></li>
+         <if condition="cmf_auth_check(cmf_get_current_admin_id(), 'admin/shop_goods_class/add')">
+        <li><a href="{:url('add',['page'=>$page,'pid'=>$pid,'type'=>'goods','params'=>$params])}">添加</a></li>
+        </if>
+        <li class="active"><a href="{:url('edit',['id'=>$id,'page'=>$page,'pid'=>$pid,'type'=>'goods','params'=>$params])}"> 编辑</a></li>
+    </ul>
+    <form method="post" class="form-horizontal js-ajax-form margin-top-20 layui-form" action="{:url('edit_post',['id'=>$id,'page'=>$page,'pid'=>$pid,'type'=>'goods','params'=>$params])}"
+          autocomplete="off">
+
+        <include file="shop_goods_class/form"/>
+
+        <!-- 主键id -->
+        <input type="text" name="id" value="{$id}" class="form-control post-params item-left" style="display: none">
+        <!--当前页码-->
+        <input type="text" name="page" value="{$page}" class="form-control post-params item-left"
+               style="display: none">
+
+        <div class="col-sm-offset-2 col-sm-10">
+            <button type="submit" class="layui-btn js-ajax-submit" id="save">保存</button>
+            <a class="layui-btn layui-btn-primary" href="javascript:history.back(-1);">返回</a>
+        </div>
+    </form>
+
+</div>
+<script src="__STATIC__/js/admin.js"></script>
+</body>
+</html>
+
+
+

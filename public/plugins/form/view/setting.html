@@ -1,0 +1,536 @@
+<include file="public/head"/>
+</head>
+<style>
+    .baocun {
+        margin-left: -1%;
+        width: 108px;
+        height: 48px;
+    }
+
+    .bottom-right {
+        position: fixed;
+        bottom: 75px;
+        right: 10px;
+        padding: 10px;
+        background-color: #333;
+        color: #fff;
+    }
+
+    .bottom-right-url {
+        position: fixed;
+        bottom: 171px;
+        right: 50px;
+        color: #fff;
+    }
+</style>
+
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <!--        <li><a href="{:url('/plugin/form/AdminIndex/index')}">列表</a></li>-->
+        <li class="active"><a href="{:url('/plugin/form/AdminIndex/setting')}">配置表单</a></li>
+        <li><a href="http://{$_SERVER['HTTP_HOST']}/create_table/create_table.html" target="_blank">生成sql</a></li>
+        <li><a onclick="get_url()">更新url</a></li>
+    </ul>
+
+    <!--    <div class="alert">-->
+    <!--        <pre>-->
+    <!--模板生成插件-->
+
+    <!--1. 创建一个表,注意表前缀无需写-->
+    <!--    在创建表时候,添加上注释,可以在列表中展示时,自动填入注释,-->
+    <!--    如果注释需要复杂,则第一个","前面的就是注释,后面是详细说明-->
+
+    <!--2. model 名称为驼峰写法,不用带最后带Model-->
+
+    <!--3. Controller 名称为驼峰写法,不用最后带Controller-->
+    <!--        </pre>-->
+    <!--    </div>-->
+
+    <form method="post" class="form-horizontal js-ajax-form margin-top-20 layui-form" autocomplete="off"
+          action="{:url('/plugin/form/AdminIndex/settingPost')}">
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label"><span
+                    class="form-required">*</span>表单名称(表名不需要带前缀):</label>
+            <div class="col-md-6 col-sm-10">
+                <select class="form-control post-params table_name" name="table_name" lay-search
+                        lay-filter="table_name">
+                    <option value="">暂无选择</option>
+                    <foreach name="db_list" item="vo" key="key">
+                        <option value="{$vo.table_name}">{$vo.table_name} ({$vo.table_remark})</option>
+                    </foreach>
+                </select>
+            </div>
+            <div onclick="get_db_list()">
+                <img style="width: 35px;"
+                     src="https://oss.ausite.cn/kf136/default/20231210/5fc78287f3392c45ae84b6ab9b0900e2.png">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label"> model/controller 名称:</label>
+            <div class="col-md-6 col-sm-10">
+                <input type="text" class="form-control" name="model_name" value="" id="model_name"
+                       oninput="model_names()" required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label">api接口中 tags类名:</label>
+            <div class="col-md-6 col-sm-10">
+                <input type="text" class="form-control" oninput="tags_in()" name="tags" id="tags">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label">后台search:</label>
+            <div class="col-md-6 col-sm-10">
+                <div id="search">
+                    <input style="margin-left: 10px;margin-bottom: 10px;" type="checkbox" lay-skin="tag"
+                           class="form-control" name="id"
+                           id="id" title="id">
+                </div>
+            </div>
+        </div>
+
+
+        <br>
+        <br>
+        <br>
+        <div class="form-group">
+            <label class="col-sm-1 control-label">api_validate:</label>
+            <div class="col-md-11">
+                <div id="validateHtml">
+                    <input style="margin-left: 10px;margin-bottom: 10px;" type="checkbox" lay-skin="tag"
+                           class="form-control" name="validateHtmlId"
+                           id="validateHtmlId" title="validateHtmlId">
+                </div>
+            </div>
+        </div>
+
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label">生成控制器/模型:</label>
+            <div class="col-md-10 col-sm-10 layui-input-block">
+                <input type="checkbox" class="form-control" lay-skin="tag" name="api_controller" title="api控制器" checked>
+                <input type="checkbox" class="form-control" lay-skin="tag" name="api_paginate" title="api控制器(分页)"
+                       checked>
+                <input type="checkbox" class="form-control" lay-skin="tag" name="api_checkAuth" title="api控制器(检测是否授权)">
+                <!--                <input type="checkbox" class="form-control" lay-skin="tag" name="api_model" title="api模型" checked>-->
+                <input type="radio" class="form-control" name="api_openid" value="openid" title="openid" checked>
+                <input type="radio" class="form-control" name="api_openid" value="token" title="token">
+                <br>
+                <br>
+                <br>
+
+                <s>
+                    <p style="">
+                        -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------</p>
+                    <br>
+                </s>
+
+
+                <br>
+                <input type="checkbox" class="form-control" lay-skin="tag" name="admin_controller" title="admin控制器"
+                       checked>
+                <!--                <input type="checkbox" class="form-control" lay-skin="tag" name="admin_model" title="admin模型" checked>-->
+                <input type="checkbox" class="form-control" lay-skin="tag" name="admin_paginate" title="admin控制器(分页)"
+                       checked>
+                <input type="checkbox" class="form-control" lay-skin="tag" name="admin_view" title="admin视图" checked>
+                <input type="checkbox" class="form-control" lay-skin="tag" name="admin_menu" title="左侧菜单">
+            </div>
+        </div>
+
+        <div class="col-sm-offset-2 col-sm-10">
+            <button type="submit" class="btn baocun btn-success js-ajax-submit">保存</button>
+        </div>
+
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <s>
+            <p style="margin-left: 17%">----------------------------------------------------------------------------
+                页面设置
+                -----------------------------------------------------------------------------------</p>
+            <br>
+            <br>
+
+
+            <div class="form-group">
+                <label for="input-action" class="col-sm-2 control-label"><span
+                        class="form-required">*</span>index页面设置:</label>
+                <div class="col-md-6 col-sm-10">
+
+                    <input type="checkbox" class="form-control" lay-skin="tag" name="index_add" title="添加" checked>
+                    <input type="checkbox" class="form-control" lay-skin="tag" name="index_edit" title="编辑" checked>
+                    <input type="checkbox" class="form-control" lay-skin="tag" name="index_find" title="查看" checked>
+                    <input type="checkbox" class="form-control" lay-skin="tag" name="index_delete" title="删除" checked>
+                    <input type="checkbox" class="form-control" lay-skin="tag" name="index_delete_s" title="批量删除">
+                    <input type="checkbox" class="form-control" lay-skin="tag" name="index_recommend" title="批量推荐">
+                    <input type="checkbox" class="form-control" lay-skin="tag" name="index_list_order" title="批量排序">
+
+                    <br>
+                    <br>
+
+                    <input type="checkbox" class="form-control" lay-skin="tag" name="index_enter" title="导入">
+                    <input type="checkbox" class="form-control" lay-skin="tag" name="index_out" title="导出">
+                </div>
+            </div>
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn baocun btn-success js-ajax-submit">保存</button>
+            </div>
+        </s>
+
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <s>
+            <p style="margin-left: 17%">------------------------------------------------------------------------
+                生成左侧菜单
+                --------------------------------------------------------------------------------</p>
+            <br>
+            <br>
+            <div class="form-group">
+                <label for="input-parent_id" class="col-sm-2 control-label"><span
+                        class="form-required">*</span>上级</label>
+                <div class="col-md-6 col-sm-10">
+                    <select name="parent_id" id="input-parent_id" lay-search>
+                        <option value=""></option>
+                        {$select_category}
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="input-name" class="col-sm-2 control-label"><span
+                        class="form-required">*</span>左侧菜单名称</label>
+                <div class="col-md-6 col-sm-10">
+                    <input type="text" class="form-control" id="input-name" name="name">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="input-app" class="col-sm-2 control-label">应用</label>
+                <div class="col-md-6 col-sm-10">
+                    <input type="text" class="form-control" id="input-app" name="app" value="admin">
+                </div>
+            </div>
+
+
+            <div class="form-group">
+                <label for="input-action" class="col-sm-2 control-label"><span
+                        class="form-required">*</span>控制器跳转的方法</label>
+                <div class="col-md-6 col-sm-10">
+                    <input type="text" class="form-control" id="input-action" name="action" value="index">
+                </div>
+            </div>
+
+
+            <!--            <div class="form-group">-->
+            <!--                <label for="input-action" class="col-sm-2 control-label"><span-->
+            <!--                        class="form-required">*</span>权限生成:</label>-->
+            <!--                <div class="col-md-6 col-sm-10">-->
+            <!--                    <input type="checkbox" class="form-control" lay-skin="tag" name="menu_add" title="添加" checked>-->
+            <!--                    <input type="checkbox" class="form-control" lay-skin="tag" name="menu_edit" title="编辑" checked>-->
+            <!--                    <input type="checkbox" class="form-control" lay-skin="tag" name="menu_delete" title="删除" checked>-->
+            <!--                    <input type="checkbox" class="form-control" lay-skin="tag" name="menu_find" title="查看" checked>-->
+            <!--                    <input type="checkbox" class="form-control" lay-skin="tag" name="menu_recommend" title="推荐">-->
+            <!--                    <input type="checkbox" class="form-control" lay-skin="tag" name="menu_list_order" title="排序">-->
+            <!--                </div>-->
+            <!--            </div>-->
+
+
+            <div class="form-group">
+                <label for="input-param" class="col-sm-2 control-label">参数</label>
+                <div class="col-md-6 col-sm-10">
+                    <input type="text" class="form-control" id="input-param" name="param">
+                    <p class="help-block">例:id=3&amp;p=3</p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="input-icon" class="col-sm-2 control-label">图标</label>
+                <div class="col-md-6 col-sm-10">
+                    <input type="text" class="form-control" id="input-icon" name="icon">
+                    <p class="help-block">
+                        <a href="http://www.thinkcmf.com/font/font_awesome/icons.html" target="_blank">选择图标</a>
+                        不带前缀fa-，如fa-user => user
+                    </p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="input-remark" class="col-sm-2 control-label">备注</label>
+                <div class="col-md-6 col-sm-10">
+                    <textarea class="form-control" id="input-remark" name="remark"></textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="input-status" class="col-sm-2 control-label">状态</label>
+                <div class="col-md-6 col-sm-10" id="input-status">
+                    <select class="form-control" name="status">
+                        <option value="1">在左侧菜单显示</option>
+                        <option value="0">在左侧菜单隐藏</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="input-type" class="col-sm-2 control-label">类型</label>
+                <div class="col-md-6 col-sm-10">
+                    <select class="form-control" name="type" id="input-type">
+                        <option value="1">有界面可访问菜单</option>
+                        <option value="2">无界面可访问菜单</option>
+                        <option value="0">只作为菜单</option>
+                    </select>
+                </div>
+            </div>
+        </s>
+
+        <div class="col-sm-offset-2 col-sm-10">
+            <button type="submit" class="btn baocun btn-success js-ajax-submit">保存</button>
+        </div>
+    </form>
+
+    <div class="bottom-right">
+        <a id="bottom-right-a" style="color: white;">待生成</a>
+    </div>
+    <div class="bottom-right-url" onclick="get_url()">
+        <img style="width: 65px;"
+             src="https://oss.ausite.cn/kf136/default/20231210/5fc78287f3392c45ae84b6ab9b0900e2.png">
+    </div>
+
+
+</div>
+
+
+<!--复制需要的input框-->
+<textarea readonly id="copy_content" class="form-control item-left"
+          style="position: absolute;top: -540px;left: 0;opacity: 0;z-index: -10;"></textarea>
+
+<script src="__STATIC__/layui/layui.js"></script>
+<script src="__STATIC__/js/admin.js"></script>
+<script>
+    //更新url地址
+    get_url();
+
+    function get_url() {
+        $.ajax({
+            url: "{:url('/plugin/form/AdminIndex/get_url')}",
+            type: "post",
+            dataType: "json",
+            success: function (res) {
+                var data = res.data;
+                var colors = getRandomColor();
+                var url = '';
+                url = '<a target="_blank" href=' + data.json_params + ' class="bottom-right" style=' + 'background-color:' + colors + '>' + data.json_params + '<br><br>' + data.remark + '</a>';
+                $("#bottom-right-a").html(url)
+            }
+        });
+    }
+
+    function getRandomColor() {
+        var letters = '0123401234abcabc';
+        var color = '#';
+        for (var i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+    }
+
+
+    //表选中
+    layui.use(['form', 'element'], function () {
+        var form = layui.form,
+            element = layui.element;
+
+        //选中select
+        form.on('select(table_name)', function (data) {
+            // console.log(data.elem); //得到select原始DOM对象
+            // console.log(data.value); //得到被选中的值
+
+            var table_name_value = data.value;//表名称
+            tablenames(table_name_value);
+
+            $.ajax({
+                url: "{:url('/plugin/form/AdminIndex/db_info')}",
+                data: {'table_name': table_name_value},
+                type: "post",
+                dataType: "json",
+                success: function (data) {
+                    var list = data.data
+                    $('#search').html(list.html);
+                    $('#validateHtml').html(list.validateHtml);
+                    $('#tags').val(list.tags);
+                    $('#input-name').val(list.tags);
+                    if (!list.tags) names(table_name_value);
+
+                    form.render();
+                }
+            });
+
+        });
+    });
+
+
+    $(function () {
+        tagger_parent()
+    })
+
+
+    function tagger_parent() {
+        $("#check_root").click(function () {
+            $(".show-parent").hide();
+            // 选中为子标签
+            if ($(this).is(':checked')) {
+                $("#menu_parent").val(null);
+            } else {
+                // 父标签
+                $(".show-parent").show();
+                $("#menu_parent").val("default");
+            }
+        })
+    }
+
+
+    //表名
+    function tablenames(value) {
+        $('#model_name').val(toLine(value));
+    }
+
+    //模型名字
+    function model_names() {
+        $('#model_name').val(toLine($('#model_name').val()));
+    }
+
+
+    //翻译
+    function translate_a(e) {
+        var val = e.value;
+        layui.use('form', function () {
+            var form = layui.form;
+            //标签渲染上
+            $.ajax({
+                url: "{:url('/plugin/form/AdminIndex/db_info')}",
+                data: {'table_name': val},
+                type: "post",
+                dataType: "json",
+                success: function (data) {
+                    var list = data.data
+                    $('#search').html(list.html);
+                    $('#validateHtml').html(list.validateHtml);
+                    $('#tags').val(list.tags);
+                    $('#input-name').val(list.tags);
+
+                    if (!list.tags) {
+                        names(val);
+                    }
+
+                    form.render();
+                }
+            });
+        });
+    }
+
+
+    //获取数据库列表
+    function get_db_list() {
+        layui.use('form', function () {
+            var form = layui.form;
+            //获取数据库表
+            $.ajax({
+                url: "{:url('/plugin/form/AdminIndex/get_table_name_list')}",
+                type: "post",
+                dataType: "json",
+                success: function (res) {
+                    if (res.code == 1) {
+                        List = res.data;
+                        var tmp = '<option value="">请选择</option>';
+                        for (var i in List) {
+                            tmp += '<option value="' + List[i].table_name + '"  ' + List[i].selected + '>' + List[i].table_remark + '(' + List[i].table_name + ')' + '</option>';
+                        }
+                        $(".table_name").html(tmp);//赋值一级分类下拉选择
+                    }
+                    form.render('select');
+                }
+            });
+        });
+    }
+
+
+    //驼峰转大写
+    function toLine(name) {
+        name = name[0].toUpperCase() + name.substr(1)
+        return name.replace(/\_(\w)/g, function (all, letter) {
+            return letter.toUpperCase();
+        });
+    }
+
+
+    //获取本表搜索条件
+    function names(value) {
+        // var value = $('#input-label-name').val();
+        $.ajax({
+            url: "{:url('/api/wxapp/public/translate')}",
+            data: {'value': value, 'c': 1},
+            type: "post",
+            dataType: "json",
+            success: function (data) {
+                if (data.data) {
+                    $('#tags').val(data.data);
+                }
+            }
+        });
+    }
+
+    //复制变量
+    function copyContent(clickContent) {
+        //获取要赋值的input的元素
+        var inputElement = document.getElementById("copy_content");
+        //给input框赋值
+        //clickContent = clickContent.replace(/<br\s*\/?>/g, "");
+        inputElement.value = clickContent;
+        //选中input框的内容
+        inputElement.select();
+        // 执行浏览器复制命令
+        document.execCommand("Copy");
+        //提示已复制
+        layer.msg(clickContent + '已复制', {icon: 6, time: 700});
+    }
+
+
+    function copyKey(key) {
+        var ids = key + '_select';
+        var select_value = $("#" + ids).text();
+        // 获取选中 option 的 value 属性值
+        var selectedValue = $("#" + ids).val();
+        // 获取选中 option 的文本内容
+        var selectedText = $('#' + ids + ' option:selected').text();
+        var key_value = $("#" + key).val();
+        var newString = selectedText.replace("确保 * 字段", key_value);
+        //获取要赋值的input的元素
+        $("#" + key + '_value').val(newString)
+    }
+
+
+    function tags_in() {
+        var tags = $('#tags').val();
+        $('#input-name').val(tags);
+    }
+
+
+
+
+</script>
+</body>
+</html>

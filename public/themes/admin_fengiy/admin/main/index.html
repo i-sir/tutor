@@ -1,0 +1,159 @@
+<include file="public@header"/>
+
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <div class="layui-row">
+        <div class="layui-col-xs12">
+            <div class="panel panel-default" style="margin-bottom: 10px;">
+                <div class="panel-body">
+                    {:lang('WELCOME_USER',array('user_nickname' => empty($admin['user_nickname'])?$admin['user_login'] :
+                    $admin['user_nickname']))}登陆后台管理中心
+                    <div style="float: right;">
+                        服务到期时间:<span style="color:red;">{:cmf_config('app_expiration_time')}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!--六方格统计-->
+    <!--    <div class="layui-row layui-col-space20">-->
+    <!--        <div class="layui-col-xs2">-->
+    <!--            <div class="panel panel-default" style="margin-bottom: 0;">-->
+    <!--                <div class="panel-body text-center">-->
+    <!--                    <i style="font-size: 24px; color: #69C0FF;">{$serve_order_total|default='0'}</i>-->
+    <!--                    <div class="margin-top-10">预约总单数</div>-->
+    <!--                </div>-->
+    <!--            </div>-->
+    <!--        </div>-->
+    <!--        <div class="layui-col-xs2">-->
+    <!--            <div class="panel panel-default" style="margin-bottom: 0;">-->
+    <!--                <div class="panel-body text-center" style="margin-bottom: 0;">-->
+    <!--                    <i style="font-size: 24px; color: #5CDBD3;">{$serve_order_amount|default='0'}</i>-->
+    <!--                    <div class="margin-top-10">预约总销量</div>-->
+    <!--                </div>-->
+    <!--            </div>-->
+    <!--        </div>-->
+    <!--        <div class="layui-col-xs2">-->
+    <!--            <div class="panel panel-default" style="margin-bottom: 0;">-->
+    <!--                <div class="panel-body text-center">-->
+    <!--                    <i style="font-size: 24px; color: #B37FEB;">{$day_serve_order_total|default='0'}</i>-->
+    <!--                    <div class="margin-top-10">今日总订单数</div>-->
+    <!--                </div>-->
+    <!--            </div>-->
+    <!--        </div>-->
+    <!--        <div class="layui-col-xs2">-->
+    <!--            <div class="panel panel-default" style="margin-bottom: 0;">-->
+    <!--                <div class="panel-body text-center">-->
+    <!--                    <i style="font-size: 24px; color: #FF9C6E;">{$day_serve_order_amount|default='0'}</i>-->
+    <!--                    <div class="margin-top-10">今日总销售额</div>-->
+    <!--                </div>-->
+    <!--            </div>-->
+    <!--        </div>-->
+    <!--        <div class="layui-col-xs2">-->
+    <!--            <div class="panel panel-default" style="margin-bottom: 0;">-->
+    <!--                <div class="panel-body text-center">-->
+    <!--                    <i style="font-size: 24px; color: #95DE64;">{$all_order_total|default='0'}</i>-->
+    <!--                    <div class="margin-top-10">111</div>-->
+    <!--                </div>-->
+    <!--            </div>-->
+    <!--        </div>-->
+    <!--        <div class="layui-col-xs2">-->
+    <!--            <div class="panel panel-default" style="margin-bottom: 0;">-->
+    <!--                <div class="panel-body text-center">-->
+    <!--                    <i style="font-size: 24px; color: #FFC069;">0</i>-->
+    <!--                    <div class="margin-top-10">112</div>-->
+    <!--                </div>-->
+    <!--            </div>-->
+    <!--        </div>-->
+    <!--    </div>-->
+
+
+    <!--四宫格-->
+    <!--    <div class="layui-row layui-col-space20">-->
+    <!--        <div class="layui-col-xs3">-->
+    <!--            <div class="panel panel-default" style="margin-bottom: 0;">-->
+    <!--                <div class="panel-body text-center">-->
+    <!--                    <i style="font-size: 24px; color: #69C0FF;">{$member_total|default='0'}</i>-->
+    <!--                    <div class="margin-top-10">平台用户</div>-->
+    <!--                </div>-->
+    <!--            </div>-->
+    <!--        </div>-->
+    <!--        <div class="layui-col-xs3">-->
+    <!--            <div class="panel panel-default" style="margin-bottom: 0;">-->
+    <!--                <div class="panel-body text-center">-->
+    <!--                    <i style="font-size: 24px; color: #69C0FF;">{$member_vip_total|default='0'}</i>-->
+    <!--                    <div class="margin-top-10">会员总数</div>-->
+    <!--                </div>-->
+    <!--            </div>-->
+    <!--        </div>-->
+    <!--        <div class="layui-col-xs3">-->
+    <!--            <div class="panel panel-default" style="margin-bottom: 0;">-->
+    <!--                <div class="panel-body text-center" style="margin-bottom: 0;">-->
+    <!--                    <i style="font-size: 24px; color: #5CDBD3;">{$all_technician_total|default='0'}</i>-->
+    <!--                    <div class="margin-top-10">技师总数</div>-->
+    <!--                </div>-->
+    <!--            </div>-->
+    <!--        </div>-->
+    <!--        <div class="layui-col-xs3">-->
+    <!--            <div class="panel panel-default" style="margin-bottom: 0;">-->
+    <!--                <div class="panel-body text-center" style="margin-bottom: 0;">-->
+    <!--                    <i style="font-size: 24px; color: #507400;">{$reception_total|default='0'}</i>-->
+    <!--                    <div class="margin-top-10">前台总数</div>-->
+    <!--                </div>-->
+    <!--            </div>-->
+    <!--        </div>-->
+    <!--    </div>-->
+
+
+    <!--折线图--> <!--如需要关闭,js也需要关掉,否则报错,最下方折线图不会出现-->
+    <!--    <div class="layui-row layui-col-space15">-->
+
+    <!--        <div class="layui-col-xs12">-->
+    <!--            <div class="panel panel-default" style="margin-bottom: 10px;">-->
+    <!--                <div class="panel-heading">-->
+    <!--                    <i class="fa fa-pie-chart" style="font-size: 16px; color: #1890FF;"></i>-->
+    <!--                    <span>订单</span>-->
+    <!--                </div>-->
+    <!--                <div class="panel-body">-->
+    <!--                    <div id="order" style="width: 100%;height:280px;"></div>-->
+    <!--                </div>-->
+    <!--            </div>-->
+    <!--        </div>-->
+
+
+    <!--        <div class="layui-col-xs12">-->
+    <!--            <div class="panel panel-default" style="margin-bottom: 0;">-->
+    <!--                <div class="panel-heading">-->
+    <!--                    <i class="fa fa-user-circle" style="font-size: 16px; color: #1890FF;"></i>-->
+    <!--                    <span>用户</span>-->
+    <!--                </div>-->
+    <!--                <div class="panel-body">-->
+    <!--                    <div id="member" style="width: 100%;height:280px;"></div>-->
+    <!--                </div>-->
+    <!--            </div>-->
+    <!--        </div>-->
+
+
+    <!--    </div>-->
+
+
+</div>
+<script src="__STATIC__/js/admin.js"></script>
+<script src="__TMPL__/public/assets/simpleboot3/js/adminindex.js"></script>
+<script src="__TMPL__/public/assets/js/echarts.js"></script>
+<script src="__TMPL__/public/assets/simpleboot3/js/indexnum.js"></script>
+<hook name="admin_before_body_end"/>
+<script type="text/javascript">
+    //图表
+    $(function () {
+        //订单数据量趋势
+        orderChart([10, 11, 13, 11, 12, 12, 9], [1, 2, 2, 5, 3, 2, 0]);
+        //用户数据量趋势
+        userChart([820, 932, 901, 934, 1290, 1330, 1320]);
+    })
+</script>
+</body>
+</html>

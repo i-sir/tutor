@@ -1,0 +1,53 @@
+<include file="public@header"/>
+
+
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <form action='{:url("Excel/memberExcelImport")}' class="form-horizontal js-ajax-form margin-top-20" method="post"
+          autocomplete="off" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="" class="col-sm-2 control-label">{:lang('文件')}</label>
+            <div class="col-md-6 col-sm-10">
+                <input type="file" class="form-control post-params" id="" required name="my_file">
+            </div>
+        </div>
+
+        <a style="color: red;"
+           href="https://oss.ausite.cn/dz160/default/20230104/86aa40450b54529733dc58e1e1a6f997.xlsx">下载模板</a>
+
+
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <br>
+                <br>
+                <button type="submit" class="layui-btn js-ajax-submit">提交</button>
+                <br>
+            </div>
+        </div>
+    </form>
+
+</div>
+<script src="__STATIC__/js/admin.js"></script>
+
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,9 @@
+.buildpath
+.DS_Store
+.vscode
+.idea
+.git
+Vagrantfile
+.vagrant
+*.log
+/data/runtime

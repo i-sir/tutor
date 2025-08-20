@@ -1,0 +1,146 @@
+<?php
+namespace api\wxapp\controller;
+
+%root_menu_name%
+
+
+%use_auth_controllers%
+
+
+
+error_reporting(0);
+
+
+
+class %controller_name%Controller extends AuthController{
+
+	//public function initialize(){
+	//	//%table_result_name%
+	//	parent::initialize();
+	//}
+
+
+
+	/**
+	* 默认接口
+	* %success_url%
+	*/
+	public function index(){
+		$%InitName% = new \init\%InitName%();//%table_result_name%   (ps:InitController)
+		$%InitModel% = new \initmodel\%InitModel%(); //%table_result_name%   (ps:InitModel)
+
+		$result = [];
+
+		$this->success(%success%,$result);
+	}
+
+
+
+
+	%api_index%
+	public function find_%api_function_name%_list()
+	{	%api_checkAuth%
+		$%InitName% = new \init\%InitName%();//%table_result_name%   (ps:InitController)
+		$%InitModel% = new \initmodel\%InitModel%(); //%table_result_name%   (ps:InitModel)
+
+		/** 获取参数 **/
+		$params = $this->request->param();
+		$params["user_id"] = $this->user_id;
+
+		/** 查询条件 **/
+		$where=[];
+		%user_id_where%
+		if ($params["keyword"]) $where[] = ["%keyword%", "like", "%{$params['keyword']}%"];
+		if($params["status"]) $where[]=["status","=", $params["status"]];
+		%is_where%
+
+
+		/** 查询数据 **/
+		$params["InterfaceType"] = "api";//接口类型
+		$params["DataFormat"]    = "list";//数据格式,find详情,list列表
+		$params["field"]         = "*";//过滤字段
+		if ($params['is_paginate']) $result = $%InitName%->get_list($where, $params);
+		if (empty($params['is_paginate'])) $result = $%InitName%->get_list_paginate($where, $params);
+		if (empty($result)) $this->error("暂无信息!");
+
+		$this->success("请求成功!", $result);
+	}
+
+
+
+    %api_find%
+    public function find_%api_function_name%()
+{
+		$%InitName% = new \init\%InitName%();//%table_result_name%    (ps:InitController)
+		$%InitModel% = new \initmodel\%InitModel%(); //%table_result_name%   (ps:InitModel)
+
+		/** 获取参数 **/
+	 	$params = $this->request->param();
+		$params["user_id"] = $this->user_id;
+
+		/** 查询条件 **/
+		$where   = [];
+		$where[] = ["id", "=", $params["id"]];
+
+		/** 查询数据 **/
+		$params["InterfaceType"] = "api";//接口类型
+		$params["DataFormat"]    = "find";//数据格式,find详情,list列表
+        $result = $%InitName%->get_find($where,$params);
+		if (empty($result)) $this->error("暂无数据");
+
+        $this->success("详情数据",$result);
+    }
+
+
+
+
+	%api_edit%
+	public function edit_%api_function_name%(){%api_checkAuth%
+		$%InitName% = new \init\%InitName%();//%table_result_name%    (ps:InitController)
+		$%InitModel% = new \initmodel\%InitModel%(); //%table_result_name%   (ps:InitModel)
+
+		/** 获取参数 **/
+		$params = $this->request->param();
+		$params["user_id"]=$this->user_id;
+
+		/** 检测参数信息 **/
+		$validateResult = $this->validate($params, %ValidateName%);
+		if ($validateResult !== true) $this->error($validateResult);
+
+		/** 更改数据条件 && 或$params中存在id本字段可以忽略 **/
+		$where   = [];
+		if($params['id'])$where[] = ['id', '=', $params['id']];
+
+
+		/** 提交更新 **/
+		$result = $%InitName%->api_edit_post($params,$where);
+		if (empty($result)) $this->error("失败请重试");
+
+
+		if (empty($params["id"])) $msg = "添加成功";
+		if (!empty($params["id"])) $msg = "编辑成功";
+		$this->success($msg);
+	}
+
+
+	%api_delete%
+	public function delete_%api_function_name%()
+	{
+		$%InitName% = new \init\%InitName%();//%table_result_name%    (ps:InitController)
+		$%InitModel% = new \initmodel\%InitModel%(); //%table_result_name%   (ps:InitModel)
+
+		/** 获取参数 **/
+		$params      = $this->request->param();
+
+		/** 删除数据 **/
+		$result = $%InitName%->delete_post($params["id"]);
+		if (empty($result)) $this->error("失败请重试");
+
+		$this->success("删除成功");
+	}
+
+
+
+
+
+}

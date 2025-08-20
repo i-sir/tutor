@@ -1,0 +1,156 @@
+ <include file="public@header"/>
+<style>
+    textarea {
+        border: 0;
+        outline: none;
+        background-color: rgba(0, 0, 0, 0);
+    }
+
+    input {
+        border: 0;
+        outline: none;
+        background-color: rgba(0, 0, 0, 0);
+    }
+
+    .col-sm-6 {
+        margin-top: 7px;
+    }
+</style>
+
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="{:url('find',['id'=>$id,'pid'=>$pid,'type'=>'goods','params'=>$params])}">查看</a></li>
+    </ul>
+    <form method="post" class="form-horizontal js-ajax-form margin-top-20 layui-form" autocomplete="off"
+          action="{:url('edit_post',['id'=>$id,'page'=>$page,'pid'=>$pid,'type'=>'goods','params'=>$params])}">
+
+
+        
+
+
+
+            <!--商品类型:paid=有偿共享,show=种质展示,discount=限时折扣,full=满减活动,new=新品预售,goods=普通商品-->            <div class="form-group">
+                <label class="col-sm-2 control-label">商品类型:paid=有偿共享,show=种质展示,discount=限时折扣,full=满减活动,new=新品预售,goods=普通商品:</label>
+                <div class="layui-input-block col-sm-6">
+                                                {$type|default=''}                                    </div>
+            </div>
+
+
+
+
+
+
+        
+
+
+
+            <!--pid-->            <div class="form-group">
+                <label class="col-sm-2 control-label">pid:</label>
+                <div class="layui-input-block col-sm-6">
+                                                {$pid|default=''}                                    </div>
+            </div>
+
+
+
+
+
+
+        
+
+
+
+            <!--名称-->            <div class="form-group">
+                <label class="col-sm-2 control-label">名称:</label>
+                <div class="layui-input-block col-sm-6">
+                                                {$name|default=''}                                    </div>
+            </div>
+
+
+
+
+
+
+        
+
+
+
+            <!--图片-->            <div class="form-group">
+                <label class="col-sm-2 control-label">图片:</label>
+                <div class="layui-input-block col-sm-6">
+                                                <if condition='!empty($image)'>
+<a href="javascript:imagePreviewDialog('{:cmf_get_asset_url($image)}');">
+<img src='{:cmf_get_asset_url($image)}' style='height:40px;'>
+</a>
+<else/>
+暂无上传
+</if>
+                </div>
+            </div>
+
+
+
+
+
+
+        
+
+
+
+            <!--首页推荐:1是,2否-->            <div class="form-group">
+                <label class="col-sm-2 control-label">首页推荐:</label>
+                <div class="layui-input-block col-sm-6">
+                                                {$is_index_name|default=''}                                    </div>
+            </div>
+
+
+
+
+
+
+        
+
+
+
+            <!--显示:1是,2否-->            <div class="form-group">
+                <label class="col-sm-2 control-label">显示:</label>
+                <div class="layui-input-block col-sm-6">
+                                                {$is_show_name|default=''}                                    </div>
+            </div>
+
+
+
+
+
+
+        
+
+
+
+            <!--list_order-->            <div class="form-group">
+                <label class="col-sm-2 control-label">list_order:</label>
+                <div class="layui-input-block col-sm-6">
+                                                {$list_order|default=''}                                    </div>
+            </div>
+
+
+
+
+
+
+        
+
+        <!-- 主键id -->
+        <input type="text" name="id" value="{$id}" class="form-control post-params item-left" style="display: none">
+
+
+    </form>
+
+</div>
+<script src="__STATIC__/js/admin.js"></script>
+</body>
+</html>
+
+
+

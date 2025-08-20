@@ -1,0 +1,53 @@
+<include file="public@header"/>
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li><a href="{:url('user/index')}">{:lang('ADMIN_USER_INDEX')}</a></li>
+        <li><a href="{:url('user/add')}">{:lang('ADMIN_USER_ADD')}</a></li>
+        <li class="active"><a>编辑管理员</a></li>
+    </ul>
+    <form method="post" class="form-horizontal js-ajax-form margin-top-20 layui-form" action="{:url('User/editPost')}">
+        <div class="form-group">
+            <label for="input-user_login" class="col-sm-2 control-label">{:lang('USERNAME')}</label>
+            <div class="layui-input-block col-md-4 col-sm-10">
+                <input type="text" class="form-control post-params" id="input-user_login" name="user_login" value="{$user_login}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="input-user_pass" class="col-sm-2 control-label">{:lang('PASSWORD')}</label>
+            <div class="layui-input-block col-md-4 col-sm-10">
+                <input type="text" class="form-control post-params" id="input-user_pass" name="user_pass" value=""
+                       placeholder="******">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="input-user_email" class="col-sm-2 control-label">{:lang('EMAIL')}</label>
+            <div class="layui-input-block col-md-4 col-sm-10">
+                <input type="text" class="form-control post-params" id="input-user_email" name="user_email" value="{$user_email}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="input-user_email" class="col-sm-2 control-label">{:lang('ROLE')}</label>
+            <div class="layui-input-block col-md-4 col-sm-10">
+                <foreach name="roles" item="vo">
+                    <php>$role_id_checked=in_array($vo['id'],$role_ids)?"checked":"";</php>
+                    <input value="{$vo.id}" type="checkbox" name="role_id[{$vo.id}]" {$role_id_checked}
+                    <if condition="cmf_get_current_admin_id() neq 1 && $vo['id'] eq 1">disabled="true"</if>
+                    title="{$vo.name}">
+                </foreach>
+
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <input type="hidden" name="id" value="{$id}"/>
+                <button type="submit" class="layui-btn js-ajax-submit" id="save">保存</button>
+                <a class="layui-btn layui-btn-primary" href="javascript:history.back(-1);">返回</a>
+            </div>
+        </div>
+    </form>
+</div>
+<script src="__STATIC__/js/admin.js"></script>
+</body>
+</html>

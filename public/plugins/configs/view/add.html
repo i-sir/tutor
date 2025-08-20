@@ -1,0 +1,304 @@
+<include file="public@head"/>
+<style>
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 34px;
+    }
+
+    .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: .4s;
+        border-radius: 34px;
+    }
+
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 26px;
+        width: 26px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        transition: .4s;
+        border-radius: 50%;
+    }
+
+    input:checked + .slider {
+        background-color: #2196F3;
+    }
+
+    input:checked + .slider:before {
+        transform: translateX(26px);
+    }
+
+    /* 圆角滑块 */
+    .slider.round {
+        border-radius: 34px;
+    }
+
+    .slider.round:before {
+        border-radius: 50%;
+    }
+</style>
+
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <volist name="group_list" id="vo">
+            <eq name="group_id" value="$key">
+                <li class="active"><a
+                        href="{:cmf_plugin_url('Configs://AdminIndex/index', ['group_id' => $key,'code'=>$code])}">{$vo}</a>
+                </li>
+                <else/>
+                <li>
+                    <a href="{:cmf_plugin_url('Configs://AdminIndex/index', ['group_id' => $key,'code'=>$code])}">{$vo}</a>
+                </li>
+            </eq>
+        </volist>
+
+        <if condition="$CUSTODIAN_SIR">
+            <if condition="empty($group_id)">
+                <li>
+                    <a href="{:cmf_plugin_url('Configs://AdminIndex/site')}">导航栏设置</a>
+                </li>
+                <li class="active">
+                    <a href="{:cmf_plugin_url('Configs://AdminIndex/add',['code'=>$code,'code'=>$group_id])}">添加参数</a>
+                </li>
+                <else/>
+                <li>
+                    <a href="{:cmf_plugin_url('Configs://AdminIndex/site')}">导航栏设置</a>
+                </li>
+                <li>
+                    <a href="{:cmf_plugin_url('Configs://AdminIndex/add',['code'=>$code,'code'=>$group_id])}">添加参数</a>
+                </li>
+            </if>
+        </if>
+    </ul>
+
+
+    <form class="form-horizontal js-ajax-form margin-top-20" role="form" autocomplete="off"
+          action="{:cmf_plugin_url('Configs://AdminIndex/add',['code'=>$code,'group_id'=>$group_id])}" method="post">
+
+
+        <div class="form-group layui-form">
+            <label for="group-id" class="col-sm-2 control-label">参数分组</label>
+            <div class="col-sm-3">
+                <select name="group_id" id="group-id" lay-search>
+                    <volist name="group_list" id="vo">
+                        <eq name="post_group_id" value="$key">
+                            <option value="{$key}" selected>{$vo}</option>
+                            <else/>
+                            <option value="{$key}">{$vo}</option>
+                        </eq>
+                    </volist>
+                    <option value="site"
+                    <if condition="$post_group_id eq 'site'">selected</if>
+                    >导航栏设置</option>
+                </select>
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label"><span class="form-required">*</span>参数说明(中)</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control item-left" id="input-label-name" name="label"
+                       placeholder="例如:网站名称" value="{$label}" onblur="names()">
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label">参数名(英)</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control item-left" id="input-site-name" name="name"
+                       placeholder="例如:app_debug" value="{$name}">
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label">排序</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control item-left" id="input-list_order-name" name="list_order"
+                       value="{$list_order}">
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            <label for="input-uridata-name" class="col-sm-2 control-label">附加数据</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control item-left" id="input-uridata-name" name="uridata"
+                       placeholder="例如:key=1&key2=2" value="{$uridata}">
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            <label for="input-about-name" class="col-sm-2 control-label">附加说明</label>
+            <div class="col-sm-10">
+                <textarea class="form-control item-left" id="input-about-name" name="about"
+                          placeholder="例如:这是单位">{$about}</textarea>
+            </div>
+        </div>
+
+        <div class="form-group layui-form">
+            <label class="col-sm-2 control-label">组件数据:</label>
+            <div class="col-sm-10">
+                <input type="checkbox" lay-skin="switch" lay-text="组件|非组件" name="is_label"
+                <if condition="$is_label == 1">checked</if>
+                >
+            </div>
+        </div>
+
+        <div class="form-group layui-form">
+            <label class="col-sm-2 control-label">禁止编辑:</label>
+            <div class="col-sm-10">
+                <input type="checkbox" lay-skin="switch" lay-text="禁用|非禁用" name="is_edit"
+                <if condition="$is_edit == 1">checked</if>
+                >
+            </div>
+        </div>
+
+        <div class="form-group layui-form">
+            <label class="col-sm-2 control-label">是否显示:</label>
+            <div class="col-sm-10">
+                <input type="checkbox" lay-skin="switch" lay-text="显示|隐藏" name="is_show"
+                <if condition="$is_show == 1 || !isset($is_show) ">checked</if>
+                >
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="input-about-name" class="col-sm-2 control-label">参数样式</label>
+            <div class="col-sm-10">
+                <select name="type" class="form-control item-left">
+                    <option value="">请选择</option>
+                    <option value="number"
+                    <if condition="$type eq 'number'">selected</if>
+                    >数字</option>
+                    <option value="text"
+                    <if condition="$type eq 'text'">selected</if>
+                    >文本</option>
+                    <option value="textarea"
+                    <if condition="$type eq 'textarea'">selected</if>
+                    >文本域</option>
+                    <option value="checkbox"
+                    <if condition="$type eq 'checkbox'">selected</if>
+                    >多选</option>
+                    <option value="radio"
+                    <if condition="$type eq 'radio'">selected</if>
+                    >单选</option>
+                    <option value="select"
+                    <if condition="$type eq 'select'">selected</if>
+                    >下拉选</option>
+                    <option value="img"
+                    <if condition="$type eq 'img'">selected</if>
+                    >图片</option>
+                    <option value="file"
+                    <if condition="$type eq 'file'">selected</if>
+                    >文件</option>
+                    <option value="video"
+                    <if condition="$type eq 'video'">selected</if>
+                    >视频</option>
+                    <option value="line"
+                    <if condition="$type eq 'line'">selected</if>
+                    >分隔线</option>
+                    <option value="time"
+                    <if condition="$type eq 'time'">selected</if>
+                    >时间</option>
+                    <option value="date"
+                    <if condition="$type eq 'date'">selected</if>
+                    >日期</option>
+                    <option value="content"
+                    <if condition="$type eq 'content'">selected</if>
+                    >富文本</option>
+                    <option value="custom"
+                    <if condition="$type eq 'custom'">selected</if>
+                    >自定义表单</option>
+                </select>
+            </div>
+        </div>
+
+
+        <div id="other-data" class="form-group"
+        <if condition="!$data">style="display: none"</if>
+        >
+        <label class="col-sm-2 control-label">可选参数</label>
+        <div class="col-sm-10">
+            <textarea rows="4" class="form-control item-left" cols="60" name="data" id="data1"
+                      placeholder="格式:值=显示信息,一行一个 如:1=开启">{$data}</textarea>
+        </div>
+</div>
+
+
+<div id="scatter" class="form-group"
+<if condition="!$scatter">style="display: none"</if> >
+<label class="col-sm-2 control-label">打散参数</label>
+<div class="col-sm-10">
+    <input type="text" class="form-control item-left" name="scatter" id="data2"
+           placeholder="例如:, / 打散数组" value="{$scatter}">
+</div>
+</div>
+
+<div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+        <input type="hidden" class="form-control item-left" name="id" value="{$id}">
+        <input type="hidden" value="{$post_group_id}" name="post_group_id"/>
+        <button type="submit" class="btn btn-primary js-ajax-submit">立即保存</button>
+    </div>
+</div>
+</form>
+</div>
+<include file="public@scripts"/>
+<script>
+    $("select[name='type']").change(function () {
+        var type = $(this).val();
+        if (type == 'select' || type == 'checkbox' || type == 'radio' || type == 'tpls') {
+            $("#other-data").show();
+        } else {
+            $("#data1").val('');
+            $("#other-data").hide();
+        }
+
+        var type = $(this).val();
+        if (type == 'textarea') {
+            $("#scatter").show();
+        } else {
+            $("#data2").val('');
+            $("#scatter").hide();
+        }
+    });
+
+
+    function names() {
+        var value = $('#input-label-name').val();
+        $.ajax({
+            url: "{:url('/plugin/configs/admin_index/translate')}",
+            data: {'value': value},
+            type: "post",
+            dataType: "json",
+            success: function (data) {
+                if (data.data) {
+                    $('#input-site-name').val(data.data.replace(/\ /g, "_").toLowerCase());
+                }
+            }
+        });
+    }
+
+</script>
+

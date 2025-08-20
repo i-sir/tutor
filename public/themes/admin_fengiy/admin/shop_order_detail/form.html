@@ -1,0 +1,102 @@
+    <div class="form-group">
+        <label class="col-sm-2 control-label">店铺:</label>
+        <div class="layui-input-block col-sm-6">
+                            <input type="text" name="shop_id" class="form-control post-params item-left" value="{$shop_id|default=''}">
+                    </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label">用户信息:</label>
+        <div class="layui-input-block col-sm-6">
+                            <input type="text" name="user_id" class="form-control post-params item-left" value="{$user_id|default=''}">
+                    </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label">商品:</label>
+        <div class="layui-input-block col-sm-6">
+                            <input type="text" name="goods_id" class="form-control post-params item-left" value="{$goods_id|default=''}">
+                    </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label">规格:</label>
+        <div class="layui-input-block col-sm-6">
+                            <input type="text" name="sku_id" class="form-control post-params item-left" value="{$sku_id|default=''}">
+                    </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label">商品名字:</label>
+        <div class="layui-input-block col-sm-6">
+                            <input type="text" name="goods_name" class="form-control post-params item-left" value="{$goods_name|default=''}">
+                    </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label">规格名字:</label>
+        <div class="layui-input-block col-sm-6">
+                            <input type="text" name="sku_name" class="form-control post-params item-left" value="{$sku_name|default=''}">
+                    </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label">购买数量:</label>
+        <div class="layui-input-block col-sm-6">
+                            <input type="text" name="count" class="form-control post-params item-left" value="{$count|default=''}">
+                    </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label">是否是会员:</label>
+        <div class="layui-input-block col-sm-6">
+                            <input type="text" name="is_vip" class="form-control post-params item-left" value="{$is_vip|default=''}">
+                    </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label">价格/单价:</label>
+        <div class="layui-input-block col-sm-6">
+                            <input type="text" name="goods_price" class="form-control post-params item-left" value="{$goods_price|default=''}">
+                    </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label">会员价/单价   同步到普通单价里面,方便展示:</label>
+        <div class="layui-input-block col-sm-6">
+                            <input type="text" name="vip_price" class="form-control post-params item-left" value="{$vip_price|default=''}">
+                    </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label">会员价/合计   同步到普通合计里面,方便展示:</label>
+        <div class="layui-input-block col-sm-6">
+                            <input type="text" name="vip_amount" class="form-control post-params item-left" value="{$vip_amount|default=''}">
+                    </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label">优惠金额:</label>
+        <div class="layui-input-block col-sm-6">
+                            <input type="text" name="coupon_amount" class="form-control post-params item-left" value="{$coupon_amount|default=''}">
+                    </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label">合计:</label>
+        <div class="layui-input-block col-sm-6">
+                            <input type="text" name="total_amount" class="form-control post-params item-left" value="{$total_amount|default=''}">
+                    </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label">展示图:</label>
+        <div class="layui-input-block col-sm-6">
+                                <input type="hidden" class="form-control post-params item-left" name="image"  id="photo-00000014"  
+                           value="{$image}">
+<if condition='!empty($image)'>
+<a href="javascript:imagePreviewDialog('{:cmf_get_asset_url($image)}');">
+<img src='{:cmf_get_image_preview_url($image)}' id='photo-00000014-preview' style='width: 85px;height: 80px'>
+</a>
+<else/>
+<img src='/static/images/default.png' id='photo-00000014-preview' style='width: 85px;height: 80px'>
+</if>
+<a href="javascript:uploadOneImage('图片上传','#photo-00000014','image');">上传</a>
+<a onclick="$('#photo-00000014-preview').attr('src','__TMPL__/public/assets/images/default-thumbnail.png');$('#photo-00000014').val('');return false;">取消图片</a>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label">订单单号:</label>
+        <div class="layui-input-block col-sm-6">
+                            <input type="text" name="order_num" class="form-control post-params item-left" value="{$order_num|default=''}">
+                    </div>
+    </div>
+
+

@@ -1,0 +1,19 @@
+<include file="public@header"/>
+
+</head>
+<body>
+<div class="wrap">
+	<div class="grid-item col-md-12" style="margin-top: 20px">
+		<div class="dashboard-box">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					{:lang('WELCOME_USER',array('user_nickname' => empty($admin['user_nickname'] )? $admin['user_login'] : $admin['user_nickname']))}登陆后台管理中心
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script src="__STATIC__/js/admin.js"></script>
+<hook name="admin_before_body_end"/>
+</body>
+</html>

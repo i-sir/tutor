@@ -1,0 +1,213 @@
+<include file="public@header"/></head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="{:url('refuse',['id'=>$id,'page'=>$page,'params'=>$params])}"> 拒绝</a></li>
+    </ul>
+    <form method="post" id="moods_form" class="form-horizontal js-ajax-form margin-top-20 layui-form" autocomplete="off"
+          action="{:url('audit_post',['id'=>$id,'page'=>$page,'params'=>$params])}" onsubmit="return false">
+
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label">拒绝理由:</label>
+            <div class="layui-input-block col-sm-6">
+                <textarea name="refuse" class="form-control post-params item-left">{$refuse|default=''}</textarea>
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label">备注:</label>
+            <div class="layui-input-block col-sm-6">
+                <textarea class="form-control post-params item-left" name="remark">{$remark|default=''}</textarea>
+            </div>
+        </div>
+
+
+
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label">价格:</label>
+            <div class="layui-input-block col-sm-6">
+                <input type="number" name="price" class="form-control post-params item-left"
+                       value="{$price|default=''}">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label">测试数据2:</label>
+            <div class="layui-input-block col-sm-6">
+                <input type="text" name="tset" class="form-control post-params item-left"
+                       value="{$test|default=''}">
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label">图片</label>
+            <div class="layui-input-block col-sm-6">
+                <input class="form-control post-params item-left" id="photo-1000000" name="image" type="hidden"
+                       value="{$image|default=''}">
+                <if condition="!empty($image)">
+                    <a href="javascript:imagePreviewDialog('{:cmf_get_image_preview_url($image)}');">
+                        <img id="photo-1000000-preview"
+                             src="{:cmf_get_image_preview_url($image)}" style="height: 80px">
+                    </a>
+                    <else/>
+                    <img id="photo-1000000-preview"
+                         src="/static/images/default.png" style="height: 80px">
+                </if>
+                <a href="javascript:uploadOneImage('图片上传','#photo-1000000');">上传</a>
+                <a onclick="$('#photo-1000000-preview').attr('src','__TMPL__/public/assets/images/default-thumbnail.png');$('#photo-1000000').val('');return false;">取消图片</a>
+            </div>
+        </div>
+
+
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label">图集:</label>
+            <div class="layui-input-block col-sm-6">
+                <div class="help-block text-danger">长按图片可上下拖动,调整图片顺序</div>
+                <if condition="!empty($images)">
+                    <ul id="imagesId00001" class="pic-list list-unstyled form-inline">
+                        <foreach name="$images" item="vo">
+                            <li id="savedImages-00001-{$key}" style="margin-bottom: 5px;">
+                                <input id="photoImages-00001-{$key}" class="form-control post-params item-left" type="hidden" name="images[{$key}]" value="{$vo}">
+                                <img id="photoImages-00001-{$key}-preview" src="{:cmf_get_image_preview_url($vo)}"
+                                     height="50" onclick="parent.imagePreviewDialog(this.src);">
+                                <a href="javascript:uploadOneImage('图片上传','#photoImages-00001-{$key}');">替换</a>
+                                <a href="javascript:(function(){$('#savedImages-00001-{$key}').remove();})();">移除</a>
+                            </li>
+                        </foreach>
+                    </ul>
+                    <else/>
+                    <ul id="imagesId00001" class="pic-list list-unstyled form-inline">
+                        <li id="savedImages-00001" style="margin-bottom: 5px;">
+                        </li>
+                    </ul>
+                </if>
+                <a href="javascript:uploadMultiImage('图片上传','#imagesId00001','itemImages-00001');"
+                   class="btn btn-sm btn-default">选择图片</a>
+                <script type="text/html" id="itemImages-00001">
+                    <li id="savedImages-00001-{id}" style="margin-bottom: 5px;">
+                        <input id="photoImages-00001-{id}" class="form-control post-params item-left" type="hidden" name="images[{id}]" value="{filepath}">
+                        <img id="photoImages-00001-{id}-preview" src="{url}"  height="50"
+                             onclick="imagePreviewDialog(this.src);">
+                        <a href="javascript:uploadOneImage('图片上传','#photoImages-00001-{id}');">替换</a>
+                        <a href="javascript:(function(){$('#savedImages-00001-{id}').remove();})();">移除</a>
+                    </li>
+                </script>
+                <script>
+                    // 多图上传支持排序
+                    new Sortable(imagesId00001, {
+                        animation: 150,
+                        ghostClass: 'blue-background-class'
+                    });
+                </script>
+            </div>
+        </div>
+
+        <!-- 主键id -->
+        <input type="hidden" name="id" value="{$id}" class="form-control post-params item-left">
+        <input type="hidden" name="status" value="3" class="form-control post-params item-left">
+
+
+        <!--禁止回车提交-->
+        <input type="submit" class="form-control item-left" style="display: none;">
+        <!--当前页码-->
+        <input type="text" name="page" value="{$page}" class="form-control post-params item-left"
+               style="display: none">
+
+
+        <div class="col-sm-offset-2 col-sm-10 edit_post_save">
+            <button type="button" class="layui-btn js-ajax-submit" id="save">保存</button>
+        </div>
+
+
+    </form>
+
+</div>
+<script src="__STATIC__/js/admin.js"></script>
+</body>
+</html>
+
+<script>
+    function preventEnterSubmit(event) {
+        // 检查是否按下了回车键
+        if (event.key === 'Enter') {
+            event.preventDefault(); // 阻止默认行为
+        }
+    }
+
+    // 当文档加载完成后，设置事件监听
+    document.addEventListener('DOMContentLoaded', function() {
+        var form = document.getElementById('moods_form');
+        form.addEventListener('keypress', preventEnterSubmit);
+    });
+</script>
+
+<!--弹框体积,父页面自动刷新-->
+<script>
+    // 封装方法，获取到form表单的数据。使用此方法，表单元素必须存在那么属性。
+    //el:元素的class名称。
+    function getParameter(el) {
+        var obj = {};
+        $(el).each(function (index, item) {
+            obj[$(this).attr("name")] = $(this).val();
+            // 判断元素的类型
+            if (item.type == "text" || item.type == "password" || item.type == "select-one" || item.type == "tel" ||
+                item.type == "search" || item.type == "range" || item.type == "number" || item.type == "month" ||
+                item.type == "email" || item.type == "datetime-local" || item.type == "datetime" || item.type == "date" ||
+                item.type == "color" || item.type == "hidden") {
+                //获取到name的值,name的值就是向后台传递的数据
+                obj[$(this).attr("name")] = $(this).val();
+            } else if (item.type == "checkbox") {
+                var stamp = false;
+                if ($(this).attr("name") && !stamp) {
+                    stamp = false;
+                    // 获取到复选框选中的元素
+                    var checkboxEl = $("input[name=" + $(item).attr('name') + "]:checked");
+                    if (checkboxEl) {
+                        var checkboxArr = [];
+                        // 取出复选框选中的值
+                        checkboxEl.each(function (idx, itm) {
+                            checkboxArr.push($(itm).val());
+                        });
+                        obj[$(this).attr("name")] = checkboxArr.join(",");
+                    }
+
+                }
+            } else if (item.type == "radio") {
+                // 获取到单选框选中的值
+                var radio_val = $("input[name=" + $(item).attr('name') + "]:checked").val();
+                if (radio_val) {
+                    obj[$(item).attr("name")] = radio_val;
+                }
+            }
+        });
+        return obj;
+    }
+
+    // 调用方法
+    $("#save").click(function () {
+        var parameter = getParameter(".post-params");
+        $.ajax({
+            type: 'POST',
+            url: "{:url('audit_post')}",
+            data: parameter,
+            dataType: 'json',
+            success: function (data) {
+                layer.msg(data.msg);
+
+                if (data.code == 1) {
+                    let time1 = setInterval(function () {
+                        //父级弹框关闭
+                        parent.layer.closeAll();
+                        //父页面自动刷新
+                    }, 500);
+                }
+
+            }
+        });
+    });
+</script>

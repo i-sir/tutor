@@ -1,0 +1,155 @@
+<include file="public@header"/></head>
+<body xmlns="http://www.w3.org/1999/html">
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="{:url('index',['pid'=>$pid,'params'=>$params])}">菜单栏</a></li>
+
+        <notempty name="$pid">
+            <li><a href="{:url('add',['pid'=>$pid,'params'=>$params])}">添加</a></li>
+        </notempty>
+    </ul>
+
+
+    <form class="js-ajax-form" method="post" autocomplete="off">
+
+        <br>
+        <div class="table-actions">
+
+            <if condition="cmf_auth_check(cmf_get_current_admin_id(),'admin/WechatMenu/list_order_post')">
+                <button class="layui-btn layui-btn-primary layui-border-green layui-btn-xs js-ajax-submit" type="submit"
+                        data-action="{:url('list_order_post',['page'=>$page,'pid'=>$pid,'params'=>$params])}">
+                    排序
+                </button>
+            </if>
+
+
+            <empty name="$pid">
+                <button class="layui-btn layui-btn-primary layui-border-red layui-btn-xs js-ajax-submit" type="submit"
+                        data-action="{:url('pushMenu')}">
+                    同步菜单
+                </button>
+            </empty>
+
+        </div>
+
+
+        <table class="table table-hover table-bordered">
+            <thead>
+            <tr>
+                <if condition="cmf_auth_check(cmf_get_current_admin_id(),'admin/WechatMenu/list_order_post')">
+                    <th style="width: 60px">排序</th>
+                </if>
+                <th style="width: 60px">ID</th>
+                <th style="width: 60px">菜单名称</th>
+                <th style="width: 60px">类型</th>
+                <th style="width: 60px">状态</th>
+
+
+                <th style="width: 80px">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <foreach name="list" item="vo">
+                <tr>
+                    <if condition="cmf_auth_check(cmf_get_current_admin_id(),'admin/WechatMenu/list_order_post')">
+                        <td>
+                            <input type="text" class="input input-order valid post-params" name="list_order[{$vo.id}]"
+                                   value="{$vo.list_order}">
+                        </td>
+                    </if>
+                    <td>{$vo.id}</td>
+                    <td>{$vo.name}</td>
+                    <td>{$vo.type_name}</td>
+                    <td>
+                        <div class="layui-form">
+                            <input type="checkbox" lay-skin="switch" lay-text="显示|隐藏" lay-filter="status"
+                                   name="status"
+                                   value="{$vo.id}"
+                            <if condition="$vo.status == 1">checked</if>
+                            >
+                        </div>
+                    </td>
+
+                    <td>
+
+                        <if condition="$pid == 0">
+                            <a class="layui-btn layui-btn-primary layui-border-orange layui-btn-xs"
+                               href="javascript:parent.openIframeLayer('{:url('index',array('pid'=>$vo.id))}','',{ area: ['65%', '85%'],move:'.layui-layer-title'},false);"
+                            >二级菜单</a>
+                        </if>
+
+                        <if condition="cmf_auth_check(cmf_get_current_admin_id(),'admin/WechatMenu/edit')">
+                            <a class="layui-btn layui-btn-primary layui-border-green layui-btn-xs"
+                               href="{:url('edit',['id'=>$vo.id,'page'=>$page,'pid'=>$pid,'params'=>$params])}">编辑</a>
+                        </if>
+
+
+                        <notempty name="pid">
+                            <if condition="cmf_auth_check(cmf_get_current_admin_id(),'admin/WechatMenu/delete')">
+                                <a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs js-ajax-delete"
+                                   href="{:url('delete',['id'=>$vo.id,'page'=>$page,'pid'=>$pid,'params'=>$params])}">删除</a>
+                            </if>
+                        </notempty>
+
+                    </td>
+                </tr>
+            </foreach>
+            </tbody>
+        </table>
+    </form>
+
+    <div class="pagination">{$pagination|default=''}</div>
+</div>
+<script src="__STATIC__/js/admin.js"></script>
+</body>
+</html>
+
+
+<!--修改状态|导出|搜索  js代码-->
+<script>
+
+    //开关板块
+    layui.use(['layer', 'form', 'slider'], function () {
+        var layer = layui.layer, form = layui.form;
+
+
+        form.on('switch(status)', function (data) {
+            batchPost(data.value, 'status', this.checked ? 1 : 2)
+        });
+
+    });
+
+    //修改状态
+    function batchPost(id, field, value) {
+        $.ajax({
+            url: "{:url('batch_post')}",
+            type: "POST",
+            data: {id: id, [field]: value},
+            success: function (res) {
+                if (res.code === 1) {
+                    layer.msg(res.msg, {icon: 1});
+                } else {
+                    layer.msg(res.msg, {icon: 7});
+                }
+            }
+        });
+    }
+
+
+    //导出
+    $(".ajax-export").click(function () {
+        //alert("正在开发中...");
+        $(".is_export").val(1);
+        $(".ajax-form").submit();
+        $(".is_export").val(0);
+        return false;
+    });
+
+    //搜索
+    $(".bt_search").click(function () {
+        $(".w-form-search").removeAttr('action');
+        $(".w-form-search").attr('action', "/index.html");
+        $(".w-form-search").submit();
+    });
+</script>
+

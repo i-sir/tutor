@@ -1,0 +1,860 @@
+<include file="public@head"/>
+</head>
+<style>
+    .ext {
+        background: #F5F5F5;
+    }
+
+    .bottoms {
+        margin-bottom: 83px;
+    }
+
+    .ext_text0 {
+        margin-left: 256px;
+        margin-right: 0px;
+        margin-top: -12px;
+    }
+
+    .ext_text1 {
+        margin-left: 28px;
+        margin-right: 0px;
+        margin-top: -12px;
+    }
+
+    .ext_text2 {
+        margin-left: -100px;
+        margin-right: 0px;
+        margin-top: -12px;
+    }
+
+    .layui-btn + .layui-btn {
+        margin-left: 0px;
+    }
+
+    .img-rounded {
+        border-radius: 4px;
+        overflow: hidden;
+    }
+</style>
+
+<body>
+<div class="wrap js-check-wrap" style="margin-bottom: 350px;">
+    <ul class="nav nav-tabs">
+        <volist name="group_list" id="vo">
+            <eq name="group_id" value="$key">
+                <li class="active"><a
+                        href="{:cmf_plugin_url('Configs://AdminIndex/details6', ['group_id' => $key,'code'=>$code])}">{$vo}</a>
+                </li>
+            </eq>
+        </volist>
+
+        <!--        写死写法-->
+        <!--        <li class="active"><a-->
+        <!--                href="{:cmf_plugin_url('Configs://AdminIndex/details6', ['group_id' => 1000,'code'=>$code])}">{$vo}</a>-->
+        <!--        </li>-->
+    </ul>
+
+
+    <form class="form-horizontal js-ajax-form margin-top-20 test" autocomplete="off"
+          action="{:cmf_plugin_url('Configs://AdminIndex/details6', ['group_id' => $group_id,'code'=>$code])}"
+          method="post">
+
+        <input type="hidden" value="{$group_id}" name="group_id"/>
+
+        <volist name="config" id="vo">
+            <!--本地显示-->
+            <if condition="$CUSTODIAN_SIR">
+
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">
+                        {$vo.label}:
+                        <if condition="$vo['scatter']">
+                            <p style="color:red;font-size: 10.5px;">请用 {$vo.scatter} 隔开数据:</p>
+                        </if>
+                    </label>
+
+                    <div class="col-sm-10">
+                        <if condition=" $vo.type neq 'content' ">
+                            <div class="col-md-1" style="margin-left: -35px;margin-right: -8px;">
+                                <div class="layui-form-item">
+                                    <input type="number" class="form-control" placeholder="排序"
+                                           name="list_order[{$vo.id}]"
+                                    <if condition="$vo.is_edit eq 1">readonly</if>
+                                    value="{$vo.list_order}">
+                                </div>
+                            </div>
+                        </if>
+
+                        <switch name="vo.type">
+                            <case value="textarea">
+                                <textarea rows="4" class="form-control item-left" cols="60" name="{$vo.name}"
+                                          style="width: 45%!important;"
+                                <if condition="$vo.is_edit eq 1">readonly</if>
+                                >{$vo.value}</textarea>
+                            </case>
+                            <case value="number">
+                                <input type="number" class="form-control item-left" name="{$vo.name}"
+                                       value="{$vo.value}"
+                                <if condition="$vo.is_edit eq 1">readonly</if>
+                                >
+                            </case>
+                            <case value="file">
+                                <input id="{$vo.name}" class="form-control item-left" type="text" name="{$vo.name}"
+                                       readonly="readonly" value="{$vo.value}" placeholder="请上传文件"
+                                       ondblclick="copyIdValue('{$vo.name}')">
+                                <if condition="$vo.is_edit eq 0">
+                                    <a href="javascript:uploadOne('文件上传','#{$vo.name}','file');"
+                                       class="layui-btn" style="margin-left: 1%;">
+                                        <i class="fa fa-cloud-upload" aria-hidden="true"></i>
+                                        上传
+                                    </a>
+                                    <a onclick="$('#{$vo.name}').val('');return false;" class="layui-btn layui-bg-red">
+                                        取消
+                                    </a>
+                                </if>
+                            </case>
+                            <case value="video">
+                                <input id="{$vo.name}" class="form-control item-left" type="text" name="{$vo.name}"
+                                       readonly="readonly" value="{$vo.value}" placeholder="请上传视频"
+                                       ondblclick="copyIdValue('{$vo.name}')">
+                                <if condition="$vo.is_edit eq 0">
+                                    <a href="javascript:uploadOne('视频上传','#{$vo.name}','video');"
+                                       class="layui-btn" style="margin-left: 1%;">
+                                        <i class="fa fa-cloud-upload" aria-hidden="true"></i>
+                                        上传
+                                    </a>
+                                    <a onclick="$('#{$vo.name}').val('');return false;" class="layui-btn layui-bg-red">
+                                        取消
+                                    </a>
+                                </if>
+                            </case>
+                            <case value="img">
+                                <input type="text" name="{$vo.name}" id="{$vo.name}" value="{$vo.value}"
+                                       class="form-control item-left" readonly="readonly" placeholder="请上传图片"
+                                       ondblclick="copyIdValue('{$vo.name}')">
+                                <button type="button" class="layui-btn layui-bg-blue Preview" style="margin-left: 10px">
+                                    <i class="fa fa-search" aria-hidden="true"></i>查看
+                                </button>
+
+                                <if condition="$vo.is_edit eq 0">
+                                    <a href="javascript:uploadOneImage('图片上传','#{$vo.name}');"
+                                       class="layui-btn">
+                                        <i class="fa fa-cloud-upload" aria-hidden="true"></i>
+                                        上传图片
+                                    </a>
+                                </if>
+
+                                <br>
+                                <if condition="!empty($vo.value)">
+                                    <a href="javascript:imagePreviewDialog('{:cmf_get_asset_url($vo.value)}');">
+                                        <img class="img-rounded" id="{$vo.name}-preview"
+                                             src="{:cmf_get_asset_url($vo.value)}"
+                                             style="height:80px;">
+                                    </a>
+                                    <else/>
+                                    <img src="/static/images/default.png"
+                                         id="{$vo.name}-preview" style="height:80px;">
+                                </if>
+                            </case>
+
+                            <case value="select">
+                                <select name="{$vo.name}" class="form-control item-left"
+                                <if condition="$vo.is_edit eq 1">readonly</if>
+                                >
+                                <volist name="vo.data" id="vd">
+                                    <if condition="$vd['value'] eq $vo['value']">
+                                        <option value="{$vd.value}" selected="selected">{$vd.name}</option>
+                                        <else/>
+                                        <option value="{$vd.value}">{$vd.name}</option>
+                                    </if>
+                                </volist>
+                                </select>
+                            </case>
+                            <case value="radio">
+                                <volist name="vo.data" id="vd">
+                                    <if condition="$vd['value'] eq $vo['value']">
+                                        <label><input type="radio" name="{$vo.name}" value="{$vd.value}"
+                                            <if condition="$vo.is_edit eq 1">readonly</if>
+                                            checked="checked">{$vd.name}<span>[{$vd.value}]</span></label>
+                                        <else/>
+                                        <label><input type="radio" name="{$vo.name}"
+                                            <if condition="$vo.is_edit eq 1">readonly</if>
+                                            value="{$vd.value}">{$vd.name}<span>[{$vd.value}]</span></label>
+                                    </if>
+                                </volist>
+                            </case>
+                            <case value="checkbox">
+                                <volist name="vo.data" id="vd">
+                                    <if condition="in_array($vd['value'],(array)$vo['value'])">
+                                        <label><input type="checkbox" name="{$vo.name}[]" value="{$vd.value}"
+                                            <if condition="$vo.is_edit eq 1">readonly</if>
+                                            checked="checked">{$vd.name}<span>[{$vd.value}]</span></label>
+                                        <else/>
+                                        <label><input type="checkbox" name="{$vo.name}[]"
+                                            <if condition="$vo.is_edit eq 1">readonly</if>
+                                            value="{$vd.value}">{$vd.name}<span>[{$vd.value}]</span></label>
+                                    </if>
+                                </volist>
+                            </case>
+
+                            <case value="time">
+                                <input type="time" class="form-control item-left" name="{$vo.name}"
+                                <if condition="$vo.is_edit eq 1">readonly</if>
+                                value="{$vo.value}">
+                            </case>
+
+                            <case value="date">
+                                <input type="text" class="form-control item-left js-datetime" name="{$vo.name}"
+                                <if condition="$vo.is_edit eq 1">readonly</if>
+                                value="{$vo.value}">
+                            </case>
+
+                            <case value="content">
+                                <script type="text/plain" id="{$vo.name}" name="{$vo.name}" style="width: 80%">
+                                         {$vo.value}
+                                
+                                </script>
+                                <script type="text/javascript">
+                                    //编辑器路径定义
+                                    var editorURL = GV.WEB_ROOT;
+                                </script>
+                                <script type="text/javascript"
+                                        src="__STATIC__/js/ueditor/ueditor.config.js?v=00001"></script>
+                                <script type="text/javascript" src="__STATIC__/js/ueditor/ueditor.all.min.js"></script>
+                                <!--编辑器支持秀米-->
+                                <script type="text/javascript"
+                                        src="__STATIC__/js/ueditor/xiumi/xiumi-ue-dialog-v5.js"></script>
+                                <link rel="stylesheet" type="text/css"
+                                      href="__STATIC__/js/ueditor/xiumi/xiumi-ue-v5.css"/>
+                                <script type="text/javascript">
+                                    $(function () {
+                                        var names = "{$vo.name}";
+                                        names = new baidu.editor.ui.Editor();
+                                        names.render("{$vo.name}");
+                                        try {
+                                            names.sync();
+                                        } catch (err) {
+                                        }
+                                    });
+                                </script>
+                            </case>
+
+
+                            <!--自定义表单-->
+                            <case value="custom">
+                                <div class="layui-input-inline" id="{$vo.name}">
+                                    <if condition="!empty($vo.value)">
+                                        <foreach name="$vo.value" item="value">
+                                            <div class="layui-form-item" style="display: flex">
+                                                <div class="layui-input-inline">
+                                                    <input type="text" name="{$vo.name}[]" style="width: 580px"
+                                                           lay-verify="required" value="{$value}"
+                                                           class="form-control">
+                                                </div>
+                                                <div style="margin-left: 400px;">
+                                                    <button type="button"
+                                                            class="layui-btn layui-btn-danger layui-btn-sm removeclass">
+                                                        <i class="layui-icon">&#xe67e;</i></button>
+                                                </div>
+                                            </div>
+                                        </foreach>
+                                    </if>
+
+                                    <div class="layui-form-item" style="display: flex">
+                                        <div class="layui-input-inline">
+                                            <input type="text" name="{$vo.name}[]" style="width: 580px"
+                                                   lay-verify="required" value="" class="form-control">
+                                        </div>
+                                        <div style="margin-left: 400px;">
+                                            <button id="{$vo.name}_1" type="button"
+                                                    class="layui-btn layui-btn-warm layui-btn-sm">
+                                                <i class="layui-icon">&#xe654;</i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <script>
+                                    layui.use(['element', 'jquery', 'layer', 'form', 'laydate'], function () {
+                                        var form = layui.form
+                                            , element = layui.element
+                                            , laydate = layui.laydate
+                                            , $ = layui.$;
+
+                                        //删除动态添加的input输入框
+                                        $("body").on('click', ".removeclass", function () {
+                                            //元素移除前校验是否被引用
+                                            var approvalName = $(this).parent().prev('div.layui-input-inline').children().val();
+                                            var parentEle = $(this).parent().parent();
+                                            parentEle.remove();
+                                        });
+
+
+                                        //超大件 体积
+                                        var o = 0;
+                                        $("#{$vo.name}_1").click(function () {
+                                            var this_craft = this.value;
+                                            var str = '<div class="layui-form-item" style="display: flex">' +
+                                                '<div class="layui-input-inline">' +
+                                                '<input type="text" name="{$vo.name}[]" style=" width: 580px;"  class="form-control">' +
+                                                '</div>' +
+                                                '<div class="layui-input-block" style="margin-left: 400px">' +
+                                                '<button type="button" class="layui-btn layui-btn-danger layui-btn-sm removeclass"> <i class="layui-icon">&#xe67e;</i> </button>' +
+                                                '</div>' +
+                                                '</div>';
+                                            $("#{$vo.name}").append(str);
+                                            form.render('select');
+                                        });
+                                    })
+                                </script>
+
+                            </case>
+
+
+                            <default/>
+                            <input type="text" name="{$vo.name}" class="form-control item-left"
+                            <if condition="$vo.is_edit eq 1">readonly</if>
+                            value="{$vo.value}">
+
+                        </switch>
+                        <span class="tips">{$vo.about}</span>
+                        <!--                        <div class="col-md-3" style="margin-left: 0px;margin-right:0px;">-->
+                        <!--                            <div class="layui-form-item">-->
+                        <!--                                <input class="form-control ext" name="name[{$vo.id}]"-->
+                        <!--                                       style="width: 300px;height: 34px"-->
+                        <!--                                       value="{$vo.name}" ondblclick="copyInnerText('{$vo.id}')">-->
+                        <!--                            </div>-->
+                        <!--                        </div>-->
+
+                        <!--                        <div class="col-md-1" style="margin-left: -10px;margin-right: 0px;">-->
+                        <!--                            <div class="layui-form-item">-->
+                        <!--                                    <textarea class="form-control ext" name="about[{$vo.id}]"-->
+                        <!--                                              style="width: 300px;height: 34px"-->
+                        <!--                                              placeholder="备注">{$vo.about}</textarea>-->
+                        <!--                            </div>-->
+                        <!--                        </div>-->
+
+
+                        <div class="item-right">
+                            <span class="iconfont" style="color: red;margin-left: 18px;font-size: 16px;"
+                                  ondblclick="copyInnerText('{$vo.name}{$vo.id}')">
+                                        使用 cmf_config( <span style="display: none"
+                                                             id="{$vo.name}{$vo.id}">{$vo.copy} </span> </span>
+                            <span style="color: #2e73f6;font-size: 16px">
+                                    <span class="iconfont2" ondblclick="copyInnerText('{$vo.id}')">'{$vo.name}'</span>
+                                    <span style="display: none" id="{$vo.id}">{$vo.name} </span>
+                                     <span style="color: red; font-size: 16px">
+                                        )
+                                       </span>
+                                </span>
+
+                            <input type="hidden" class="form-control ext" name="is_show"
+                                   value="1">
+                            <input type="hidden" class="form-control ext" name="is_edit"
+                                   value="1">
+                            <input type="hidden" class="form-control ext" name="is_label"
+                                   value="1">
+
+                            <span class="layui-form" style="margin-top: -20px;">
+                                <input type="checkbox" lay-skin="switch" lay-text="显示|隐藏" name="showList[{$vo.id}]"
+                                <if condition="$vo.is_show == 1">checked</if>
+                                >
+                            </span>
+                            <span class="layui-form" style="margin-top: -20px;">
+                                <input type="checkbox" lay-skin="switch" lay-text="禁止编辑|可编辑" name="editList[{$vo.id}]"
+                                <if condition="$vo.is_edit == 1">checked</if>
+                                >
+                            </span>
+                            <span class="layui-form" style="margin-top: -20px;">
+                                <input type="checkbox" lay-skin="switch" lay-text="组件格式|非组件" name="labelList[{$vo.id}]"
+                                <if condition="$vo.is_label == 1">checked</if>
+                                >
+                            </span>
+                            <if condition="$vo['id'] gt 3">
+                                <a href="{:cmf_plugin_url('Configs://AdminIndex/add', ['group_id'=>$vo['group_id'],'post_group_id'=>$group_id,'id'=>$vo.id])}"
+                                   class="layui-btn layui-btn-primary layui-border-green layui-btn-xs">
+                                    编辑</a>
+                                <a event="delete"
+                                   data-url="{:cmf_plugin_url('Configs://AdminIndex/delete', ['group_id'=>$vo['group_id'],'post_group_id'=>$group_id,'id'=>$vo.id])}"
+                                   class="layui-btn layui-btn-primary layui-border-red layui-btn-xs">
+                                    删除</a>
+                            </if>
+                        </div>
+                    </div>
+
+
+                    <!--备注等操作2.0 换行显示-->
+                    <if condition="$vo.type neq 'img'  && $vo.type neq 'content' ">
+                        <div class="col-md-1 ext_text0">
+                            <div class="layui-form-item">
+                                <input class="form-control ext" name="label[{$vo.id}]"
+                                       style="width: 150px;height: 34px"
+                                       value="{$vo.label}">
+                            </div>
+                        </div>
+                        <div class="col-md-3 ext_text1">
+                            <div class="layui-form-item">
+                                <input class="form-control ext" name="name[{$vo.id}]"
+                                       style="width: 300px;height: 34px"
+                                       value="{$vo.name}" ondblclick="copyInnerText('{$vo.id}')">
+                            </div>
+                        </div>
+                        <div class="col-md-1 ext_text2">
+                            <div class="layui-form-item">
+                                <textarea class="form-control ext" name="about[{$vo.id}]" placeholder="备注"
+                                          style="width: 300px;height: 34px">{$vo.about}</textarea>
+                            </div>
+                        </div>
+                        <div class="bottoms"></div>
+                    </if>
+
+                </div>
+
+                <else/>
+
+
+                <!--线上显示-->
+                <if condition="$vo.is_show == 1 ">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">
+                            {$vo.label}:
+                            <if condition="$vo['scatter']">
+                                <p style="color:red;font-size: 10.5px;">请用 {$vo.scatter} 隔开数据:</p>
+                            </if>
+                        </label>
+                        <div class="col-sm-10">
+                            <switch name="vo.type">
+                                <case value="textarea">
+                                <textarea rows="4" class="form-control item-left" cols="60"
+                                          style="width: 45%!important;"
+                                    <if condition="$vo.is_edit eq 1">readonly</if>
+                                    name="{$vo.name}">{$vo.value}</textarea>
+                                </case>
+                                </case>
+                                <case value="number">
+                                    <input type="number" class="form-control item-left" name="{$vo.name}"
+                                    <if condition="$vo.is_edit eq 1">readonly</if>
+                                    value="{$vo.value}" style="width: 45%!important;">
+                                </case>
+                                <case value="file">
+                                    <input id="{$vo.name}" class="form-control item-left" type="text" name="{$vo.name}"
+                                           readonly="readonly" value="{$vo.value}" placeholder="请上传文件"
+                                           ondblclick="copyIdValue('{$vo.name}')" style="width: 45%!important;">
+                                    <if condition="$vo.is_edit eq 0">
+                                        <a href="javascript:uploadOne('文件上传','#{$vo.name}','file');"
+                                           class="layui-btn" style="margin-left: 1%;">
+                                            <i class="fa fa-cloud-upload" aria-hidden="true"></i>
+                                            上传
+                                        </a>
+                                        <a onclick="$('#{$vo.name}').val('');return false;"
+                                           class="layui-btn layui-bg-red">
+                                            取消
+                                        </a>
+                                    </if>
+                                </case>
+                                <case value="video">
+                                    <input id="{$vo.name}" class="form-control item-left" type="text" name="{$vo.name}"
+                                           readonly="readonly" value="{$vo.value}" placeholder="请上传视频"
+                                           ondblclick="copyIdValue('{$vo.name}')" style="width: 45%!important;">
+                                    <if condition="$vo.is_edit eq 0">
+                                        <a href="javascript:uploadOne('视频上传','#{$vo.name}','video');"
+                                           class="layui-btn" style="margin-left: 1%;">
+                                            <i class="fa fa-cloud-upload" aria-hidden="true"></i>
+                                            上传
+                                        </a>
+                                        <a onclick="$('#{$vo.name}').val('');return false;"
+                                           class="layui-btn layui-bg-red">
+                                            取消
+                                        </a>
+                                    </if>
+                                </case>
+                                <case value="img">
+                                    <input type="text" name="{$vo.name}" id="{$vo.name}" value="{$vo.value}"
+                                           class="form-control item-left" readonly="readonly" placeholder="请上传图片"
+                                           ondblclick="copyIdValue('{$vo.name}')" style="width: 45%!important;">
+                                    <button type="button" class="layui-btn layui-bg-blue Preview"
+                                            style="margin-left: 10px">
+                                        <i class="fa fa-search" aria-hidden="true"></i>查看
+                                    </button>
+
+                                    <if condition="$vo.is_edit eq 0">
+                                        <a href="javascript:uploadOneImage('图片上传','#{$vo.name}');"
+                                           class="layui-btn">
+                                            <i class="fa fa-cloud-upload" aria-hidden="true"></i>
+                                            上传图片
+                                        </a>
+                                    </if>
+                                    <br>
+                                    <if condition="!empty($vo.value)">
+                                        <a href="javascript:imagePreviewDialog('{:cmf_get_asset_url($vo.value)}');">
+                                            <img class="img-rounded" id="{$vo.name}-preview"
+                                                 src="{:cmf_get_asset_url($vo.value)}"
+                                                 style="height:80px; ">
+                                        </a>
+                                        <else/>
+                                        <img src="/static/images/default.png"
+                                             id="{$vo.name}-preview" style="height:80px;">
+                                    </if>
+                                </case>
+
+
+                                <case value="select">
+                                    <select name="{$vo.name}" style="width: 45%!important;"
+                                            class="form-control item-left"
+                                    <if condition="$vo.is_edit eq 1">readonly</if>
+                                    >
+                                    <volist name="vo.data" id="vd">
+                                        <if condition="$vd['value'] eq $vo['value']">
+                                            <option value="{$vd.value}" selected="selected">{$vd.name}</option>
+                                            <else/>
+                                            <option value="{$vd.value}">{$vd.name}</option>
+                                        </if>
+                                    </volist>
+                                    </select>
+                                </case>
+
+                                <case value="radio">
+                                    <volist name="vo.data" id="vd">
+                                        <if condition="$vd['value'] eq $vo['value']">
+                                            <label><input type="radio" name="{$vo.name}" value="{$vd.value}"
+                                                <if condition="$vo.is_edit eq 1">readonly</if>
+                                                checked="checked">{$vd.name}</label>
+                                            <else/>
+                                            <label><input type="radio" name="{$vo.name}"
+                                                <if condition="$vo.is_edit eq 1">readonly</if>
+                                                value="{$vd.value}">{$vd.name}</label>
+                                        </if>
+                                    </volist>
+                                </case>
+
+                                <case value="checkbox">
+                                    <volist name="vo.data" id="vd">
+                                        <if condition="in_array($vd['value'],(array)$vo['value'])">
+                                            <label><input type="checkbox" name="{$vo.name}[]" value="{$vd.value}"
+                                                <if condition="$vo.is_edit eq 1">readonly</if>
+                                                checked="checked">{$vd.name}<span>[{$vd.value}]</span></label>
+                                            <else/>
+                                            <label><input type="checkbox" name="{$vo.name}[]"
+                                                <if condition="$vo.is_edit eq 1">readonly</if>
+                                                value="{$vd.value}">{$vd.name}<span>[{$vd.value}]</span></label>
+                                        </if>
+                                    </volist>
+                                </case>
+
+
+                                <case value="time">
+                                    <input type="time" class="form-control item-left" name="{$vo.name}"
+                                    <if condition="$vo.is_edit eq 1">readonly</if>
+                                    value="{$vo.value}" style="width: 45%!important;">
+                                </case>
+
+                                <case value="date">
+                                    <input type="text" class="form-control item-left js-datetime" name="{$vo.name}"
+                                    <if condition="$vo.is_edit eq 1">readonly</if>
+                                    value="{$vo.value}" style="width: 45%!important;">
+                                </case>
+
+                                <case value="content">
+                                    <script type="text/plain" id="{$vo.name}" name="{$vo.name}" style="width: 80%">
+                                         {$vo.value}
+                                    
+                                    </script>
+                                    <script type="text/javascript">
+                                        //编辑器路径定义
+                                        var editorURL = GV.WEB_ROOT;
+                                    </script>
+                                    <script type="text/javascript"
+                                            src="__STATIC__/js/ueditor/ueditor.config.js?v=00001"></script>
+                                    <script type="text/javascript"
+                                            src="__STATIC__/js/ueditor/ueditor.all.min.js"></script>
+                                    <!--编辑器支持秀米-->
+                                    <script type="text/javascript"
+                                            src="__STATIC__/js/ueditor/xiumi/xiumi-ue-dialog-v5.js"></script>
+                                    <link rel="stylesheet" type="text/css"
+                                          href="__STATIC__/js/ueditor/xiumi/xiumi-ue-v5.css"/>
+                                    <script type="text/javascript">
+                                        $(function () {
+                                            var names = "{$vo.name}";
+                                            names = new baidu.editor.ui.Editor();
+                                            names.render("{$vo.name}");
+                                            try {
+                                                names.sync();
+                                            } catch (err) {
+                                            }
+                                        });
+                                    </script>
+                                </case>
+
+
+                                <!--自定义表单-->
+                                <case value="custom">
+                                    <div class="layui-input-inline" id="{$vo.name}">
+                                        <if condition="!empty($vo.value)">
+                                            <foreach name="$vo.value" item="value">
+                                                <div class="layui-form-item" style="display: flex">
+                                                    <div class="layui-input-inline">
+                                                        <input type="text" name="{$vo.name}[]" style="width: 580px"
+                                                               lay-verify="required" value="{$value}"
+                                                               class="form-control">
+                                                    </div>
+                                                    <div style="margin-left: 400px;">
+                                                        <button type="button"
+                                                                class="layui-btn layui-btn-danger layui-btn-sm removeclass">
+                                                            <i class="layui-icon">&#xe67e;</i></button>
+                                                    </div>
+                                                </div>
+                                            </foreach>
+                                        </if>
+
+                                        <div class="layui-form-item" style="display: flex">
+                                            <div class="layui-input-inline">
+                                                <input type="text" name="{$vo.name}[]" style="width: 580px"
+                                                       lay-verify="required" value="" class="form-control">
+                                            </div>
+                                            <div style="margin-left: 400px;">
+                                                <button id="{$vo.name}_1" type="button"
+                                                        class="layui-btn layui-btn-warm layui-btn-sm">
+                                                    <i class="layui-icon">&#xe654;</i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <script>
+                                        layui.use(['element', 'jquery', 'layer', 'form', 'laydate'], function () {
+                                            var form = layui.form
+                                                , element = layui.element
+                                                , laydate = layui.laydate
+                                                , $ = layui.$;
+
+
+                                            //删除动态添加的input输入框
+                                            $("body").on('click', ".removeclass", function () {
+                                                //元素移除前校验是否被引用
+                                                var approvalName = $(this).parent().prev('div.layui-input-inline').children().val();
+                                                var parentEle = $(this).parent().parent();
+                                                parentEle.remove();
+                                            });
+
+
+                                            //超大件 体积
+                                            var o = 0;
+                                            $("#{$vo.name}_1").click(function () {
+                                                var this_craft = this.value;
+                                                var str = '<div class="layui-form-item" style="display: flex">' +
+                                                    '<div class="layui-input-inline">' +
+                                                    '<input type="text" name="{$vo.name}[]" style=" width: 580px;"  class="form-control">' +
+                                                    '</div>' +
+                                                    '<div class="layui-input-block" style="margin-left: 400px">' +
+                                                    '<button type="button" class="layui-btn layui-btn-danger layui-btn-sm removeclass"> <i class="layui-icon">&#xe67e;</i> </button>' +
+                                                    '</div>' +
+                                                    '</div>';
+                                                $("#{$vo.name}").append(str);
+                                                form.render('select');
+                                            });
+                                        })
+                                    </script>
+                                </case>
+
+                                <default/>
+                                <input type="text" name="{$vo.name}" class="form-control item-left"
+                                <if condition="$vo.is_edit eq 1">readonly</if>
+                                value="{$vo.value}" style="width: 45%!important;">
+
+                                <input type="hidden" class="form-control ext" name="is_show"
+                                       value="0">
+                                <input type="hidden" class="form-control ext" name="is_edit"
+                                       value="0">
+                                <input type="hidden" class="form-control ext" name="is_label"
+                                       value="0">
+                            </switch>
+                            <span class="tips">{$vo.about}</span>
+                        </div>
+                    </div>
+
+                    <else/>
+                    <textarea style="position: absolute;top: -40px;left: 0;opacity: 0;z-index: -10;" name="{$vo.name}">{$vo.value}</textarea>
+                </if>
+            </if>
+
+
+        </volist>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="layui-btn js-ajax-submit">保存设置</button>
+
+                <if condition="$CUSTODIAN_SIR">
+                    <textarea id="this_page_params"
+                              style="position: absolute;top: -40px;left: 0;opacity: 0;z-index: -10;">{$this_page_params}</textarea>
+                    <p type="button" class="layui-btn layui-bg-purple" onclick="thisPageParams()">复制本页参数</p>
+                </if>
+
+                <if condition="APP_DEBUG">
+                    <!--                                        <button type="button" event="delete"-->
+                    <!--                                                data-url="{:cmf_plugin_url('Configs://AdminIndex/delete', ['group_id'=>$group_id,'type'=>'all'])}"-->
+                    <!--                                                class="btn btn-danger">清空当前参数-->
+                    <!--                                        </button>-->
+                </if>
+            </div>
+        </div>
+    </form>
+
+    <textarea id="copy_content" style="position: absolute;top: -40px;left: 0;opacity: 0;z-index: -10;"></textarea>
+
+
+</div>
+</body>
+</html>
+<include file="public@scripts"/>
+
+
+<script>
+    //悬浮提示
+    $(function () {
+        var tips;
+        $('.iconfont').on({
+            //延时1秒
+            mouseenter: function () {
+                var that = this;
+                tips = layer.tips("<span style='color:#000;'>双击复制变量,使用方法</span>", that, {
+                    tips: [2, '#fff'],
+                    time: 0,
+                    area: 'auto',
+                    maxWidth: 500
+                });
+            },
+
+            //去除
+            mouseleave: function () {
+                layer.close(tips);
+            }
+        });
+
+        $('.iconfont2').on({
+            mouseenter: function () {
+                var that = this;
+                tips = layer.tips("<span style='color:#000;'>双击赋值单词</span>", that, {
+                    tips: [2, '#fff'],
+                    time: 0,
+                    area: 'auto',
+                    maxWidth: 500
+                });
+            },
+            mouseleave: function () {
+                layer.close(tips);
+            }
+        });
+
+    })
+
+    //复制变量
+    function thisPageParams() {
+        //获取点击的值
+        var clickContent = document.getElementById('this_page_params').value;
+        //获取要赋值的input的元素
+        var inputElement = document.getElementById("copy_content");
+        console.log(clickContent);
+        //给input框赋值
+        inputElement.value = clickContent;
+        //选中input框的内容
+        inputElement.select();
+        // 执行浏览器复制命令
+        document.execCommand("Copy");
+        //提示已复制
+        layer.msg(clickContent + '已复制', {icon: 6, time: 500});
+    }
+
+
+    //复制文本,根据id
+    function copyIdValue(item_id) {
+        //获取点击的值
+        var image_value = document.getElementById(item_id).value;
+        var clickContent = "{:cmf_get_asset_url('" + image_value + "')}";
+        //获取要赋值的input的元素
+        var inputElement = document.getElementById("copy_content");
+        //给input框赋值,字符串去空
+        //clickContent = clickContent.replace(/\s+/g, '');
+        inputElement.value = clickContent;
+        //选中input框的内容
+        inputElement.select();
+        // 执行浏览器复制命令
+        document.execCommand("Copy");
+        //提示已复制
+        layer.msg(clickContent + '已复制', {icon: 6, time: 500});
+    }
+
+
+    //复制文本,根据id
+    function copyInnerText(item_id) {
+        //获取点击的值
+        var clickContent = document.getElementById(item_id).innerText;
+        //获取要赋值的input的元素
+        var inputElement = document.getElementById("copy_content");
+        //给input框赋值,字符串去空
+        clickContent = clickContent.replace(/ +/g, '');
+        inputElement.value = clickContent;
+        //选中input框的内容
+        inputElement.select();
+        // 执行浏览器复制命令
+        document.execCommand("Copy");
+        //提示已复制
+        layer.msg(clickContent + '已复制', {icon: 6, time: 500});
+    }
+
+    //复制图片url , url传过来的
+    function copyImageUrl(clickContent) {
+        clickContent = clickContent.replace(/\s+/g, '');
+        inputElement.value = clickContent;
+        //选中input框的内容
+        inputElement.select();
+        // 执行浏览器复制命令
+        document.execCommand("Copy");
+        //提示已复制
+        layer.msg(clickContent + '已复制', {icon: 6, time: 500});
+    }
+
+
+    $('.Preview').click(function () {
+        var Preview = "{:cmf_get_asset_url(1)}";
+        Preview = Preview.substr(0, Preview.length - 1);
+        if ($(this).prev().val()) {
+            imagePreviewDialog(Preview + $(this).prev().val());
+        }
+    });
+
+    function uploadImage(dialog_title, input_selector, extra_params, app) {
+        openUploadDialog(dialog_title, function (dialog, files) {
+            $(input_selector).val(files[0].filepath);
+        }, extra_params, 0, 'image', app);
+    }
+
+    $('[event=delete]').click(function () {
+        var url = $(this).data('url');
+        layer.confirm('您确定要删除吗?', {
+            title: '系统提示',
+            btn: ['确定', '取消'],
+            icon: 7
+        }, function (index) {
+            layer.close(index);
+            var ld = layer.msg('加载中...', {icon: 16, shade: 0.01});
+            $.ajax({
+                type: 'get',
+                url: url,
+                success: function (e) {
+                    layer.close(ld);
+                    if (e.code == 1) {
+                        layer.msg(e.msg, {icon: 6, time: 1000}, function () {
+                            location.reload();
+                        });
+
+                    } else {
+                        layer.msg(e.msg, {icon: 5});
+                    }
+                }
+            });
+        });
+
+    });
+</script>

@@ -1,0 +1,244 @@
+ <include file="public@header"/>
+<style>
+    textarea {
+        border: 0;
+        outline: none;
+        background-color: rgba(0, 0, 0, 0);
+    }
+
+    input {
+        border: 0;
+        outline: none;
+        background-color: rgba(0, 0, 0, 0);
+    }
+
+    .col-md-6 {
+        margin-top: 7px;
+    }
+</style>
+
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="{:url('find',['id'=>$id,'params'=>$params])}">查看</a></li>
+    </ul>
+    <form method="post" class="form-horizontal js-ajax-form margin-top-20 layui-form" autocomplete="off"
+          action="{:url('edit_post',['id'=>$id,'params'=>$params])}">
+
+
+        
+            <div class="form-group">
+                <label class="col-sm-2 control-label">用户类型;1:</label>
+                <div class="layui-input-block col-sm-6">
+                                                {$user_type_name|default=''}
+                    
+                </div>
+            </div>
+
+
+        
+            <div class="form-group">
+                <label class="col-sm-2 control-label">性别;0:</label>
+                <div class="layui-input-block col-sm-6">
+                                                {$sex_name|default=''}
+                    
+                </div>
+            </div>
+
+
+        
+            <div class="form-group">
+                <label class="col-sm-2 control-label">生日:</label>
+                <div class="layui-input-block col-sm-6">
+                                                {$birthday|default=''}
+                    
+                </div>
+            </div>
+
+
+        
+            <div class="form-group">
+                <label class="col-sm-2 control-label">最后登录时间:</label>
+                <div class="layui-input-block col-sm-6">
+                                                {$last_login_time|default=''}
+                    
+                </div>
+            </div>
+
+
+        
+            <div class="form-group">
+                <label class="col-sm-2 control-label">用户积分:</label>
+                <div class="layui-input-block col-sm-6">
+                                                {$score|default=''}
+                    
+                </div>
+            </div>
+
+
+        
+            <div class="form-group">
+                <label class="col-sm-2 control-label">金币:</label>
+                <div class="layui-input-block col-sm-6">
+                                                {$coin|default=''}
+                    
+                </div>
+            </div>
+
+
+        
+            <div class="form-group">
+                <label class="col-sm-2 control-label">余额:</label>
+                <div class="layui-input-block col-sm-6">
+                                                {$balance|default=''}
+                    
+                </div>
+            </div>
+
+
+        
+            <div class="form-group">
+                <label class="col-sm-2 control-label">用户状态;0:</label>
+                <div class="layui-input-block col-sm-6">
+                                                {$user_status_name|default=''}
+                    
+                </div>
+            </div>
+
+
+        
+            <div class="form-group">
+                <label class="col-sm-2 control-label">用户名:</label>
+                <div class="layui-input-block col-sm-6">
+                                                {$user_login|default=''}
+                    
+                </div>
+            </div>
+
+
+        
+            <div class="form-group">
+                <label class="col-sm-2 control-label">登录密码;cmf_password加密:</label>
+                <div class="layui-input-block col-sm-6">
+                                                {$user_pass|default=''}
+                    
+                </div>
+            </div>
+
+
+        
+            <div class="form-group">
+                <label class="col-sm-2 control-label">用户昵称:</label>
+                <div class="layui-input-block col-sm-6">
+                                                {$user_nickname|default=''}
+                    
+                </div>
+            </div>
+
+
+        
+            <div class="form-group">
+                <label class="col-sm-2 control-label">用户登录邮箱:</label>
+                <div class="layui-input-block col-sm-6">
+                                                {$user_email|default=''}
+                    
+                </div>
+            </div>
+
+
+        
+            <div class="form-group">
+                <label class="col-sm-2 control-label">用户个人网址:</label>
+                <div class="layui-input-block col-sm-6">
+                                                {$user_url|default=''}
+                    
+                </div>
+            </div>
+
+
+        
+            <div class="form-group">
+                <label class="col-sm-2 control-label">用户头像:</label>
+                <div class="layui-input-block col-sm-6">
+                                                {$avatar|default=''}
+                    
+                </div>
+            </div>
+
+
+        
+            <div class="form-group">
+                <label class="col-sm-2 control-label">个性签名:</label>
+                <div class="layui-input-block col-sm-6">
+                                                {$signature|default=''}
+                    
+                </div>
+            </div>
+
+
+        
+            <div class="form-group">
+                <label class="col-sm-2 control-label">最后登录ip:</label>
+                <div class="layui-input-block col-sm-6">
+                                                {$last_login_ip|default=''}
+                    
+                </div>
+            </div>
+
+
+        
+            <div class="form-group">
+                <label class="col-sm-2 control-label">激活码:</label>
+                <div class="layui-input-block col-sm-6">
+                                                {$user_activation_key|default=''}
+                    
+                </div>
+            </div>
+
+
+        
+            <div class="form-group">
+                <label class="col-sm-2 control-label">中国手机不带国家代码，国际手机号格式为：国家代码-手机号:</label>
+                <div class="layui-input-block col-sm-6">
+                                                {$mobile|default=''}
+                    
+                </div>
+            </div>
+
+
+        
+            <div class="form-group">
+                <label class="col-sm-2 control-label">扩展属性:</label>
+                <div class="layui-input-block col-sm-6">
+                                                {$more|default=''}
+                    
+                </div>
+            </div>
+
+
+        
+            <div class="form-group">
+                <label class="col-sm-2 control-label">查看合同:</label>
+                <div class="layui-input-block col-sm-6">
+                                                {$is_contract_name|default=''}
+                    
+                </div>
+            </div>
+
+
+        
+
+        <!-- 主键id -->
+        <input type="text" name="id" value="{$id}" class="form-control post-params item-left" style="display: none">
+
+
+    </form>
+
+</div>
+<script src="__STATIC__/js/admin.js"></script>
+</body>
+</html>
+
+
+

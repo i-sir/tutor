@@ -1,0 +1,188 @@
+<include file="public@header"/></head>
+<body xmlns="http://www.w3.org/1999/html">
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="{:url('index',['params'=>$params])}">优惠券</a></li>
+
+        <if condition="cmf_auth_check(cmf_get_current_admin_id(),'admin/ShopCoupon/add')">
+            <li><a href="{:url('add',['params'=>$params])}">添加</a></li>
+        </if>
+
+    </ul>
+
+    <form class="well form-inline margin-top-20 layui-form ajax-form w-form-search" method="get" autocomplete="off">
+        关键字：
+        <div class="form-group layui-form">
+            <div class="layui-form-item" style="margin-bottom: 0 !important;">
+                <div class="col-md-12">
+                    <div class="layui-inline">
+                        <input type="text" class="form-control" name="keyword" style="width: 180px;"
+                               value="{:input('request.keyword/s','')}" placeholder="请输关键字搜索">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" class="layui-btn" style="margin-left: 10px">搜索</button>
+        <a class="layui-btn layui-bg-red" href="{:url('index',['params'=>$params])}">清空</a>
+
+
+        <input type="hidden" name="is_export" class="is_export" value="0">
+    </form>
+
+
+    <form class="js-ajax-form" method="post" autocomplete="off">
+
+        <br>
+        <div class="table-actions">
+
+            <if condition="cmf_auth_check(cmf_get_current_admin_id(),'admin/ShopCoupon/list_order_post')">
+                <button class="layui-btn layui-btn-primary layui-border-green layui-btn-xs js-ajax-submit" type="submit"
+                        data-action="{:url('list_order_post',['params'=>$params])}">
+                    排序
+                </button>
+            </if>
+
+
+        </div>
+
+
+        <table class="table table-hover table-bordered">
+            <thead>
+            <tr>
+                <if condition="cmf_auth_check(cmf_get_current_admin_id(),'admin/ShopCoupon/list_order_post')">
+                    <th style="">排序</th>
+                </if>
+                <th style="">ID</th>
+                <th style="">时间类型</th>
+                <th style="">优惠券类型</th>
+                <th style="">优惠券名称</th>
+                <th style="">满额</th>
+                <th style="">面额</th>
+                <th style="">开始时间</th>
+                <th style="">结束时间</th>
+                <th style="">有效期(天)</th>
+                <th style="">显示</th>
+                <th style="">创建时间</th>
+
+                <th style="">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <foreach name="list" item="vo">
+                <tr>
+                    <if condition="cmf_auth_check(cmf_get_current_admin_id(),'admin/ShopCoupon/list_order_post')">
+                        <td style="width: 90px;">
+                            <input style="width: 100%;!important;" type="text"
+                                   class="form-control input input-order valid post-params" name="list_order[{$vo.id}]"
+                                   value="{$vo.list_order}">
+                        </td>
+                    </if>
+                    <td>{$vo.id}</td>
+                    <td>{$vo.type_name}</td>
+                    <td>{$vo.coupon_type_name}</td>
+                    <td>{$vo.name}</td>
+                    <td>{$vo.full_amount}</td>
+                    <td>{$vo.amount}</td>
+                    <td>
+                        <if condition="$vo.start_time && $vo.type==1">
+                            {$vo.start_time|date='Y-m-d'}
+                        </if>
+                    </td>
+                    <td>
+                        <if condition="$vo.end_time && $vo.type==1">
+                            {$vo.end_time|date='Y-m-d'}
+                        </if>
+                    </td>
+                    <td>
+                        <if condition="$vo.type==2">
+                            {$vo.day}
+                        </if>
+                    </td>
+                    <td>
+                        <div class="layui-form">
+                            <input type="checkbox" lay-skin="switch" lay-text="是|否" lay-filter="is_show" name="is_show"
+                                   value="{$vo.id}"
+                            <if condition="$vo.is_show == 1">checked</if>
+                            >
+                        </div>
+                    </td>
+
+                    <td>{$vo.create_time|date='Y-m-d H:i:s'}</td>
+
+                    <td>
+                        <if condition="cmf_auth_check(cmf_get_current_admin_id(),'admin/ShopCoupon/edit')">
+                            <a class="layui-btn layui-btn-primary layui-border-green layui-btn-xs"
+                               href="{:url('edit',['id'=>$vo.id,'params'=>$params])}">编辑</a>
+                        </if>
+                        <if condition="cmf_auth_check(cmf_get_current_admin_id(),'admin/ShopCoupon/delete')">
+                            <a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs js-ajax-delete"
+                               href="{:url('delete',['id'=>$vo.id,'params'=>$params])}">删除</a>
+                        </if>
+
+
+                    </td>
+                </tr>
+            </foreach>
+            </tbody>
+        </table>
+    </form>
+
+    <div class="pagination">{$page|default=''}</div>
+</div>
+<script src="__STATIC__/js/admin.js"></script>
+</body>
+</html>
+
+<script>
+    layui.use(['layer', 'form', 'slider'], function () {
+        var layer = layui.layer, form = layui.form;
+
+
+        form.on('switch(is_show)', function (data) {
+            batchPost(data.value, 'is_show', this.checked ? 1 : 2)
+        });
+
+
+    });
+</script>
+
+<!--导出,筛选查询-->
+<script>
+    function batchPost(id, field, value) {
+        $.ajax({
+            url: "{:url('batch_post')}",
+            type: "POST",
+            data: {id: id, [field]: value},
+            success: function (res) {
+                if (res.code === 1) {
+                    layer.msg(res.msg, {icon: 1});
+
+                    let time1 = setInterval(function () {
+                        //页面自动刷新
+                        location.reload();
+                    }, 500);
+                } else {
+                    layer.msg(res.msg, {icon: 7});
+                }
+            }
+        });
+    }
+
+    //导出
+    $(".ajax-export").click(function () {
+        //alert("正在开发中...");
+        $(".is_export").val(1);
+        $(".ajax-form").submit();
+        $(".is_export").val(0);
+        return false;
+    });
+
+    //搜索
+    $(".bt_search").click(function () {
+        $(".w-form-search").removeAttr('action');
+        $(".w-form-search").attr('action', "/index.html");
+        $(".w-form-search").submit();
+    });
+</script>
+

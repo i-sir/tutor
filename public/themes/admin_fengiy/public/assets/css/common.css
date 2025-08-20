@@ -1,0 +1,314 @@
+cite {
+	font-style: normal;
+	color: #808080;
+}
+
+/*鼠标样式*/
+.cursor {
+	cursor: pointer;
+}
+
+/*浅色背景*/
+.layui-bg-red-light {
+	color: #FF5722;
+	background: #FCE5DE;
+}
+.layui-bg-orange-light {
+	color: #FFB800;
+	background: #FCF5E3;
+}
+.layui-bg-green-light {
+	color: #16BAAA;
+	background: #EAFCF5;
+}
+.layui-bg-blue-light {
+	color: #1E9FFF;
+	background: #EEF6FF;
+}
+.layui-bg-purple-light {
+	color: #A233C6;
+	background: #FAEDFC;
+}
+.layui-bg-gray-light {
+	color: #7C868D;
+	background: #F5F5F5;
+}
+
+/*圆角图片*/
+.img-rounded {
+	border-radius: 4px;
+	overflow: hidden;
+}
+
+/*订单状态*/
+.order-tab li {
+	min-width: auto !important;
+	margin-right: 50px !important;
+	padding: 0 !important;
+	font-size: 15px !important;
+}
+
+/*订单列表*/
+.order-table {
+	min-width: 1200px;
+}
+.order-table thead .tab-header {
+	background: #f3f5f6;
+	border: 1px #f3f5f6 solid;
+	margin-top: 20px;
+}
+.order-table thead .tab-header th {
+	padding: 15px 5px;
+	text-align: center;
+}
+.order-table thead .tab-header th:first-child {
+	border-top-left-radius: 5px;
+	border-bottom-left-radius: 5px;
+	padding: 0 !important;
+}
+.order-table thead .tab-header th:last-child {
+	border-top-right-radius: 5px;
+	border-bottom-right-radius: 5px;
+}
+.order-table thead .tab-header th .th-table {
+	width: 100%;
+	min-width: 500px;
+}
+.order-table>thead>tr>th {
+	vertical-align: middle;
+	text-align: center;
+}
+
+.order-table {
+	border-collapse: separate;
+}
+.order-table tbody .tr-header td {
+	background: #f3f5f6;
+	padding: 15px;
+}
+.order-table tbody tr.tr-header td:first-child {
+	border-top-left-radius: 5px;
+	border-left: 1px #f3f5f6 solid;
+}
+.order-table tbody tr.tr-header td:last-child {
+	border-top-right-radius: 5px;
+	border-right: 1px #f3f5f6 solid;
+}
+.order-table tbody tr.tr-goods td:first-child {
+	border-left: 1px #f3f5f6 solid;
+}
+.order-table tbody tr.tr-goods td:last-child {
+	border-right: 1px #f3f5f6 solid;
+}
+.order-table tbody tr.tr-footer td:first-child {
+	border-bottom-left-radius: 5px;
+	border-left: 1px #f3f5f6 solid;
+}
+.order-table tbody tr.tr-footer td:last-child {
+	border-bottom-right-radius: 5px;
+	border-right: 1px #f3f5f6 solid;
+}
+.order-table tbody tr.tr-footer td {
+	border-bottom: 1px #f3f5f6 solid;
+}
+
+.order-table tbody:hover tr.tr-header td:first-child, .order-table tbody:hover tr.tr-goods td:first-child {
+	border-left: 1px #3399ff solid;
+}
+.order-table tbody:hover tr.tr-header td:last-child, .order-table tbody:hover tr.tr-goods td:last-child {
+	border-right: 1px #3399ff solid;
+}
+.order-table tbody:hover tr.tr-footer td:first-child{
+	border-left: 1px #3399ff solid;
+}
+.order-table tbody:hover tr.tr-footer td:last-child{
+	border-right: 1px #3399ff solid;
+}
+.order-table tbody:hover tr.tr-footer td {
+	border-bottom: 1px #3399ff solid;
+}
+.order-table tbody:hover .tr-header td {
+	border-top: 1px #3399ff solid;
+	padding: 15px;
+}
+.order-table tbody .tr-footer td {
+	background: #f3f5f6;
+	padding: 10px 15px;
+}
+
+.order-table tbody .tr-pipe {
+	height: 18px;
+}
+
+.order-table tbody tr.tr-goods td {
+	border-right: 1px #f3f5f6 solid;
+}
+.order-table tbody tr.tr-goods td {
+	padding: 0 !important;
+}
+.order-table tbody tr.tr-goods td .goods-item {
+	width: 100%;
+}
+.order-table tbody tr.tr-goods td .goods-item tr td,
+.order-table tbody:hover tr.tr-goods td .goods-item tr td {
+	border: 0;
+	border-right: 1px #f3f5f6 solid;
+	border-bottom: 1px #f3f5f6 solid;
+	padding: 15px !important;
+}
+.order-table tbody tr.tr-goods td .goods-item tr td:last-child,
+.order-table tbody:hover .tr-goods .goods-item tr td:last-child {
+	border-right: 0;
+}
+.order-table tbody tr.tr-goods td .goods-item tr:last-child td {
+	border-bottom: 0;
+}
+.order-table tbody tr.tr-goods td .goods-item .img {
+	float: left;
+	margin-right: 10px;
+}
+.order-table tbody tr.tr-goods td .goods-item .title {
+	width: 350px;
+	margin-bottom: 5px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+}
+.order-table tbody tr.tr-goods td .goods-item .tags {
+	font-size: 12px;
+	color: #409eff;
+	background: #ecf5ff;
+	border: 1px #d9ecff solid;
+	border-radius: 4px;
+	padding: 3px 5px 2px;
+}
+.order-table tbody tr.tr-goods td .price {
+	font-size: 15px;
+}
+.order-table tbody tr.tr-goods td .free {
+	color: #999;
+	margin: 2px 0;
+}
+.order-table tbody tr.tr-goods td .status {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+.order-table tbody tr.tr-goods .operate {
+	display: flex;
+	justify-content: center;
+	margin: 5px 15px;
+}
+.order-table tbody tr.tr-goods .operate .op-btn {
+	display: block;
+	width: 30px;
+	height: 30px;
+	line-height: 30px;
+	/* text-align: center; */
+	vertical-align: middle;
+	margin: 5px;
+	cursor: pointer;
+}
+
+/*订单详情===========================================================*/
+/*订单进度*/
+.steps-section {
+	background: #FFF;
+	margin: 20px;
+	padding: 20px 35px 40px;
+}
+.steps-section .warp {
+	width: 70%;
+	display: flex;
+	justify-content: center;
+	margin: 0 auto;
+}
+.steps-section .warp .step {
+	flex: 1;
+	display: flex;
+	justify-content: center;
+}
+.steps-section .warp .step .left {
+	width: 70px;
+	text-align: center;
+	position: relative;
+}
+.steps-section .warp .left .title {
+	font-size: 15px;
+	color: #C0C4CC;
+	margin-top: 5px;
+}
+.steps-section .warp .left .title.active {
+	color: #409EFF;
+}
+.steps-section .warp .step .left .date {
+	width: 120px;
+	font-size: 12px;
+	color: #409EFF;
+	position: absolute;
+	bottom: -18px;
+	left: 50%;
+	transform: translateX(-50%);
+}
+@media screen and (max-width: 1199px) {
+	.steps-section .warp {
+		width: 100%;
+	}
+}
+@media screen and (max-width: 990px) {
+	.steps-section .warp .step .left .date {
+		display: none;
+	}
+}
+.steps-section .warp .step .right {
+	flex: 1;
+	position: relative;
+}
+.steps-section .warp .step.last {
+	flex: 0;
+}
+.steps-section .warp .line {
+	position: absolute;
+	top: 18px;
+	left: 0;
+	right: 0;
+	height: 1px;
+	background-color: #C0C4CC;
+}
+
+/*商品列表*/
+.order-details {
+	margin: 20px;
+}
+.order-details .warp {
+	background: #FFF;
+	padding: 20px;
+}
+.order-details .warp .list-cell {
+	margin: 10px 0;
+}
+.order-details .warp .list-cell .sub-title {
+	color: #808080;
+}
+.order-details .goods-list .img {
+	float: left;
+	margin-right: 10px;
+}
+.order-details .goods-list .title {
+	margin-bottom: 5px;
+}
+.order-details .tags {
+	font-size: 12px;
+	color: #409eff;
+	background: #ecf5ff;
+	border: 1px #d9ecff solid;
+	border-radius: 4px;
+	padding: 3px 5px 2px;
+}
+.order-details .operate {
+	display: flex;
+	justify-content: flex-end;
+	margin: 20px 0;
+}

@@ -1,0 +1,66 @@
+<include file="public@header"/>
+<style>
+    textarea {
+        border: 0;
+        outline: none;
+        background-color: rgba(0, 0, 0, 0);
+    }
+
+    input {
+        border: 0;
+        outline: none;
+        background-color: rgba(0, 0, 0, 0);
+    }
+
+    .col-md-6 {
+        margin-top: 7px;
+    }
+</style>
+
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <form method="post" class="form-horizontal js-ajax-form margin-top-20 layui-form" autocomplete="off"
+          action="{:url('edit_post',['id'=>$id,'params'=>$params])}">
+
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label">退款原由:</label>
+            <div class="layui-input-block col-sm-6">
+                {$refund_type}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label">退款补充:</label>
+            <div class="layui-input-block col-sm-6">
+                {$refund_why}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label">图片:</label>
+            <div class="layui-input-block col-sm-6">
+                <if condition="!empty($refund_image)">
+                    <a href="javascript:imagePreviewDialog('{:cmf_get_image_preview_url($refund_image)}');">
+                        <img src="{:cmf_get_image_preview_url($refund_image)}"
+                             style="width:40px;height:40px; ">
+                    </a>
+                </if>
+            </div>
+        </div>
+
+
+        <!-- 主键id -->
+        <input type="text" name="id" value="{$id}" class="form-control post-params item-left" style="display: none">
+
+
+    </form>
+
+</div>
+<script src="__STATIC__/js/admin.js"></script>
+</body>
+</html>
+
+
+

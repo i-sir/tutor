@@ -1,0 +1,327 @@
+<include file="public@header"/>
+<style>
+    .margin-top-10 {
+        margin-left: 6%;
+    }
+</style>
+</head>
+<body>
+
+
+<!--//统计-->
+<!--public function statistics()-->
+<!--{-->
+<!--$TyreStockModel = new \initmodel\TyreStockModel(); //库存管理   (ps:InitModel)-->
+
+
+<!--/**-->
+<!--* 获取当日,开始,结束时间戳-->
+<!--*/-->
+<!--$todayStartTimeStamp = strtotime(date('Y-m-d 00:00:00'));-->
+<!--$todayEndTimeStamp   = strtotime(date('Y-m-d 23:59:59'));-->
+
+<!--/**-->
+<!--* 获取本周,开始,结束时间戳-->
+<!--*/-->
+<!--$currentDayOfWeek   = date('w');-->
+<!--$currentTimeStamp   = time();-->
+<!--$weekStartTimeStamp = strtotime('-' . $currentDayOfWeek . ' days', $currentTimeStamp);-->
+<!--$weekEndTimeStamp   = strtotime('+' . (6 - $currentDayOfWeek) . ' days', $currentTimeStamp) + 86399; // 86399秒是一天的最后一秒-->
+
+<!--/**-->
+<!--* 获取本月,开始,结束时间戳-->
+<!--*/-->
+<!--$currentYearMonth   = date('Y-m');-->
+<!--$moonStartTimeStamp = strtotime($currentYearMonth . '-01 00:00:00');-->
+<!--$moonEndTimeStamp   = strtotime(date('Y-m-d', strtotime($currentYearMonth . '+1 month')) . ' 00:00:00') - 1;-->
+
+
+<!--/**-->
+<!--*今日出库-->
+<!--*/-->
+<!--$map                 = [];-->
+<!--$map[]               = ['create_time', 'between', [$todayStartTimeStamp, $todayEndTimeStamp]];-->
+<!--$map[]               = ['operation_type', '=', 2];//类型:1新增,2扣除-->
+<!--$map[]               = ['is_admin', '=', 2];//管理:1后台展示,2库存管理-->
+<!--$map[]               = ['type', '=', 1];//库存类型:1仓库,2经销商,3经销商出库(用户记录)-->
+<!--$result['today_out'] = $TyreStockModel->where($map)->sum('stock');-->
+
+
+<!--/**-->
+<!--* 本周出库-->
+<!--*/-->
+<!--$map2               = [];-->
+<!--$map2[]             = ['create_time', 'between', [$weekStartTimeStamp, $weekEndTimeStamp]];-->
+<!--$map2[]             = ['operation_type', '=', 2];//类型:1新增,2扣除-->
+<!--$map2[]             = ['is_admin', '=', 2];//管理:1后台展示,2库存管理-->
+<!--$map2[]             = ['type', '=', 1];//库存类型:1仓库,2经销商,3经销商出库(用户记录)-->
+<!--$result['week_out'] = $TyreStockModel->where($map2)->sum('stock');-->
+
+
+<!--/**-->
+<!--* 本月出库-->
+<!--*/-->
+<!--$map3               = [];-->
+<!--$map3[]             = ['create_time', 'between', [$moonStartTimeStamp, $moonEndTimeStamp]];-->
+<!--$map3[]             = ['operation_type', '=', 2];//类型:1新增,2扣除-->
+<!--$map3[]             = ['is_admin', '=', 2];//管理:1后台展示,2库存管理-->
+<!--$map3[]             = ['type', '=', 1];//库存类型:1仓库,2经销商,3经销商出库(用户记录)-->
+<!--$result['moon_out'] = $TyreStockModel->where($map3)->sum('stock');-->
+
+
+<!--/**-->
+<!--* 总出库-->
+<!--*/-->
+<!--$map4                = [];-->
+<!--$map4[]              = ['operation_type', '=', 2];//类型:1新增,2扣除-->
+<!--$map4[]              = ['is_admin', '=', 2];//管理:1后台展示,2库存管理-->
+<!--$map4[]              = ['type', '=', 1];//库存类型:1仓库,2经销商,3经销商出库(用户记录)-->
+<!--$result['total_out'] = $TyreStockModel->where($map4)->sum('stock');-->
+
+
+<!--/**-->
+<!--* 今日入库-->
+<!--*/-->
+<!--$map5                  = [];-->
+<!--$map5[]                = ['create_time', 'between', [$todayStartTimeStamp, $todayEndTimeStamp]];-->
+<!--$map5[]                = ['operation_type', '=', 1];//类型:1新增,2扣除-->
+<!--$map5[]                = ['is_admin', '=', 2];//管理:1后台展示,2库存管理-->
+<!--$map5[]                = ['type', '=', 1];//库存类型:1仓库,2经销商,3经销商出库(用户记录)-->
+<!--$result['today_enter'] = $TyreStockModel->where($map5)->sum('stock');-->
+
+
+<!--/**-->
+<!--* 本周入库-->
+<!--*/-->
+<!--$map6                 = [];-->
+<!--$map6[]               = ['create_time', 'between', [$weekStartTimeStamp, $weekEndTimeStamp]];-->
+<!--$map6[]               = ['operation_type', '=', 1];//类型:1新增,2扣除-->
+<!--$map6[]               = ['is_admin', '=', 2];//管理:1后台展示,2库存管理-->
+<!--$map6[]               = ['type', '=', 1];//库存类型:1仓库,2经销商,3经销商出库(用户记录)-->
+<!--$result['week_enter'] = $TyreStockModel->where($map6)->sum('stock');-->
+
+
+<!--/**-->
+<!--* 本月入库-->
+<!--*/-->
+<!--$map7                 = [];-->
+<!--$map7[]               = ['create_time', 'between', [$moonStartTimeStamp, $moonEndTimeStamp]];-->
+<!--$map7[]               = ['operation_type', '=', 1];//类型:1新增,2扣除-->
+<!--$map7[]               = ['is_admin', '=', 2];//管理:1后台展示,2库存管理-->
+<!--$map7[]               = ['type', '=', 1];//库存类型:1仓库,2经销商,3经销商出库(用户记录)-->
+<!--$result['moon_enter'] = $TyreStockModel->where($map7)->sum('stock');-->
+
+
+<!--/**-->
+<!--* 总入库-->
+<!--*/-->
+<!--$map8                  = [];-->
+<!--$map8[]                = ['operation_type', '=', 1];//类型:1新增,2扣除-->
+<!--$map8[]                = ['is_admin', '=', 2];//管理:1后台展示,2库存管理-->
+<!--$map8[]                = ['type', '=', 1];//库存类型:1仓库,2经销商,3经销商出库(用户记录)-->
+<!--$result['total_enter'] = $TyreStockModel->where($map8)->sum('stock');-->
+
+
+<!--//渲染-->
+<!--foreach ($result as $k => $v) {-->
+<!--$this->assign($k, $v);-->
+<!--}-->
+
+
+<!--return $this->fetch();-->
+<!--}-->
+
+
+<!--/**-->
+<!--* 折线图数据-->
+<!--*/-->
+<!--public function line_chart()-->
+<!--{-->
+<!--$TyreStockModel = new \initmodel\TyreStockModel(); //库存管理   (ps:InitModel)-->
+
+<!--/**-->
+<!--* 入库&出库  30天数据-->
+<!--*/-->
+<!--$currentDate = date('Y-m-d');-->
+<!--$enter_list  = array();-->
+<!--$out_list    = array();-->
+<!--// 循环获取最近30天的日期-->
+<!--for ($i = 30; $i >= 0; $i&#45;&#45;) {-->
+<!--$date       = date('Y-m-d', strtotime("-$i days", strtotime($currentDate)));-->
+<!--$begin_time = strtotime(date("{$date}00:00:00"));-->
+<!--$end_time   = strtotime(date("{$date} 23:59:59"));-->
+
+<!--//入库-->
+<!--$map9         = [];-->
+<!--$map9[]       = ['create_time', 'between', [$begin_time, $end_time]];-->
+<!--$map9[]       = ['operation_type', '=', 1];//类型:1新增,2扣除-->
+<!--$map9[]       = ['is_admin', '=', 2];//管理:1后台展示,2库存管理-->
+<!--$map9[]       = ['type', '=', 1];//库存类型:1仓库,2经销商,3经销商出库(用户记录)-->
+<!--$enter_list[] = $TyreStockModel->where($map9)->sum('stock');-->
+
+
+<!--//出库-->
+<!--$map10      = [];-->
+<!--$map10[]    = ['create_time', 'between', [$begin_time, $end_time]];-->
+<!--$map10[]    = ['operation_type', '=', 2];//类型:1新增,2扣除-->
+<!--$map10[]    = ['is_admin', '=', 2];//管理:1后台展示,2库存管理-->
+<!--$map10[]    = ['type', '=', 1];//库存类型:1仓库,2经销商,3经销商出库(用户记录)-->
+<!--$out_list[] = $TyreStockModel->where($map10)->sum('stock');-->
+<!--}-->
+
+<!--$result['enter_list'] = array_merge($enter_list);-->
+<!--$result['out_list']   = array_merge($out_list);-->
+
+
+<!--$this->success('成功', '', $result);-->
+<!--}-->
+
+
+<div class="wrap js-check-wrap">
+
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-xs6">
+            <div class="layui-row layui-col-space15">
+                <div class="layui-col-xs6">
+                    <div class="panel panel-default" style="margin-bottom: 0;">
+                        <div class="panel-body text-center">
+                            <i class="fa fa-users" style="font-size: 24px; color: #69C0FF;">{$today_enter}</i>
+                            <div class="margin-top-10">今日入库</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-col-xs6">
+                    <div class="panel panel-default" style="margin-bottom: 0;">
+                        <div class="panel-body text-center" style="margin-bottom: 0;">
+                            <i class="fa fa-cube" style="font-size: 24px; color: #5CDBD3;">{$week_enter}</i>
+                            <div class="margin-top-10">本周入库</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-xs6">
+            <div class="layui-row layui-col-space15">
+                <div class="layui-col-xs6">
+                    <div class="panel panel-default" style="margin-bottom: 0;">
+                        <div class="panel-body text-center">
+                            <i class="fa fa-id-card" style="font-size: 24px; color: #B37FEB;">{$moon_enter}</i>
+                            <div class="margin-top-10">本月入库</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-col-xs6">
+                    <div class="panel panel-default" style="margin-bottom: 0;">
+                        <div class="panel-body text-center">
+                            <i class="fa fa-id-card" style="font-size: 24px; color: #B37FEB;">{$total_enter}</i>
+                            <div class="margin-top-10">总入库</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-xs12">
+            <div class="panel panel-default" style="margin-bottom: 0;">
+                <div class="panel-heading">
+                    <i class="fa fa-user-circle" style="font-size: 16px; color: #1890FF;"></i>
+                    <span>入库统计图</span>
+                </div>
+                <div class="panel-body">
+                    <div id="enter" style="width: 100%;height:280px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="layui-row layui-col-space15" style="margin-top: 5%;">
+        <div class="layui-col-xs6">
+            <div class="layui-row layui-col-space15">
+                <div class="layui-col-xs6">
+                    <div class="panel panel-default" style="margin-bottom: 0;">
+                        <div class="panel-body text-center">
+                            <i class="fa fa-cog" style="font-size: 24px; color: #95DE64;">{$today_out}</i>
+                            <div class="margin-top-10">今日出库</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-col-xs6">
+                    <div class="panel panel-default" style="margin-bottom: 0;">
+                        <div class="panel-body text-center">
+                            <i class="fa fa-cogs" style="font-size: 24px; color: #FFC069;">{$week_out}</i>
+                            <div class="margin-top-10">本周出库</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-col-xs6">
+            <div class="layui-row layui-col-space15">
+                <div class="layui-col-xs6">
+                    <div class="panel panel-default" style="margin-bottom: 0;">
+                        <div class="panel-body text-center">
+                            <i class="fa fa-id-card" style="font-size: 24px; color: #B37FEB;">{$moon_out}</i>
+                            <div class="margin-top-10">本月出库</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-col-xs6">
+                    <div class="panel panel-default" style="margin-bottom: 0;">
+                        <div class="panel-body text-center">
+                            <i class="fa fa-id-card" style="font-size: 24px; color: #B37FEB;">{$total_out}</i>
+                            <div class="margin-top-10">总出库</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-xs12">
+            <div class="panel panel-default" style="margin-bottom: 0;">
+                <div class="panel-heading">
+                    <i class="fa fa-user-circle" style="font-size: 16px; color: #1890FF;"></i>
+                    <span>出库统计图</span>
+                </div>
+                <div class="panel-body">
+                    <div id="out" style="width: 100%;height:280px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+
+<script src="__STATIC__/js/admin.js"></script>
+<script src="__TMPL__/public/assets/simpleboot3/js/adminindex.js"></script>
+<script src="__TMPL__/public/assets/js/echarts.js"></script>
+<script src="__TMPL__/public/assets/simpleboot3/js/indexnum.js"></script>
+<hook name="admin_before_body_end"/>
+<script type="text/javascript">
+    //图表
+    $(function () {
+        $.ajax({
+            url: "{:url('line_chart')}",
+            type: "POST",
+            success: function (res) {
+                //入库
+                enterChart(res.data.enter_list);
+                //出库
+                outChart(res.data.out_list);
+            }
+        });
+
+        //订单数据量趋势
+        //orderChart([10, 11, 13, 11, 12, 12, 9], [1, 2, 2, 5, 3, 2, 0]);
+    })
+</script>
+</body>
+</html>

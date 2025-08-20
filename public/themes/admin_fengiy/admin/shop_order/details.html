@@ -1,0 +1,478 @@
+<include file="public@header"/>
+<link href="__TMPL__/public/assets/css/common.css" rel="stylesheet">
+
+<style>
+    .price-summary {
+        /*margin-top: 20px;*/
+        /*padding-top: 10px;*/
+        width: 200px;
+        margin-left: auto;
+    }
+
+    .price-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 5px;
+    }
+
+    .price-row:last-child {
+        font-weight: bold;
+        border-top: 1px solid #eee;
+        padding-top: 5px;
+    }
+
+    .price-label {
+        width: 80px;
+        text-align: left;
+    }
+
+    .price-value {
+        width: 120px;
+        text-align: left;
+    }
+
+    /* 新增：仅用于左边时间信息的样式（纯文本，无布局） */
+    .time-info {
+        margin-bottom: 15px; /* 与右边价格信息隔开 */
+    }
+    .time-row {
+        margin-bottom: 5px;
+    }
+</style>
+
+
+
+</head>
+<body>
+
+
+
+<div class="steps-section" style="display: none;">
+    <div class="warp">
+        <div class="step">
+            <div class="left">
+                <img alt="" height="30" src="__TMPL__/public/assets/images/order/status_1_active.png" width="30">
+                <div class="title active">已下单</div>
+                <if condition="!empty($create_time)">
+                    <div class="date">{$create_time|date="Y-m-d H:i:s"}</div>
+                </if>
+            </div>
+            <div class="right">
+                <div class="line"></div>
+            </div>
+        </div>
+        <div class="step">
+            <div class="left">
+                <if condition="$status != 1 and $status != 10">
+                    <img alt="" height="30" src="__TMPL__/public/assets/images/order/status_2_active.png" width="30">
+                    <div class="title active">已付款</div>
+                    <if condition="!empty($pay_time)">
+                        <div class="date">{$pay_time|date="Y-m-d H:i:s"}</div>
+                    </if>
+                    <else/>
+                    <img alt="" height="30" src="__TMPL__/public/assets/images/order/status_2.png" width="30">
+                    <div class="title">已付款</div>
+                </if>
+            </div>
+            <div class="right">
+                <div class="line"></div>
+            </div>
+        </div>
+        <div class="step">
+            <div class="left">
+                <if condition="$status != 1 and $status != 2 and $status != 10 and $status != 12 and $status != 14 and $status != 16">
+                    <img alt="" height="30" src="__TMPL__/public/assets/images/order/status_3_active.png" width="30">
+                    <div class="title active">已发货</div>
+                    <if condition="!empty($send_time)">
+                        <div class="date">{$send_time|date="Y-m-d H:i:s"}</div>
+                    </if>
+                    <else/>
+                    <img alt="" height="30" src="__TMPL__/public/assets/images/order/status_3.png" width="30">
+                    <div class="title">已发货</div>
+                </if>
+            </div>
+            <div class="right">
+                <div class="line"></div>
+            </div>
+        </div>
+        <div class="step">
+            <div class="left">
+                <if condition="$status == 6">
+                    <img alt="" height="30" src="__TMPL__/public/assets/images/order/status_4_active.png" width="30">
+                    <div class="title active">已收货</div>
+                    <if condition="!empty($receive_time)">
+                        <div class="date">{$receive_time|date="Y-m-d H:i:s"}</div>
+                    </if>
+                    <else/>
+                    <img alt="" height="30" src="__TMPL__/public/assets/images/order/status_4.png" width="30">
+                    <div class="title">已收货</div>
+                </if>
+            </div>
+            <div class="right">
+                <div class="line"></div>
+            </div>
+        </div>
+        <div class="step">
+            <div class="left">
+                <if condition="$status == 8">
+                    <img alt="" height="30" src="__TMPL__/public/assets/images/order/status_6_active.png" width="30">
+                    <div class="title active">已完成</div>
+                    <if condition="!empty($accomplish_time)">
+                        <div class="date">{$accomplish_time|date="Y-m-d H:i:s"}</div>
+                    </if>
+                    <else/>
+                    <img alt="" height="30" src="__TMPL__/public/assets/images/order/status_6.png" width="30">
+                    <div class="title">已完成</div>
+                </if>
+            </div>
+            <div class="right">
+                <div class="line"></div>
+            </div>
+        </div>
+        <div class="step last">
+            <div class="left">
+                <if condition="$status == 10 or $status == 16 or $status == 20">
+                    <img alt="" height="30" src="__TMPL__/public/assets/images/order/status_7_active.png" width="30">
+                    <div class="title active">取消/关闭</div>
+                    <if condition="!empty($cancel_time)">
+                        <div class="date">{$cancel_time|date="Y-m-d H:i:s"}</div>
+                    </if>
+                    <else/>
+                    <img alt="" height="37" src="__TMPL__/public/assets/images/order/status_7.png" width="37">
+                    <div class="title">取消/关闭</div>
+                </if>
+            </div>
+            <div class="right">
+                <div class="line"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<div class="order-details">
+    <div class="warp">
+        <div class="layui-font-16"><b>订单信息</b></div>
+        <div class="layui-row layui-col-space30" style="margin-top: 10px;">
+            <div class="layui-col-md4">
+                <div class="list-cell">
+                    <span class="sub-title">订单号：</span>
+                    <span onclick="copyContent('{$order_num}')">{$order_num}</span>
+                </div>
+                <div class="list-cell">
+                    <span class="sub-title">用户信息：</span>
+                    <span ondblclick="copyContent('{$user_info.openid}')">{$user_info.nickname}<cite>(ID:{$user_id})</cite></span>
+                </div>
+                <div class="list-cell">
+                    <notempty name="$pay_time">
+                        <span class="sub-title">支付方式：</span>
+                        <!-- 0未支付, 1微信支付, 2余额支付, 3积分支付 -->
+                        <span class="layui-btn layui-btn-primary layui-border-green layui-btn-xs">{$pay_type_name}</span>
+                    </notempty>
+                </div>
+                <div class="list-cell">
+                    <notempty name="$exp_name">
+                        <span class="sub-title">快递名称：{$exp_name}</span>
+                    </notempty>
+                    <notempty name="$exp_num">
+                        <br>
+                        <span class="layui-font-blue">快递单号：<cite>({$exp_num})</cite></span>
+                    </notempty>
+                </div>
+            </div>
+            <div class="layui-col-md4">
+                <div class="list-cell">
+                    <span class="sub-title">联系人：</span>
+                    <span>{$username}</span>
+                </div>
+                <div class="list-cell">
+                    <span class="sub-title">电话：</span>
+                    <span>{$phone}</span>
+                </div>
+                <div class="list-cell">
+                    <span class="sub-title">收货地址：</span>
+                    <span>{$province}-{$city}-{$county} {$address}</span>
+                </div>
+                <!--				<div class="list-cell">-->
+                <!--					<span class="sub-title">配送方式：</span>-->
+                <!--					<span class="layui-btn layui-btn-primary layui-border-green layui-btn-xs">快递发货</span>-->
+                <!--				</div>-->
+                <!--<div class="list-cell">
+                    <span class="sub-title">核销员：</span>
+                    <span>用户昵称<cite>(用户ID)</cite></span>
+                </div>-->
+            </div>
+            <div class="layui-col-md4">
+                <div class="list-cell">
+                    <div class="sub-title">买家留言：</div>
+                    <span>{$remark}</span>
+                </div>
+                <!--                <div class="list-cell">-->
+                <!--                    <div class="sub-title">商家备注：</div>-->
+                <!--                    <span>{$admin_remark}</span>-->
+                <!--                    &lt;!&ndash; 如无留言为“添加备注”，否则为“修改备注” &ndash;&gt;-->
+                <!--                    <i class="layui-icon layui-icon-edit layui-font-blue cursor" data-id="{$id}"-->
+                <!--                       data-notes="{$admin_remark}" data-toggle="tooltip" lay-on="order-tips"-->
+                <!--                       title="{$admin_remark?'修改备注':'添加备注'}"></i>-->
+                <!--                </div>-->
+            </div>
+        </div>
+    </div>
+</div>
+<div class="order-details" style="margin-bottom: 150px;">
+    <div class="warp">
+        <table class="table table-hover table-bordered">
+            <thead>
+            <tr class="active">
+                <th class="text-center">商品信息</th>
+                <th class="text-center">规格</th>
+                <th class="text-center">单价</th>
+                <th class="text-center">数量</th>
+                <th class="text-center">合计</th>
+            </tr>
+            </thead>
+            <tbody>
+            <foreach item="goods" key="key" name="goods_list">
+                <tr>
+                    <!--					<td class="text-center">{$key+1}</td>-->
+                    <td class="goods-list">
+                        <div style="display: flex; align-items: center;">
+                            <if condition="$goods.goods_id">
+                                <if condition="$goods.image">
+                                    <div class="img">
+                                        <a href="javascript:imagePreviewDialog('{:cmf_get_image_preview_url($goods.image)}');">
+                                            <img alt=""
+                                                 class="img-rounded" height="70"
+                                                 src="{:cmf_get_image_preview_url($goods.image)}"
+                                                 width="70">
+                                        </a>
+                                    </div>
+                                </if>
+                                <div style="">
+                                    <div class="title">
+                                        <a href="{:url('index',array('page'=>$page,'type'=>$type,'order_num'=>$order_num,'goods_name'=>$goods.goods_name,'order_date'=>$order_date))}">
+                                            {$goods.goods_name}
+                                        </a>
+                                    </div>
+                                    <if condition="$goods.sku_name">
+                                        <!--                                        <span class="tags">{$goods.sku_name}</span>-->
+                                    </if>
+                                </div>
+                            </if>
+
+                            <if condition="$goods.status != 0">
+                                <div style="margin-top: 5px;">
+                                    <a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs"
+                                       href="javascript:parent.openIframeLayer('{:url('shop_order_refund/find',array('detail_id'=>$goods.id))}','',{ area: ['65%', '85%'],move:'.layui-layer-title'},false);"
+                                    >退款原因</a>
+                                </div>
+                            </if>
+                        </div>
+                    </td>
+                    <td class="text-center">
+                        <if condition="$goods.sku_name">
+                            <span class="tags">{$goods.sku_name}</span>
+                        </if>
+                        <if condition="$goods.status != 0">
+                            <div style="margin-top: 5px;">
+                                <a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs"
+                                   href="javascript:parent.openIframeLayer('{:url('shop_order_refund/find',array('detail_id'=>$goods.id))}','',{ area: ['65%', '85%'],move:'.layui-layer-title'},false);"
+                                >退款原因</a>
+                            </div>
+                        </if>
+                        <if condition="$goods.id == $detail_id">
+                            <div style="margin-top: 5px;">
+                                本单
+                            </div>
+                        </if>
+                    </td>
+                    <td class="text-center">&yen; {$goods.goods_price|default='0'}</td>
+                    <td class="text-center">{$goods.count|default='1'}</td>
+                    <td class="text-center">&yen; {$goods.total_amount|default='0'}</td>
+                </tr>
+            </foreach>
+            </tbody>
+        </table>
+
+
+        <div style="display: flex;justify-content: space-between;align-items: center;">
+            <!-- 左边时间信息（纯文本，无样式） -->
+            <div class="time-info">
+                <div class="time-row"><cite>下单时间：</cite> {$create_time|date='Y-m-d H:i:s'}</div>
+                <notempty name="$pay_time">
+                    <div class="time-row"><cite>支付时间：</cite> {$pay_time|date='Y-m-d H:i:s'}</div>
+                </notempty>
+                <notempty name="$send_time">
+                    <div class="time-row"><cite>发货时间：</cite> {$send_time|date='Y-m-d H:i:s'}</div>
+                </notempty>
+                <notempty name="$accomplish_time">
+                    <div class="time-row"><cite>完成时间：</cite> {$accomplish_time|date='Y-m-d H:i:s'}</div>
+                </notempty>
+            </div>
+
+            <!-- 右边价格信息（完全保持原样） -->
+            <div class="price-summary">
+                <div class="price-row">
+                    <div class="price-label"><cite>优惠金额：</cite></div>
+                    <div class="price-value">&yen; {$coupon_amount}</div>
+                </div>
+                <div class="price-row">
+                    <div class="price-label"><cite>运费：</cite></div>
+                    <div class="price-value">&yen; {$freight_amount}</div>
+                </div>
+                <div class="price-row">
+                    <div class="price-label"><cite>使用积分：</cite></div>
+                    <div class="price-value">&yen; {$point}</div>
+                </div>
+                <div class="price-row">
+                    <div class="price-label"><cite>积分抵扣：</cite></div>
+                    <div class="price-value">&yen; {$point_balance}</div>
+                </div>
+                <div class="price-row">
+                    <div class="price-label"><cite>实际支付：</cite></div>
+                    <div class="price-value">&yen; {$amount}</div>
+                </div>
+
+                <!-- 总计行（加粗显示） -->
+                <div class="price-row" style="font-weight: bold; border-top: 1px solid #eee; padding-top: 5px;">
+                    <div class="price-label"><cite>总计：</cite></div>
+                    <div class="price-value">&yen; {$total_amount}</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+<script src="__STATIC__/js/admin.js"></script>
+<script>
+    layui.use(function () {
+        var layer = layui.layer;
+        var util = layui.util;
+        //操作订单
+        util.on('lay-on', {
+            //管理员添加备注信息
+            'order-tips': function () {
+                var orderId = $(this).attr("data-id"); //当前订单ID
+                var value = $(this).attr("data-notes"); //当前订单备注信息
+
+                layer.prompt({title: '请输入备注信息', value, formType: 2}, function (value, index, elem) {
+                    if (value === '') return elem.focus();
+
+                    $.ajax({
+                        type: "POST",
+                        url: "setRemark",
+                        data: {id: orderId, admin_remark: value},
+                        success: function (res) {
+                            if (res.code == 1) {
+                                layer.close(index);
+                                layer.msg(res.msg, {icon: 1, time: 1000}, function () {
+                                    location.reload();
+                                });
+                            } else {
+                                layer.msg(res.msg, {icon: 7});
+                            }
+                        },
+                    })
+                });
+            },
+
+            //处理退款
+            'order-refund': function () {
+                var orderId = $(this).attr("data-id"); //当前订单ID
+
+                layer.confirm('确认要通过审核？', {
+                    btn: ['确定', '拒绝'] //按钮
+                }, function () {
+                    $.ajax({
+                        url: 'confirmCancel',
+                        type: "POST",
+                        data: {id: orderId, status: 1},
+                        success: function (res) {
+                            if (res.code == 1) {
+                                layer.msg(res.msg, {icon: 1, time: 1000}, function () {
+                                    location.reload();
+                                });
+                            } else {
+                                layer.msg(res.msg, {icon: 7});
+                            }
+                        }
+                    });
+                }, function () {
+                    layer.prompt({title: '请输入拒绝原因', formType: 2}, function (value, index, elem) {
+                        if (value === '') return elem.focus();
+
+                        $.ajax({
+                            url: 'confirmCancel',
+                            type: "POST",
+                            data: {id: orderId, status: 2, text: value},
+                            success: function (res) {
+                                if (res.code == 1) {
+                                    layer.close(index);
+                                    layer.msg(res.msg, {icon: 1, time: 1000}, function () {
+                                        location.reload();
+                                    });
+                                } else {
+                                    layer.msg(res.msg, {icon: 7});
+                                }
+                            }
+                        });
+                    });
+                });
+            },
+
+            //打印小票
+            'order-print': function () {
+                var orderId = $(this).attr("data-id"); //当前订单ID
+
+                layer.confirm('确认要打印小票？', {
+                    btn: ['确定', '取消'] //按钮
+                }, function () {
+                    layer.msg('打印小票操作', {icon: 1});
+                });
+            }
+        })
+    })
+
+    function send(id) {
+        openIframeLayer(`{:url('order/send')}?id=${id}`, '订单发货', {
+            area: ['800px', '600px'],
+            btn: ['确定', '取消'],
+            yes: function (index, layero) {
+
+                var iframeWin = window[layero.find('iframe')[0]['name']];
+                var str = iframeWin.confirm();
+                var data = str['data'];
+
+                if (!str.data.exp_id) {
+                    layer.msg('请选择快递公司');
+                    return;
+                }
+
+                if (!str.data.exp_num) {
+                    layer.msg('请填写快递单号');
+                    return;
+                }
+                $.ajax({
+                    type: "POST",
+                    url: "send",
+                    data: data,
+                    success: function (res) {
+                        if (res.code == 1) {
+                            layer.close(index);
+                            layer.msg(res.msg, {icon: 1, time: 1000}, function () {
+                                location.reload();
+                            });
+                        } else {
+                            layer.msg(res.msg, {icon: 7});
+                        }
+                    },
+                })
+            }
+        });
+    }
+</script>
+</body>
+</html>

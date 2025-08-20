@@ -1,0 +1,23 @@
+<include file="public@header"/></head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li><a href="{:url('index',['params'=>$params])}">管理员</a></li>
+        <li class="active"><a href="{:url('add',['params'=>$params])}">添加</a></li>
+        <!--<li><a  href="/edit.html" >ADMIN_NAV_EDIT</a></li>-->
+    </ul>
+    <form method="post" class="form-horizontal js-ajax-form margin-top-20 layui-form" autocomplete="off" action="{:url('add_post',['params'=>$params])}">
+
+        <include file="admin_user/form"/>
+
+        <div class="col-sm-offset-2 col-sm-10">
+            <button type="submit" class="layui-btn js-ajax-submit" id="save">保存</button>
+            <a class="layui-btn layui-btn-primary" href="javascript:history.back(-1);">返回</a>
+        </div>
+    </form>
+
+</div>
+<script src="__STATIC__/js/admin.js"></script>
+</body>
+</html>
+

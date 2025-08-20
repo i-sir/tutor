@@ -1,0 +1,251 @@
+<!doctype html>
+<html>
+<head>
+    <include file="public/head"/>
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li {$type==1?"class='active'":''}><a href="{:cmf_plugin_url('Weipay://AdminIndex/index',array('type'=>1))}">基础信息</a>
+        </li>
+        <li {$type==2?"class='active'":''}><a href="{:cmf_plugin_url('Weipay://AdminIndex/index',array('type'=>2))}">微信支付</a>
+        </li>
+<!--        <li {$type==3?"class='active'":''}><a href="{:cmf_plugin_url('Weipay://AdminIndex/index',array('type'=>3))}">支付宝支付</a>-->
+<!--        </li>-->
+    </ul>
+    <form method="post" class="form-horizontal js-ajax-form margin-top-20"
+          action="{:cmf_plugin_url('Weipay://AdminIndex/update')}">
+        <if condition="$type == 1">
+            <div class="form-group">
+                <label class="col-sm-2 control-label">微信小程序app_id</label>
+                <div class="col-md-6 col-sm-10">
+                    <input type="text" class="form-control" name="wx_mini_app_id"
+                           value="{$info.wx_mini_app_id|default=''}">
+                    <span>微信微信小程序APPID</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">微信小程序密钥</label>
+                <div class="col-md-6 col-sm-10">
+                    <input type="text" class="form-control" name="wx_mini_app_secret"
+                           value="{$info.wx_mini_app_secret|default=''}">
+                    <span>微信公众平台密钥</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">微信公众号app_id</label>
+                <div class="col-md-6 col-sm-10">
+                    <input type="text" class="form-control" name="wx_mp_app_id" value="{$info.wx_mp_app_id|default=''}">
+                    <span>微信公众号APPID</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">微信公众号密钥</label>
+                <div class="col-md-6 col-sm-10">
+                    <input type="text" class="form-control" name="wx_mp_app_secret"
+                           value="{$info.wx_mp_app_secret|default=''}">
+                    <span>微信公众平台密钥</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">微信公众号token</label>
+                <div class="col-md-6 col-sm-10">
+                    <input type="text" class="form-control" name="wx_token" value="{$info.wx_token|default=''}">
+                    <span>微信公众号token</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label"><span
+                        class="form-required">*</span>微信公众号encodingaeskey</label>
+                <div class="col-md-6 col-sm-10">
+                    <input type="text" class="form-control" name="wx_encodingaeskey"
+                           value="{$info.wx_encodingaeskey|default=''}">
+                    <span>微信公众号encodingaeskey</span>
+                </div>
+            </div>
+
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label">所用系统</label>
+                <div class="col-md-6 col-sm-10">
+                    <if condition="isset($info.wx_system_type)">
+                        <input type="radio" name="wx_system_type" value="wx_mini"
+                        <if condition="$info.wx_system_type eq 'wx_mini' ">checked</if>
+                        >小程序
+                        <input type="radio" name="wx_system_type" value="wx_mp"
+                        <if condition="$info.wx_system_type eq 'wx_mp' ">checked</if>
+                        >公众号
+                        <else/>
+                        <input type="radio" name="wx_system_type" value="wx_mini" checked>小程序
+                        <input type="radio" name="wx_system_type" value="wx_mp">公众号
+                    </if>
+                </div>
+            </div>
+
+            <elseif condition="$type == 2"/>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">微信商户号</label>
+                <div class="col-md-6 col-sm-10">
+                    <input type="text" class="form-control" name="wx_mch_id" value="{$info.wx_mch_id|default=''}">
+                    <span>微信商户号不能为空</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">微信商户秘钥v2</label>
+                <div class="col-md-6 col-sm-10">
+                    <input type="text" class="form-control" name="wx_v2_mch_secret_key"
+                           value="{$info.wx_v2_mch_secret_key|default=''}">
+                    <span>微信商户秘钥(微信转账到零钱需要v2支付)</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">微信商户秘钥v3</label>
+                <div class="col-md-6 col-sm-10">
+                    <input type="text" class="form-control" name="wx_v3_mch_secret_key"
+                           value="{$info.wx_v3_mch_secret_key|default=''}">
+                    <span>微信商户秘钥(支付需要v3密钥)</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">微信商户私钥证书key</label>
+                <div class="col-md-6 col-sm-10">
+                    <div>
+                        <input class="form-control" id="js-wx_mch_secret_cert-input" type="text"
+                               name="wx_mch_secret_cert" value="{$info.wx_mch_secret_cert|default=''}"
+                               style="width: 500px;display: inline-block;" title="文件名称">
+                        <a href="javascript:uploadOne('文件上传','#js-wx_mch_secret_cert-input','file');">上传文件</a>
+                    </div>
+                    <span>微信商户私钥证书文件(注意：文件上传到本地，否则不支持支付)</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">微信商户公钥证书cert</label>
+                <div class="col-md-6 col-sm-10">
+                    <div>
+                        <input class="form-control" id="js-wx_mch_public_cert_path-input" type="text"
+                               name="wx_mch_public_cert_path" value="{$info.wx_mch_public_cert_path|default=''}"
+                               style="width: 500px;display: inline-block;" title="文件名称">
+                        <a href="javascript:uploadOne('文件上传','#js-wx_mch_public_cert_path-input','file');">上传文件</a>
+                    </div>
+                    <span>微信商户公钥证书文件(注意：文件上传到本地，否则不支持支付)</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">微信NotifyUrl</label>
+                <div class="col-md-6 col-sm-10">
+                    <input type="text" class="form-control" name="wx_notify_url"
+                           value="{$info.wx_notify_url|default=''}">
+                    <span>微信支付回跳地址(方法路径,相对路径/api/wxapp/Notify/returnCallback)</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">APP的app_id</label>
+                <div class="col-md-6 col-sm-10">
+                    <input type="text" class="form-control" name="wx_app_id" value="{$info.wx_app_id|default=''}">
+                    <span>微信开放平台APPID(仅限APP支付使用)</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">key</label>
+                <div class="col-md-6 col-sm-10">
+                    <input type="text" class="form-control" name="wx_v3_key" value="{$info.wx_v3_key|default=''}">
+                    <span>微信支付 ApiV3Key (微信商户秘钥v3)</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">证书序列号</label>
+                <div class="col-md-6 col-sm-10">
+                    <input type="text" class="form-control" name="wx_certificates" value="{$info.wx_certificates|default=''}">
+                    <span>微信支付的 证书序列号</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">转账回调地址</label>
+                <div class="col-md-6 col-sm-10">
+                    <input type="text" class="form-control" name="transfer_notify_url" value="{$info.transfer_notify_url|default=''}">
+                    <span>微信转账成功回跳地址(方法路径,相对路径/api/wxapp/WxBase/notify)</span>
+                </div>
+            </div>
+            <else/>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">支付宝Appid</label>
+                <div class="col-md-6 col-sm-10">
+                    <input type="text" class="form-control" name="ali_app_id" value="{$info.ali_app_id|default=''}">
+                    <span>支付宝应用appid</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">支付宝私钥secret</label>
+                <div class="col-md-6 col-sm-10">
+                    <textarea class="form-control"
+                              name="ali_app_secret_cert">{$info.ali_app_secret_cert|default=''}</textarea>
+                    <span>支付宝私钥内容 (1行填写，特别注意：这里是支付宝私钥。)</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">支付宝应用公钥appCert</label>
+                <div class="col-md-6 col-sm-10">
+                    <div>
+                        <input class="form-control" id="js-ali_app_public_cert_path-input" type="text"
+                               name="ali_app_public_cert_path" value="{$info.ali_app_public_cert_path|default=''}"
+                               style="width: 500px;display: inline-block;" title="文件名称">
+                        <a href="javascript:uploadOne('文件上传','#js-ali_app_public_cert_path-input','file');">上传文件</a>
+                    </div>
+                    <span>应用公钥证书文件(注意：文件上传到本地，否则不支持支付)</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">支付宝公钥alipayCert</label>
+                <div class="col-md-6 col-sm-10">
+                    <div>
+                        <input class="form-control" id="js-ali_alipay_public_cert_path-input" type="text"
+                               name="ali_alipay_public_cert_path" value="{$info.ali_alipay_public_cert_path|default=''}"
+                               style="width: 500px;display: inline-block;" title="文件名称">
+                        <a href="javascript:uploadOne('文件上传','#js-ali_alipay_public_cert_path-input','file');">上传文件</a>
+                    </div>
+                    <span>支付宝公钥证书文件(注意：文件上传到本地，否则不支持支付)</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">支付宝根证书RootCert</label>
+                <div class="col-md-6 col-sm-10">
+                    <div>
+                        <input class="form-control" id="js-ali_alipay_root_cert_path-input" type="text"
+                               name="ali_alipay_root_cert_path" value="{$info.ali_alipay_root_cert_path|default=''}"
+                               style="width: 500px;display: inline-block;" title="文件名称">
+                        <a href="javascript:uploadOne('文件上传','#js-ali_alipay_root_cert_path-input','file');">上传文件</a>
+                    </div>
+                    <span>支付宝根证书文件(注意：文件上传到本地，否则不支持支付)</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">支付宝NotifyUrl</label>
+                <div class="col-md-6 col-sm-10">
+                    <input type="text" class="form-control" name="ali_notify_url"
+                           value="{$info.ali_notify_url|default=''}">
+                    <span>支付成功通知地址(方法路径,相对路径/api/wxapp/Notify/notifyCallback)</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">支付宝ReturnUrl</label>
+                <div class="col-md-6 col-sm-10">
+                    <input type="text" class="form-control" name="ali_return_url"
+                           value="{$info.ali_return_url|default=''}">
+                    <span>网页支付回跳地址(方法路径,相对路径/api/wxapp/Notify/returnCallback)</span>
+                </div>
+            </div>
+        </if>
+        <div class="col-sm-offset-2 col-sm-10">
+            <input type="hidden" value="{$type}" name="type">
+            <button type="submit" class="btn btn-primary js-ajax-submit">{:lang("SAVE")}</button>
+        </div>
+    </form>
+</div>
+<include file="public/scripts"/>
+<script type="text/javascript">
+    $('input[id=lefile]').change(function () {
+        $('#photoCover').val($(this).val());
+    });
+</script>
+</body>
+</html>

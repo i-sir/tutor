@@ -1,0 +1,199 @@
+<include file="public@header"/>
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="{:url('index')}">提现列表</a></li>
+    </ul>
+
+
+    <form class="well form-inline margin-top-20 layui-form ajax-form w-form-search" method="get" autocomplete="off"
+          action="{:url('index',['params'=>$params])}">
+        关键字:
+        <input type="text" class="form-control post-params" name="keyword" style="width: 180px;"
+               value="{:input('request.keyword/s','')}" placeholder="请输入{:lang('搜索关键字')}">
+
+
+        提现类型：
+        <div class="form-group">
+            <div class="layui-form-item">
+                <div class="col-md-6 col-sm-10" style="display: flex;margin-top: 10px;width: 180px;">
+                    <select name="type" lay-search>
+                        <option value=""
+                        <if condition="$type eq '' ">selected</if>
+                        >暂不选择</option>
+                        <foreach name="type_list" key="key" item="vo">
+                            <option value="{$key}"
+                            <if condition="$type eq $key ">selected</if>
+                            > {$vo}</option>
+                        </foreach>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+
+        <!--        身份类型:-->
+        <!--        <div class="form-group">-->
+        <!--            <div class="layui-form-item">-->
+        <!--                <div class="col-md-6 col-sm-10" style="display: flex;margin-top: 10px;width: 180px;">-->
+        <!--                    <select name="identity_type" lay-search>-->
+        <!--                        <option value=""-->
+        <!--                        <if condition="$identity_type eq '' ">selected</if>-->
+        <!--                        >暂不选择</option>-->
+
+        <!--                        <option value="member"-->
+        <!--                        <if condition="$identity_type eq 'member' ">selected</if>-->
+        <!--                        >用户</option>-->
+
+        <!--                        <option value="technician"-->
+        <!--                        <if condition="$identity_type eq 'technician' ">selected</if>-->
+        <!--                        >技师</option>-->
+
+        <!--                    </select>-->
+        <!--                </div>-->
+        <!--            </div>-->
+        <!--        </div>-->
+
+        状态：
+        <div class="form-group">
+            <div class="layui-form-item">
+                <div class="col-md-6 col-sm-10" style="display: flex;margin-top: 10px;width: 180px;">
+                    <select name="status" lay-search>
+                        <option value=""
+                        <if condition="$status eq '' ">selected</if>
+                        >暂不选择</option>
+                        <foreach name="status_list" key="key" item="vo">
+                            <option value="{$key}"
+                            <if condition="$status eq $key ">selected</if>
+                            > {$vo}</option>
+                        </foreach>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+
+        开始时间：
+        <div class="form-group">
+            <div class="layui-form-item">
+                <div class="col-md-6 col-sm-10"
+                     style="display: flex;margin-top: 10px;width: 180px;margin-right: 50px">
+                    <input type="text" class="form-control post-params js-date" name="beginTime"
+                           value="{$beginTime}" placeholder="请输入开始时间">
+                </div>
+            </div>
+        </div>
+
+
+        结束时间：
+        <div class="form-group">
+            <div class="layui-form-item">
+                <div class="col-md-6 col-sm-10" style="display: flex;margin-top: 10px;width: 150px;">
+                    <input type="text" class="form-control post-params js-date" name="endTime"
+                           value="{$endTime}" placeholder="请输入结束时间">
+                </div>
+            </div>
+        </div>
+
+
+        <button type="submit" class="layui-btn" style="margin-left: 120px">搜索</button>
+        <!--<a type="button" class="layui-btn layui-bg-blue ajax-export" href="javascript:;">导出</a>-->
+        <a class="layui-btn layui-bg-red" href="{:url('index',array('params'=>$params))}">清空</a>
+        <input type="hidden" name="is_export" class="is_export" value="0">
+    </form>
+
+
+    <table class="table table-hover table-bordered margin-top-20">
+        <thead>
+        <tr>
+            <th width="50">ID</th>
+            <th>身份类型</th>
+            <th>提现方式</th>
+            <th>用户信息</th>
+            <th>提现总金额</th>
+            <th>手续费</th>
+            <th>应打款金额</th>
+            <th>打款账号信息</th>
+            <th>创建时间</th>
+            <th>状态</th>
+            <th>拒绝</th>
+            <th width="320">{:lang('ACTIONS')}</th>
+        </tr>
+        </thead>
+        <tbody>
+
+        <foreach name="list" item="vo">
+            <tr>
+                <td>{$vo.id}</td>
+                <td>{$vo.identity_type_name}</td>
+                <td>{$vo.type_name}</td>
+                <td>
+                    <if condition="!empty($vo.user_info)">
+                        <div style="display: flex;align-items: center;">
+                            <a href="javascript:imagePreviewDialog('{:cmf_get_image_preview_url($vo.user_info.avatar)}');">
+                                <img class="img-rounded" src="{:cmf_get_image_preview_url($vo.user_info.avatar)}"
+                                     style="width:45px;">
+                            </a>
+                            <div style="margin-left: 6px;">
+                                <span ondblclick="copyContent('{$vo.user_info.openid}')">{$vo.user_info.nickname} ({$vo.user_info.id})</span>
+                                <br>
+                                <span>{$vo.user_info.phone}</span>
+                            </div>
+                        </div>
+                    </if>
+                </td>
+                <td>{$vo.price}</td>
+                <td>{$vo.charges}</td>
+                <td>{$vo.rmb}</td>
+                <td>
+                    <if condition="$vo.type == 1">
+                        <p>支付宝姓名:{$vo.ali_username}</p>
+                        <p>支付宝账号:{$vo.ali_account}</p>
+                    </if>
+                    <if condition="$vo.type == 2">
+                        <p>真实姓名:{$vo.wx_username}</p>
+                        <if condition="$vo.wx_image">
+                            <a href="javascript:imagePreviewDialog('{:cmf_get_image_preview_url($vo.wx_image)}');">
+                                <img src="{:cmf_get_image_preview_url($vo.wx_image)}"
+                                     style="width:50px;height:50px;">
+                            </a>
+                        </if>
+                    </if>
+                    <if condition="$vo.type == 3">
+                        <p>银行名称:{$vo.opening_bank}</p>
+                        <p>开户行姓名:{$vo.bank_username}</p>
+                        <p>银行卡账号:{$vo.bank_account}</p>
+                    </if>
+                </td>
+                <td>{$vo.create_time}</td>
+                <td>{$vo.status_name}</td>
+                <td>{$vo.refuse}</td>
+                <td>
+                    <if condition="$vo.status == 1">
+
+                        <if condition="$vo.type == 2">
+                            <a class="layui-btn layui-btn-primary layui-border-green layui-btn-xs js-ajax-delete"
+                               data-msg="通过通过审核打款？"
+                               href="{:url('withdrawal/update_withdrawal',array('id'=>$vo['id'],'status'=>2))}">审核通过</a>
+                            <else/>
+                            <a class="layui-btn layui-btn-primary layui-border-green layui-btn-xs js-ajax-delete"
+                               data-msg="通过手动打款？"
+                               href="{:url('withdrawal/update_withdrawal',array('id'=>$vo['id'],'status'=>2))}">审核通过&手动打款</a>
+                        </if>
+
+                        <a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs"
+                           href="javascript:parent.openIframeLayer('{:url('refuse',array('id'=>$vo['id']))}','拒绝',{ area: ['65%', '85%'],});"
+                        >审核拒绝</a>
+                    </if>
+                </td>
+            </tr>
+        </foreach>
+        </tbody>
+    </table>
+    <ul class="pagination">{$page|default=''}</ul>
+
+</div>
+<script src="__STATIC__/js/admin.js"></script>
+</body>
+</html>

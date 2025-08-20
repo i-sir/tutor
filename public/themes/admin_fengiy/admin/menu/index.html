@@ -1,0 +1,86 @@
+<include file="public@header"/>
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="{:url('Menu/index')}">后台菜单</a></li>
+        <li><a href="{:url('Menu/add')}">添加菜单</a></li>
+        <li><a href="{:url('Menu/lists')}">所有菜单</a></li>
+    </ul>
+    <form class="js-ajax-form" action="{:url('Menu/listOrder')}" autocomplete="off" method="post">
+        <div class="table-actions">
+            <button class="layui-btn layui-btn-primary layui-border-green layui-btn-xs js-ajax-submit" type="submit">{:lang('SORT')}</button>
+        </div>
+        <table class="table table-hover table-bordered table-list" id="menus-table">
+            <thead>
+            <tr>
+                <th width="80">{:lang('SORT')}</th>
+                <th width="50">ID</th>
+                <th>{:lang('NAME')}</th>
+                <th>操作</th>
+                <th width="80">{:lang('STATUS')}</th>
+                <th width="180">{:lang('ACTIONS')}</th>
+            </tr>
+            </thead>
+            <tbody>
+            {$category}
+            </tbody>
+            <tfoot>
+            <tr>
+                <th width="80">{:lang('SORT')}</th>
+                <th width="50">ID</th>
+                <th>{:lang('NAME')}</th>
+                <th>操作</th>
+                <th width="80">{:lang('STATUS')}</th>
+                <th width="180">{:lang('ACTIONS')}</th>
+            </tr>
+            </tfoot>
+        </table>
+        <div class="table-actions">
+            <button class="layui-btn layui-btn-primary layui-border-green layui-btn-xs js-ajax-submit" type="submit">{:lang('SORT')}</button>
+        </div>
+    </form>
+</div>
+<script src="__STATIC__/js/admin.js"></script>
+<script>
+    $(document).ready(function () {
+        Wind.css('treeTable');
+        Wind.use('treeTable', function () {
+            $("#menus-table").treeTable({
+                indent: 20
+            });
+        });
+    });
+</script>
+</body>
+</html>
+
+
+<script>
+    layui.use(['layer', 'form', 'slider'], function () {
+        var layer = layui.layer, form = layui.form;
+
+        form.on('switch(status)', function (data) {
+            var id = data.value;
+            var status = 0;//未选中状态值
+            if (this.checked) {
+                status = 1;//选中状态值
+            }
+            $.ajax({
+                url: "{:url('batch_post')}",
+                type: "POST",
+                data: {id: id, status: status},
+                success: function (res) {
+                    //console.log(res);
+                    if (res.code == 1) {
+                        layer.msg(res.msg, {icon: 1});
+                    } else {
+                        layer.msg(res.msg, {icon: 7});
+                    }
+                }
+            });
+        });
+
+
+    });
+</script>

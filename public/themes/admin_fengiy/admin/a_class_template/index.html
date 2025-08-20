@@ -1,0 +1,216 @@
+<include file="public@header"/></head>
+<body xmlns="http://www.w3.org/1999/html">
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="{:url('index',['pid'=>$pid,'type'=>'goods','params'=>$params])}">分类管理</a></li>
+
+        <if condition="cmf_auth_check(cmf_get_current_admin_id(),'admin/shop_goods_class/add')">
+            <li><a href="{:url('add',['pid'=>$pid,'type'=>'goods','params'=>$params])}">添加</a></li>
+        </if>
+
+    </ul>
+
+    <form class="well form-inline margin-top-20 layui-form ajax-form w-form-search" method="get" autocomplete="off">
+        关键字：
+        <div class="form-group layui-form">
+            <div class="layui-form-item" style="margin-bottom: 0 !important;">
+                <div class="col-md-12">
+                    <div class="layui-inline">
+                        <input type="text" class="form-control" name="keyword" style="width: 180px;"
+                               value="{:input('request.keyword/s','')}" placeholder="请输关键字搜索">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" class="layui-btn" style="margin-left: 10px">搜索</button>
+        <a class="layui-btn layui-bg-red" href="{:url('index',['pid'=>$pid,'type'=>'goods','params'=>$params])}">清空</a>
+
+
+        <!-- 如有导出需把  筛选条件在这里用input回显,input需隐藏-->
+        <input type="hidden" name="is_export" class="is_export" value="0">
+        <input type="hidden" name="pid" value="{$pid}">
+        <input type="hidden" name="type" value="goods">
+    </form>
+
+
+    <form class="js-ajax-form" method="post" autocomplete="off">
+
+        <br>
+        <div class="table-actions">
+
+            <if condition="cmf_auth_check(cmf_get_current_admin_id(),'admin/shop_goods_class/list_order_post')">
+                <button class="layui-btn layui-btn-primary layui-border-green layui-btn-xs js-ajax-submit" type="submit"
+                        data-action="{:url('list_order_post',['page'=>$page,'pid'=>$pid,'type'=>'goods','params'=>$params])}">
+                    排序
+                </button>
+            </if>
+
+
+        </div>
+
+
+        <table class="table table-hover table-bordered">
+            <thead>
+            <tr>
+                <if condition="cmf_auth_check(cmf_get_current_admin_id(),'admin/shop_goods_class/list_order_post')">
+                    <th style="">排序</th>
+                </if>
+                <th style="">ID</th>
+
+                <th style="">名称</th>
+                <if condition="$vo.pid">
+                    <th style="">图片</th>
+                </if>
+                <if condition="empty($vo.pid)">
+                    <th style="">首页推荐</th>
+                </if>
+                <th style="">显示</th>
+                <th style="">创建时间</th>
+
+                <th style="">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <foreach name="list" item="vo">
+                <tr>
+                    <if condition="cmf_auth_check(cmf_get_current_admin_id(),'admin/shop_goods_class/list_order_post')">
+                        <td style="width: 90px;">
+                            <input style="width: 100%;!important;" type="text"
+                                   class="form-control input input-order valid post-params" name="list_order[{$vo.id}]"
+                                   value="{$vo.list_order}">
+                        </td>
+                    </if>
+                    <td>{$vo.id|default=''}</td>  <!--本我-->
+                    <td>{$vo.name|default=''}</td>  <!--名称-->
+                    <if condition="$vo.pid">
+                        <td>
+                            <!--图片-->
+                            <if condition='!empty($vo.image)'>
+                                <a href="javascript:imagePreviewDialog('{:cmf_get_asset_url($vo.image)}');">
+                                    <img src='{:cmf_get_asset_url($vo.image)}' style='height:40px;'>
+                                </a>
+                                <else/>
+                                暂无上传
+                            </if>
+                        </td>
+                    </if>
+                    <if condition="empty($vo.pid)">
+                        <td>
+                            <!--首页推荐-->
+                            <div class='layui-form'>
+                                <input type='checkbox' lay-skin='switch' lay-text='是|否' lay-filter='is_index'
+                                       name='is_index' value='{$vo.id}'
+                                <if condition='$vo.is_index == 1'>checked</if>
+                                >
+                            </div>
+                        </td>
+                    </if>
+                    <td>
+                        <!--显示-->
+                        <div class='layui-form'>
+                            <input type='checkbox' lay-skin='switch' lay-text='是|否' lay-filter='is_show' name='is_show'
+                                   value='{$vo.id}'
+                            <if condition='$vo.is_show == 1'>checked</if>
+                            >
+                        </div>
+                    </td>
+                    <td>{:isset($vo.create_time) && $vo.create_time > 10000 ? date('Y-m-d H:i:s', $vo.create_time) :
+                        ''}
+                    </td>  <!--创建时间-->
+                    <td>
+                        <if condition="empty($vo.pid)">
+                            <a class="layui-btn layui-btn-primary layui-border-blue layui-btn-xs"
+                               href="javascript:parent.openIframeLayer('{:url('index',['pid'=>$vo.id])}','',{ area: ['65%', '85%'],move:'.layui-layer-title'},false);"
+                            >子级</a>
+                        </if>
+
+
+                        <if condition="cmf_auth_check(cmf_get_current_admin_id(),'admin/shop_goods_class/edit')">
+                            <a class="layui-btn layui-btn-primary layui-border-green layui-btn-xs"
+                               href="{:url('edit',['id'=>$vo.id,'pid'=>$pid,'type'=>'goods','page'=>$page,'params'=>$params])}">编辑</a>
+                        </if>
+
+
+                        <if condition="cmf_auth_check(cmf_get_current_admin_id(),'admin/shop_goods_class/delete')">
+                            <a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs js-ajax-delete"
+                               href="{:url('delete',['id'=>$vo.id,'pid'=>$pid,'type'=>'goods','page'=>$page,'params'=>$params])}">删除</a>
+                        </if>
+
+
+                    </td>
+                </tr>
+            </foreach>
+            </tbody>
+        </table>
+    </form>
+
+    <div class="pagination">{$pagination|default=''}</div>
+</div>
+<script src="__STATIC__/js/admin.js"></script>
+</body>
+</html>
+
+
+<!--修改状态|导出|搜索  js代码-->
+<script>
+
+    //开关板块
+    layui.use(['layer', 'form', 'slider'], function () {
+        var layer = layui.layer, form = layui.form;
+
+
+        //首页推荐
+        form.on('switch(is_index)', function (data) {
+            batchPost(data.value, 'is_index', this.checked ? 1 : 2)
+        });
+
+
+//显示
+        form.on('switch(is_show)', function (data) {
+            batchPost(data.value, 'is_show', this.checked ? 1 : 2)
+        });
+
+
+    });
+
+    //修改状态
+    function batchPost(id, field, value) {
+        $.ajax({
+            url: "{:url('batch_post')}",
+            type: "POST",
+            data: {id: id, [field]: value},
+            success: function (res) {
+                if (res.code === 1) {
+                    layer.msg(res.msg, {icon: 1});
+
+                    //默认关闭刷新页面
+                    // let time1 = setInterval(function () {
+                    //     //页面自动刷新
+                    //     location.reload();
+                    // }, 500);
+                } else {
+                    layer.msg(res.msg, {icon: 7});
+                }
+            }
+        });
+    }
+
+
+    //导出
+    $(".ajax-export").click(function () {
+        //alert("正在开发中...");
+        $(".is_export").val(1);
+        $(".ajax-form").submit();
+        $(".is_export").val(0);
+        return false;
+    });
+
+    //搜索
+    $(".bt_search").click(function () {
+        $(".w-form-search").removeAttr('action');
+        $(".w-form-search").attr('action', "/index.html");
+        $(".w-form-search").submit();
+    });
+</script>
+

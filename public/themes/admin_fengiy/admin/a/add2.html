@@ -1,0 +1,87 @@
+<include file="public@header"/></head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li><a href="{:url('index',['page'=>$page,'params'=>$params])}">列表</a></li>
+        <li class="active"><a href="{:url('add',['page'=>$page,'params'=>$params])}">添加</a></li>
+        <!--<li><a  href="/edit.html" >编辑导航</a></li>-->
+    </ul>
+
+    <form method="post" class="form-horizontal js-ajax-form margin-top-20 layui-form" autocomplete="off"
+          action="{:url('add_post',['page'=>$page,'params'=>$params])}">
+
+
+        <include file="gift/form"/>
+
+
+
+        <div class="col-sm-offset-2 col-sm-10 edit_post_save">
+            <button type="submit" class="layui-btn js-ajax-submit" id="save">保存</button>
+            <a class="layui-btn layui-btn-primary" href="javascript:history.back(-1);">返回</a>
+        </div>
+    </form>
+
+</div>
+<script src="__STATIC__/js/admin.js"></script>
+</body>
+</html>
+
+
+<!--弹框提交,父页面自动刷新-->
+<script>
+    // 封装方法，获取到form表单的数据。使用此方法，表单元素必须存在那么属性。
+    //el:元素的class名称。
+    function getParameter(el) {
+        var obj = {};
+        $(el).each(function (index, item) {
+            var name = $(this).attr("name");
+
+            // 处理文本框、密码框、select、tel等输入框
+            if (item.type == "text" || item.type == "password" || item.type == "select-one" || item.type == "tel" ||
+                item.type == "search" || item.type == "range" || item.type == "number" || item.type == "month" ||
+                item.type == "email" || item.type == "datetime-local" || item.type == "datetime" || item.type == "date" ||
+                item.type == "color" || item.type == "hidden") {
+                obj[name] = $(this).val(); // 直接赋值
+            }
+            // 处理复选框
+            else if (item.type == "checkbox") {
+                var checkboxEl = $("input[name='" + name + "']:checked"); // 获取所有选中的复选框
+                if (checkboxEl.length > 0) {
+                    var checkboxArr = [];
+                    checkboxEl.each(function (idx, itm) {
+                        checkboxArr.push($(itm).val()); // 将选中的值放入数组
+                    });
+                    obj[name] = checkboxArr.join(","); // 将选中的值用逗号连接起来
+                }
+            }
+            // 处理单选框
+            else if (item.type == "radio") {
+                var radio_val = $("input[name='" + name + "']:checked").val(); // 获取选中的单选框的值
+                if (radio_val) {
+                    obj[name] = radio_val;
+                }
+            }
+        });
+        return obj;
+    }
+
+    // 调用方法
+    $("#save").click(function () {
+        var parameter = getParameter(".form-control");
+        $.ajax({
+            type: 'POST',
+            url: "{:url('add_post')}",
+            data: parameter,
+            dataType: 'json',
+            success: function (data) {
+                layer.msg(data.msg);
+                let time1 = setInterval(function () {
+                    //父级弹框关闭
+                    parent.layer.closeAll();
+                    //父级页面刷新
+                    parent.location.reload();
+                }, 500);
+            }
+        });
+    });
+</script>

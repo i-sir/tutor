@@ -1,0 +1,51 @@
+
+
+
+
+
+���ļ�
+vendor/thinkcmf/cmf/src/common.php
+
+
+������������
+
+
+
+
+/**
+ * ��ȡ ���� ��Ϣ
+ * @param string $name ����
+ * @return array
+ */
+
+function cmf_config($name = '')
+{
+    if (empty($name)) {
+        $config = Db::name('base_config')->select()->toArray();
+        if ($config) {
+            foreach ($config as $k => $v) {
+                $config[$k]['value'] = unserialize($v['value']);
+                $config[$k]['data']  = unserialize($v['data']);
+            }
+            return $config;
+        }
+    } else {
+        $config = Db::name('base_config')->where('name', '=', $name)->find();
+        if ($config) {
+            $config['value'] = unserialize($config['value']);
+            $config['data']  = unserialize($config['data']);
+            return $config;
+        } else {
+            return null;
+        }
+    }
+}
+
+
+
+
+
+
+
+
+

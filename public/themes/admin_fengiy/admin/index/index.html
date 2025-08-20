@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="zh_CN" style="overflow: hidden;">
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<!-- Set render engine for 360 browser -->
+	<meta name="renderer" content="webkit">
+	<meta charset="utf-8">
+	<title>{:cookie('CUSTODIAN_SIR') ? cmf_config('project_name') : (cmf_config('app_name') ?: '后台管理')}</title>
+	<meta name="description" content="This is page-header (.page-header &gt; h1)">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link style="width:30px;height:30px;border-radius:30px;" rel="icon" href="{:cmf_get_asset_url(cmf_config('app_logo'))}" type="image/x-icon">
+	<!-- HTML5 shim for IE8 support of HTML5 elements -->
+	<!--[if lt IE 9]>
+	<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+	<![endif]-->
+	<link href="__TMPL__/public/assets/themes/vue-style/bootstrap.min.css" rel="stylesheet">
+	<link href="__TMPL__/public/assets/simpleboot3/css/simplebootadmin.css" rel="stylesheet">
+	<link href="__STATIC__/font-awesome/css/font-awesome.min.css?page=index" rel="stylesheet" type="text/css">
+	<link rel="stylesheet"
+		  href="__TMPL__/public/assets/themes/vue-style/simplebootadminindex.min.css">
+	<link rel="stylesheet" href="__TMPL__/public/assets/themes/vue-style/tags.view.css">
+	<!--[if lt IE 9]>
+	<script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+	<![endif]-->
+	<link href="__STATIC__/layui/css/layui.css" rel="stylesheet" type="text/css">
+
+	<style>
+		/*-----------------导航hack--------------------*/
+		.nav-list>li.open {
+			position: relative;
+		}
+
+		.nav-list>li.open .back {
+			display: none;
+		}
+
+		.nav-list>li.open .normal {
+			display: inline-block !important;
+		}
+
+		.nav-list>li.open a {
+			padding-left: 7px;
+		}
+
+		.nav-list>li .submenu>li a>[class*="fa-"]:first-child {
+			left: 20px;
+		}
+
+		.nav-list>li ul.submenu ul.submenu>li a>[class*="fa-"]:first-child {
+			left: 30px;
+		}
+
+		.navbar-brand a:hover{
+			color: #2D8CF0;
+		}
+
+		/*----------------导航hack--------------------*/
+	</style>
+
+	<script>
+		//全局变量
+		var GV = {
+			HOST: "{$_SERVER['HTTP_HOST']|default=''}",
+			ROOT: "__ROOT__/",
+			WEB_ROOT: "__WEB_ROOT__/",
+			JS_ROOT: "static/js/"
+		};
+	</script>
+	<php>$submenus=$menus;</php>
+
+	<php>
+		if (!function_exists('getsubmenu')) {
+		function getsubmenu($submenus){
+
+	</php>
+	<notempty name="submenus">
+		<php>foreach($submenus as $menu){</php>
+		<li>
+			<php>
+				$menu_name=lang($menu['lang']);
+				$menu_name=$menu['lang']==$menu_name?$menu['name']:$menu_name;
+			</php>
+			<php>if(empty($menu['items'])){</php>
+			<a href="javascript:openapp('{$menu.url}','{$menu.id}','{$menu_name}',true);">
+				<i class="fa fa-{$menu.icon|default='desktop'}"></i>
+				<span class="menu-text"> {$menu_name} </span>
+			</a>
+			<php>}else{</php>
+			<a href="#" class="dropdown-toggle">
+				<i class="fa fa-{$menu.icon|default='desktop'} normal"></i>
+				<span class="menu-text normal"> {$menu_name} </span>
+				<b class="arrow fa fa-angle-right normal"></b>
+				<i class="fa fa-reply back"></i>
+				<span class="menu-text back">返回</span>
+
+			</a>
+
+			<ul class="submenu">
+				<php>getsubmenu1($menu['items'])</php>
+			</ul>
+			<php>}</php>
+
+		</li>
+
+		<php>}</php>
+	</notempty>
+	<php>
+		}
+		}
+	</php>
+
+	<php>
+		if (!function_exists('getsubmenu1')) {
+		function getsubmenu1($submenus){
+	</php>
+	<php>foreach($submenus as $menu){</php>
+	<li>
+		<php>
+			$menu_name=lang($menu['lang']);
+			$menu_name=$menu['lang']==$menu_name?$menu['name']:$menu_name;
+		</php>
+		<php>if(empty($menu['items'])){</php>
+		<a href="javascript:openapp('{$menu.url}','{$menu.id}','{$menu_name}',true);">
+			<i class="fa fa-caret-right"></i>
+			<span class="menu-text">
+					{$menu_name}
+				</span>
+		</a>
+		<php>}else{</php>
+		<a href="#" class="dropdown-toggle">
+			<i class="fa fa-caret-right"></i>
+			<span class="menu-text">
+					{$menu_name}
+				</span>
+			<b class="arrow fa fa-angle-right"></b>
+		</a>
+		<ul class="submenu">
+			<php>getsubmenu2($menu['items'])</php>
+		</ul>
+		<php>}</php>
+
+	</li>
+
+	<php>}</php>
+	<php>}
+		}
+	</php>
+
+	<php>
+		if (!function_exists('getsubmenu2')) {
+		function getsubmenu2($submenus){</php>
+	<php>foreach($submenus as $menu){</php>
+	<li>
+		<php>
+			$menu_name=lang($menu['lang']);
+			$menu_name=$menu['lang']==$menu_name?$menu['name']:$menu_name;
+		</php>
+
+		<a href="javascript:openapp('{$menu.url}','{$menu.id}','{$menu_name}',true);">
+			&nbsp;<i class="fa fa-angle-double-right"></i>
+			<span class="menu-text">
+					{$menu_name}
+				</span>
+		</a>
+	</li>
+
+	<php>}</php>
+	<php>}
+		}
+	</php>
+
+
+	<if condition="APP_DEBUG">
+		<style>
+			#think_page_trace_open {
+				left: 0 !important;
+				right: initial !important;
+			}
+
+		</style>
+	</if>
+	<style>
+		.develop-sir{
+			display: none;
+		}
+
+		/*内容禁止选中*/
+		.develop {
+			-moz-user-select:none;
+			-webkit-user-select: none;
+			-ms-user-select: none;
+			-khtml-user-selece:none;
+			/*上面都是兼容性问题，具体看浏览器版本或什么浏览器*/
+			user-select: none;
+		}
+	</style>
+</head>
+
+<body style="min-width:900px;overflow: hidden;">
+<div class="main-container container-fluid">
+	<div class="sidebar" id="sidebar">
+		<div class="navbar-brand">
+			<a style="text-decoration: none;" href="{:url('admin/index/index')}">
+				<if condition="empty(cmf_get_option('set_config')['app_logo'])">
+					<img class="logo" width="30" height="30" src="__TMPL__/public/assets/images/logo.png" alt="{$admin.user_login|default=''}">
+					<else />
+					<img class="logo" width="30" height="30" src="{:cmf_get_asset_url(cmf_config('app_logo'))}" alt="{$admin.user_login|default=''}">
+				</if>
+				<p class="app-name" style="color: #fffdfd;font-size: 15px;margin-top: -54px;margin-left: 41px;">{:cmf_config('app_name')!=''?cmf_config('app_name'):'微巨宝后台管理系统'}</p>
+				<p class="develop-sir" style="color: #fffdfd;font-size: 13px;margin-left: 41px;margin-top: -87px;"><br> {:cmf_config('project_name')!=''?cmf_config('project_name'):'默认项目名称'}</p>
+			</a>
+		</div>
+		<div id="nav-wrapper">
+			<ul class="nav nav-list">
+				<li class="layui-this">
+					<a href="__ROOT__/" title="{:lang('WEBSITE_HOME_PAGE')}">
+						<i class="fa fa-home"></i>
+						<span class="menu-text"> 首页 </span>
+					</a>
+				</li>
+			</ul>
+			<ul class="nav nav-list">
+				{:getsubmenu($submenus)}
+			</ul>
+		</div>
+	</div>
+	<div class="main-content">
+		<div id="loading"><i class="loadingicon"></i><span>{:lang('LOADING')}</span></div>
+		<div class="navbar navbar-default">
+			<div class="container-fluid">
+				<div class="navbar-collapse collapse" id="navbar-main">
+					<div class="crumbs-box pull-left " style="position: relative;">
+						<a id="hamburger-container"><i class="fa fa-outdent"></i></a>
+						<ul class="breadcrumb">
+							<li><span class="develop" id="develop">首页</span></li>
+							<!--<li><a href="__ROOT__/">首页</a></li>-->
+							<li class="two-nav hidden"><a></a></li>
+							<li class="three-nav active hidden"></li>
+						</ul>
+					</div>
+
+
+					<ul class="nav navbar-nav develop-sir" style="position: absolute;margin-left: 15%;">
+						<li>
+							<a id="myLink" style="text-align: center;" href="{:cmf_get_asset_url(cmf_config('local_domain_name'))}" target="_blank">
+								本地
+								<br>
+								<span style="font-size: 12px;">
+									{:substr(str_replace('http://', '', cmf_config('local_domain_name')),0,strpos(str_replace('http://', '', cmf_config('local_domain_name')),'.'))}
+								</span>
+								<input type="hidden" id="local_domain_name" name="local_domain_name" value="{:substr(str_replace('http://', '', cmf_config('local_domain_name')),0,strpos(str_replace('http://', '', cmf_config('local_domain_name')),'.'))}">
+							</a>
+						</li>
+						<li>
+							<a href="{:cmf_get_asset_url(cmf_config('domain_name'))}" target="_blank">线上</a>
+						</li>
+						<li>
+							<a href="{:cmf_get_asset_url(cmf_config('domain_name'))}/admin/storage/index" target="_blank">文件存储</a>
+						</li>
+						<li>
+							<a href="{:cmf_get_asset_url(cmf_config('domain_name'))}/plugin/swagger/AdminIndex/index" target="_blank">swagger</a>
+						</li>
+						<li>
+							<a href="{:cmf_get_asset_url(cmf_config('domain_name'))}/#/admin/plugin/index" target="_blank">插件中心</a>
+						</li>
+						<li>
+							<a href="http://{$_SERVER['HTTP_HOST']}/plugin/form/AdminIndex/setting" target="_blank">curd</a>
+						</li>
+						<li>
+							<a href="{:cmf_get_asset_url(cmf_config('domain_name'))}/#/admin/rbac/index.html" target="_blank">角色管理</a>
+						</li>
+						<li>
+							<a href="{:cmf_get_asset_url(cmf_config('domain_name'))}/admin/user/index.html" target="_blank">管理员</a>
+						</li>
+						<li>
+							<a href="{:cmf_get_asset_url(cmf_config('domain_name'))}/admin/menu/index" target="_blank">菜单栏</a>
+						</li>
+						<li>
+							<a href="{:cmf_get_asset_url(cmf_config('domain_name'))}/plugin/admin_journal/admin_index/index" target="_blank">日志</a>
+						</li>
+						<li>
+							<a onclick="copyContent('{:cmf_config('program_information')}');">
+								程序信息
+							</a>
+						</li>
+						<li>
+							<div style="text-align: center;">
+								<div style="font-size: 13px;color: red;">
+									小程序码
+								</div>
+								<div>
+									<a href="#" onclick="imagePreviewDialog('{:cmf_get_image_preview_url(cmf_config('program_code'))}');">
+										<img src="{:cmf_get_image_preview_url(cmf_config('program_code'))}" style="width:25px;height:25px;">
+									</a>
+								</div>
+							</div>
+						</li>
+						<li>
+							<div style="text-align: center;margin-left: 10px;">
+								<div style="font-size: 13px;">
+									体验码
+								</div>
+								<div>
+									<a href="#" onclick="imagePreviewDialog('{:cmf_get_image_preview_url(cmf_config('trial_version_qr_image'))}');">
+										<img src="{:cmf_get_image_preview_url(cmf_config('trial_version_qr_image'))}" style="width:25px;height:25px;">
+									</a>
+								</div>
+							</div>
+						</li>
+						<li>
+							<div style="text-align: center;margin-left: 10px;">
+								<div style="font-size: 13px;color: red;">
+									公众号码
+								</div>
+								<div>
+									<a href="#" onclick="imagePreviewDialog('{:cmf_get_image_preview_url(cmf_config('qr_code_official_account_image'))}');">
+										<img src="{:cmf_get_image_preview_url(cmf_config('qr_code_official_account_image'))}" style="width:25px;height:25px;">
+									</a>
+								</div>
+							</div>
+						</li>
+						<li>
+							<div style="text-align: center;margin-left: 10px;">
+								<div style="font-size: 13px;">
+									h5地址码
+								</div>
+								<div>
+									<a href="#" onclick="imagePreviewDialog('{:cmf_get_image_preview_url(cmf_config('h5_address_code'))}');">
+										<img src="{:cmf_get_image_preview_url(cmf_config('h5_address_code'))}" style="width:25px;height:25px;">
+									</a>
+								</div>
+							</div>
+						</li>
+
+					</ul>
+
+
+					<ul class="nav navbar-nav navbar-right simplewind-nav">
+						<li class="light-blue dropdown" style="border-left:none;">
+							<a data-toggle="dropdown" href="#" class="dropdown-toggle">
+								<!--<if condition="isset($admin['avatar']) && $admin['avatar']">
+                                    <img class="nav-user-photo" width="30" height="30" src="{:cmf_get_user_avatar_url($admin['avatar'])}" alt="{$admin.user_login}">
+                                    <else />
+                                    <img class="nav-user-photo" width="30" height="30" src="__TMPL__/public/assets/images/logo-18.png" alt="{$admin.user_login|default=''}">
+                                </if>-->
+								<span class="user-info">
+											{:lang('WELCOME_USER',array('user_nickname' => empty($admin['user_nickname'])?$admin['user_login'] : $admin['user_nickname']))}
+										</span>
+								<i class="fa fa-caret-down"></i>
+							</a>
+							<ul class="user-menu pull-right dropdown-menu dropdown-yellow dropdown-caret dropdown-closer" style="margin-top: -4px;">
+								<!--<if condition="cmf_auth_check(cmf_get_current_admin_id(),'admin/Setting/site')">
+                                    <li>
+                                        <a href="javascript:openapp('{:url('setting/site')}','index_site','{:lang('ADMIN_SETTING_SITE')}');"><i class="fa fa-cog"></i> {:lang('ADMIN_SETTING_SITE')}</a>
+                                    </li>
+                                </if>
+                                <if condition="cmf_auth_check(cmf_get_current_admin_id(),'admin/user/userinfo')">
+                                    <li>
+                                        <a href="javascript:openapp('{:url('user/userinfo')}','index_userinfo','{:lang('ADMIN_USER_USERINFO')}');"><i class="fa fa-user"></i> {:lang('ADMIN_USER_USERINFO')}</a>
+                                    </li>
+                                </if>-->
+								<li>
+									<a href="javascript:openapp('{:url('setting/password')}','index_password','{:lang('ADMIN_SETTING_PASSWORD')}');"><i class="fa fa-lock"></i> {:lang('ADMIN_SETTING_PASSWORD')}</a>
+								</li>
+								<li><a href="{:url('Public/logout')}"><i class="fa fa-sign-out"></i>{:lang('LOGOUT')}</a></li>
+							</ul>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+
+		<!-- tags 标签 -->
+		<div class="tags-view">
+			<div class="pull-left" style="position: relative;">
+				<a id="task-pre" class="task-changebt" title="左移" data-toggle="tooltip"><i class="fa fa-chevron-left"></i></a>
+				<div id="task-content">
+					<ul class="cmf-component-tab" id="task-content-inner">
+						<li class="cmf-component-tabitem noclose" app-id="0" app-url="__ROOT__/" app-name="首页">
+							<a class="cmf-tabs-item-text">{:lang('HOME')}</a>
+						</li>
+					</ul>
+					<div style="clear:both;"></div>
+				</div>
+				<a id="task-next" class="task-changebt" title="右移" data-toggle="tooltip"><i class="fa fa-chevron-right"></i></a>
+			</div>
+			<div class="light-blue" style="border-left:none;display: none;" id="close-all-tabs-btn">
+				<a id="close-wrapper" href="javascript:void(0);" title="{:lang('CLOSE_TOP_MENU')}"
+				   style="color:#fff;font-size: 16px" data-toggle="tooltip">
+					<i class="fa fa-times right_tool_icon"></i>
+				</a>
+			</div>
+
+			<!--废弃-->
+			<!--			<div id="domain_name" style="width: 240px;">-->
+			<!--				<a href="{:cmf_get_asset_url(cmf_config('domain_name'))}/plugin/admin_journal/admin_index/index.html" target="_blank">日志</a>-->
+			<!--				<a href="{:cmf_get_asset_url(cmf_config('domain_name'))}" target="_blank">线上</a>-->
+			<!--				<a href="{:cmf_get_asset_url(cmf_config('domain_name'))}/admin/plugin/index" target="_blank">插件</a>-->
+			<!--				<a href="{:cmf_get_asset_url(cmf_config('domain_name'))}/plugin/swagger/admin_index/index" target="_blank">swagger</a>-->
+			<!--				<a href="http://{$_SERVER['HTTP_HOST']}/plugin/form/AdminIndex/setting" target="_blank">curd</a>-->
+			<!--			</div>-->
+
+			<div class="light-blue" style="border-left:none;margin-left: 10px;">
+				<a id="refresh-wrapper" href="javacript:void(0);" title="{:lang('REFRESH_CURRENT_PAGE')}"
+				   style="color:#fff;font-size: 16px" data-toggle="tooltip">
+					<i class="fa fa-refresh right_tool_icon"></i>
+				</a>
+			</div>
+			<if condition="cmf_auth_check(cmf_get_current_admin_id(),'admin/Setting/clearcache')">
+				<div class="light-blue" style="border-left:none;margin-left: 10px;">
+					<a class="btn btn-sm btn-default"
+					   href="javascript:openapp('{:url('admin/Setting/clearcache')}','index_clearcache','{:lang('ADMIN_SETTING_CLEARCACHE')}',true);"
+					   title="{:lang('ADMIN_SETTING_CLEARCACHE')}"
+					   data-toggle="tooltip">
+						<i class="fa fa-trash-o"></i>
+					</a>
+				</div>
+			</if>
+			<if condition="APP_DEBUG">
+				<div class="light-blue" style="border-left:none;margin-left: 10px;">
+					<a class="btn btn-sm btn-default"
+					   href="javascript:openapp('{:url('admin/Menu/index')}','index_menu','{:lang('ADMIN_MENU_INDEX')}',true);"
+					   title="{:lang('ADMIN_MENU_INDEX')}"
+					   data-toggle="tooltip">
+						<i class="fa fa-list"></i>
+					</a>
+				</div>
+			</if>
+		</div>
+
+		<div class="page-content" id="content">
+			<iframe src="{:url('Main/index')}" style="width:100%;height: 100%;" frameborder="0" id="appiframe-0"
+					class="appiframe"></iframe>
+		</div>
+	</div>
+</div>
+
+<!--复制需要的input框-->
+<textarea readonly id="copy_content" class="form-control item-left"
+		  style="position: absolute;top: -540px;left: 0;opacity: 0;z-index: -10;"></textarea>
+
+<script src="__TMPL__/public/assets/js/jquery-1.10.2.min.js"></script>
+<script src="__STATIC__/js/wind.js"></script>
+<script src="__TMPL__/public/assets/js/bootstrap.min.js"></script>
+<script src="__STATIC__/js/admin.js"></script>
+<script src="__TMPL__/public/assets/simpleboot3/js/adminindex.js"></script>
+<script src="__STATIC__/layui/layui.js"></script>
+
+<script>
+	// 获取<a>元素
+	const link = document.getElementById('myLink');
+	var local_domain_name = document.getElementById('local_domain_name').value;
+	// 添加右击事件监听器
+	link.addEventListener('contextmenu', function(event) {
+		// 阻止默认的右击菜单
+		event.preventDefault();
+		copyContent(local_domain_name);//复制内容
+	});
+</script>
+
+<script>
+	Wind.css('artDialog');
+	$(function() {
+		$("[data-toggle='tooltip']").tooltip();
+		$("li.dropdown").hover(function() {
+			$(this).addClass("open");
+		}, function() {
+			$(this).removeClass("open");
+		});
+
+		var menus= {:$menus_js_var};
+		//读取url参数。尝试执行菜单功能。
+		if (typeof(menus) != "undefined") {
+
+			var tw = window.top;
+			var twa = tw.location.href.split("#");
+			var url = twa[1];
+			var urlTmp = url;
+			if (url != null) {
+				//去掉/ 去掉_ 全部小写。
+				urlTmp = urlTmp.replace(/[\\/|_|]/g, "");
+				urlTmp = urlTmp.replace(".html", "");
+				var menu = menus[urlTmp];
+				if (menu) {
+					openapp(url, menu.id + menu.app, menu.name, true);
+				}
+			}
+		}
+	});
+
+	var ismenumin = $("#sidebar").hasClass("menu-min");
+	$(".nav-list").on("click", function(event) {
+		$(".two-nav").addClass('hidden');
+		$(".three-nav").addClass('hidden');
+		var closest_a = $(event.target).closest("a");
+		if (!closest_a || closest_a.length == 0) return
+
+		//当前菜单选中状态
+		var item = closest_a.get(0);
+		$("#nav-wrapper").find('li').removeClass('layui-this');
+		$(item.parentNode).addClass('layui-this');
+
+		// console.log($(item).find('.menu-text'))
+
+		var breadcrumbTitle = closest_a.context.innerText;
+		if (!closest_a.hasClass("dropdown-toggle")) {
+			var ptitle = $(item.parentNode.parentNode.parentNode).context.innerText;
+			var text = ptitle.split(/[(\r\n)\r\n]+/);
+			var title = text[0].replace(/\s+/g,"");
+			if(title != '首页') {
+				$(".two-nav").html(title).removeClass('hidden');
+			}
+			$(".three-nav").html(breadcrumbTitle).removeClass('hidden');
+			if (ismenumin && "click" == "tap" && closest_a.get(0).parentNode.parentNode == this) {
+				var closest_a_menu_text = closest_a.find(".menu-text").get(0);
+				if (event.target != closest_a_menu_text && !$.contains(closest_a_menu_text, event.target)) {
+					return false
+				}
+			}
+			return
+		}
+		var closest_a_next = closest_a.next().get(0);
+		if (!$(closest_a_next).is(":visible")) {
+			$(".two-nav").html(breadcrumbTitle).removeClass('hidden');
+			var closest_ul = $(closest_a_next.parentNode).closest("ul");
+			if (ismenumin && closest_ul.hasClass("nav-list")) {
+				return
+			}
+			closest_ul.find("> .open > .submenu").each(function() {
+				if (this != closest_a_next && !$(this.parentNode).hasClass("active")) {
+					$(this).slideUp(150).parent().removeClass("open")
+				}
+			});
+		}
+		if (ismenumin && $(closest_a_next.parentNode.parentNode).hasClass("nav-list")) {
+			return false;
+		}
+		$(closest_a_next).slideToggle(150).parent().toggleClass("open");
+		return false;
+	});
+
+
+	//处理显示隐藏 开发菜单
+	const developDiv = document.getElementById('develop');
+	let clickTimeout = null;
+	const doubleClickThreshold = 500; // 0.5秒 内的双击判定
+
+	function handleMouseDown(event) {
+		if (event.button === 1) { // 检测中键点击
+			if (clickTimeout) {
+				clearTimeout(clickTimeout);
+				clickTimeout = null;
+				handleDoubleClick();
+			} else {
+				clickTimeout = setTimeout(() => {
+					clickTimeout = null;
+				}, doubleClickThreshold);
+			}
+		}
+	}
+
+	function handleDoubleClick() {
+		//检测是否显示线上文字   domain_name
+		var is_cookie = getCookie("CUSTODIAN_SIR");
+		if(!is_cookie) {
+			setCookie('CUSTODIAN_SIR','SIR')
+			history.go(0);
+		}else {
+			delCookie('CUSTODIAN_SIR')
+			history.go(0);
+		}
+	}
+
+	// 监听 div 上的鼠标按下事件
+	developDiv.addEventListener('mousedown', handleMouseDown);
+
+
+	var custodian = getCookie("CUSTODIAN_SIR");
+	if(custodian) {
+		$('.app-name').show();
+		$('.app-name').attr("style","color: #fffdfd;font-size: 15px;margin-top: -64px;margin-left: 41px;");
+		$('.project-name').show();
+		$('.develop-sir').show();
+	}
+
+
+	//读写cookie
+	function getCookie(cname) {
+		let name = cname + "=";
+		let ca = document.cookie.split(";");
+		for (let i = 0; i < ca.length; i++) {
+			let c = ca[i].trim();
+			if (c.indexOf(name) == 0) {
+				return c.substring(name.length, c.length);
+			}
+		}
+	}
+
+	//写入cookie: 没有指定Expires(过期时间)时,默认为会话Cookie
+	function setCookie(name,value)
+	{
+		document.cookie = name + "=" + escape (value);
+		//document.cookie = name + "=" + escape (value)+";path="+"/";
+	}
+
+	//删除cookie
+	function delCookie(name)
+	{
+		var exp = new Date();
+		exp.setTime(exp.getTime() - 1);
+		var cval=getCookie(name);
+		if(cval!=null) document.cookie= name + "="+cval+";expires="+exp.toGMTString();
+	}
+
+
+	//复制变量
+	function copyContent(clickContent) {
+		//获取要赋值的input的元素
+		var inputElement = document.getElementById("copy_content");
+		//给input框赋值
+		// clickContent = clickContent.replace(/\s+/g, '');
+		inputElement.value = clickContent;
+		//选中input框的内容
+		inputElement.select();
+		// 执行浏览器复制命令
+		document.execCommand("Copy");
+		//提示已复制
+		layer.msg(clickContent + '已复制', {icon: 6, time: 700});
+	}
+
+
+
+
+</script>
+</body>
+</html>
+
+<!--<script type="text/javascript">-->
+<!--    _record = 0;-->
+<!--    var myTitle = document.title;-->
+<!--    function titleBlink() {-->
+<!--        _record++;-->
+<!--        if (_record == 3) _record = 1; //当变量_record累加到3是，将其赋值为1。相当于无限循环。-->
+<!--        if (_record == 1) document.title = myTitle;//两种标题来回切换-->
+<!--        if (_record == 2) document.title = '【新订单】' + myTitle;-->
+<!--        setTimeout("titleBlink()", 3000); //调节时间，单位毫秒。-->
+<!--    }-->
+<!--    setInterval(function () {-->
+<!--        $.ajax({-->
+<!--            url: "{:url('/admin/shop_order/order_notification')}",-->
+<!--            type: "post",-->
+<!--            dataType: "json",-->
+<!--            success: function (res) {-->
+<!--                var code = res.code;-->
+<!--                if (code == 1) {-->
+<!--                    titleBlink();-->
+<!--                }-->
+<!--            }-->
+<!--        });-->
+<!--    }, 5000); //每隔5秒执行一次ajax请求-->
+<!--</script>-->

@@ -1,0 +1,98 @@
+<include file="public@header" />
+<style>
+    .level {
+        color: #ffb800;
+        margin-left: 4px;
+    }
+</style>
+</head>
+
+<body>
+<div class="wrap js-check-wrap">
+    <div class="well form-inline">
+        昵称:
+        <input type="text" class="form-control" name="nickname" style="width: 150px;" placeholder="请输入昵称" autocomplete="off">
+        手机号:
+        <input type="text" class="form-control" name="phone" style="width: 150px;" placeholder="请输入手机号" autocomplete="off">
+        <button class="btn btn-primary" id="searchBtn">搜索</button>
+        <button class="btn btn-danger" id="searchDel">清空</button>
+    </div>
+
+    <div id="userTree"></div>
+</div>
+
+<script src="__STATIC__/js/admin.js?v={$_static_version}"></script>
+<script>
+    layui.config({
+        base: '__TMPL__/public/lib/eleTree/'
+    }).use(['eleTree'], function(){
+        var eleTree = layui.eleTree;
+
+        var el = eleTree({
+            el: '#userTree',
+            highlightCurrent: true,
+            expandOnClickNode: false,
+            lazy: true,
+            imgUrl: "__TMPL__/public/lib/eleTree/images/", //图片所在的文件夹路径
+            icon: {
+                dropdownOff: ".layui-icon .layui-icon-triangle-r",
+                dropdownOn: ".layui-icon .layui-icon-triangle-d",
+                loading: "loading.gif",
+            },
+            data: getUserList(),
+            // 对于后台数据重新定义名字
+            request: {
+                name: "nickname",
+            },
+            customText: function(data) {
+                var str = '['+ data.id +'] <b>' + data.nickname + '</b> ' + data.phone;
+                str += '<span class="level">会员等级</span>';
+                return str;
+            }
+        })
+        el.on('lazyload', function(d) {
+            var data = d.data;
+            var load = d.load;
+            var loadData = getUserList(data.id)
+            setTimeout(function() {
+                load(loadData)
+            }, 500)
+        })
+
+        //搜索
+        $("#searchBtn").click(function(){
+            var nickname = $('input[name="nickname"]').val();
+            var phone = $('input[name="phone"]').val();
+            var loadData = getUserList('', nickname, phone);
+            el.reload({data: loadData})
+        })
+        //清空搜索
+        $("#searchDel").click(function(){
+            $('input[name="nickname"]').val('');
+            $('input[name="phone"]').val('');
+            var loadData = getUserList();
+            el.reload({data: loadData})
+        })
+
+        //获取会员信息
+        function getUserList(pid=0, nickname = '', phone = '') {
+            var list = [];
+            $.ajax({
+                type: 'POST',
+                url: "{:url('get_user_list')}",
+                async: false,
+                data: {pid, nickname, phone},
+                success: function(res) {
+                    if(res.code) {
+                        list = res.data
+                    }else{
+                        layer.msg(res.msg, {icon: 7})
+                    }
+                },
+            });
+            return list
+        }
+    })
+</script>
+</body>
+</html>

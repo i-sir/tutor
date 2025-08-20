@@ -1,0 +1,154 @@
+<include file="public@header"/></head>
+<body xmlns="http://www.w3.org/1999/html">
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="{:url('index',['params'=>$params])}">管理员</a></li>
+
+        <if condition="cmf_auth_check(cmf_get_current_admin_id(),'admin/AdminUser/add')">
+            <li><a href="{:url('add',['params'=>$params])}">添加</a></li>
+        </if>
+
+    </ul>
+
+    <form class="well form-inline margin-top-20 layui-form ajax-form w-form-search" method="get" autocomplete="off">
+        关键字：
+        <div class="form-group layui-form">
+            <div class="layui-form-item" style="margin-bottom: 0 !important;">
+                <div class="col-md-12">
+                    <div class="layui-inline">
+                        <input type="text" class="form-control" name="keyword" style="width: 180px;"
+                               value="{:input('request.keyword/s','')}" placeholder="请输关键字搜索">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" class="layui-btn" style="margin-left: 10px">搜索</button>
+        <a class="layui-btn layui-bg-red" href="{:url('index',['params'=>$params])}">清空</a>
+
+
+        <input type="hidden" name="is_export" class="is_export" value="0">
+    </form>
+
+
+    <form class="js-ajax-form" method="get" autocomplete="off">
+
+        <br>
+        <div class="table-actions">
+
+
+        </div>
+
+
+        <table class="table table-hover table-bordered">
+            <thead>
+            <tr>
+                <th style="width: 60px">ID</th>
+                <th style="width: 60px">用户名</th>
+                <th style="width: 60px">角色</th>
+                <th style="width: 60px">手机号</th>
+                <th style="width: 60px">最后登录IP</th>
+                <th style="width: 60px">最后登录时间</th>
+                <th style="width: 60px">状态</th>
+
+                <th style="width: 80px">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <foreach name="list" item="vo">
+                <tr>
+                    <td>{$vo.id}</td>
+                    <td>{$vo.user_login}</td>
+                    <td>{$vo.role_name}</td>
+                    <td>{$vo.mobile}</td>
+                    <td>{$vo.last_login_ip}</td>
+                    <td>
+                        <if condition="$vo.last_login_time">
+                            {$vo.last_login_time|date='Y-m-d H:i:s'}
+                            <else/>
+                            暂未登录
+                        </if>
+                    </td>
+                    <td>
+                        <div class="layui-form">
+                            <input type="checkbox" lay-skin="switch" lay-text="正常|禁用" lay-filter="user_status" name="user_status"
+                                   value="{$vo.id}"
+                            <if condition="$vo.user_status == 1">checked</if>
+                            >
+                        </div>
+                    </td>
+
+
+                    <td>
+                        <if condition="cmf_auth_check(cmf_get_current_admin_id(),'admin/AdminUser/edit')">
+                            <a class="layui-btn layui-btn-primary layui-border-green layui-btn-xs"
+                               href="{:url('edit',['id'=>$vo.id,'params'=>$params])}">编辑</a>
+                        </if>
+                        <if condition="cmf_auth_check(cmf_get_current_admin_id(),'admin/AdminUser/delete')">
+                            <a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs js-ajax-delete"
+                               href="{:url('delete',['id'=>$vo.id,'params'=>$params])}">删除</a>
+                        </if>
+
+
+                    </td>
+                </tr>
+            </foreach>
+            </tbody>
+        </table>
+    </form>
+
+    <div class="pagination">{$page|default=''}</div>
+</div>
+<script src="__STATIC__/js/admin.js"></script>
+</body>
+</html>
+
+<script>
+    layui.use(['layer', 'form', 'slider'], function () {
+        var layer = layui.layer, form = layui.form;
+
+
+        form.on('switch(user_status)', function (data) {
+            var id = data.value;
+            var user_status = 0;//未选中状态值
+            if (this.checked) {
+                user_status = 1;//选中状态值
+            }
+            $.ajax({
+                url: "{:url('batch_post')}",
+                type: "POST",
+                data: {id: id, user_status: user_status},
+                success: function (res) {
+                    //console.log(res);
+                    if (res.code == 1) {
+                        layer.msg(res.msg, {icon: 1});
+                    } else {
+                        layer.msg(res.msg, {icon: 7});
+                    }
+                }
+            });
+        });
+
+
+    });
+</script>
+
+<!--导出,筛选查询-->
+<script>
+    //导出
+    $(".ajax-export").click(function () {
+        //alert("正在开发中...");
+        $(".is_export").val(1);
+        $(".ajax-form").submit();
+        $(".is_export").val(0);
+        return false;
+    });
+
+    //搜索
+    $(".bt_search").click(function () {
+        $(".w-form-search").removeAttr('action');
+        $(".w-form-search").attr('action', "/index.html");
+        $(".w-form-search").submit();
+    });
+</script>
+

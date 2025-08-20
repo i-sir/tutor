@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <!-- Set render engine for 360 browser -->
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- HTML5 shim for IE8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <![endif]-->
+
+
+    <link href="__TMPL__/public/assets/themes/vue-style/bootstrap.min.css" rel="stylesheet">
+    <link href="__TMPL__/public/assets/simpleboot3/css/simplebootadmin.css" rel="stylesheet">
+    <link href="__STATIC__/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="__STATIC__/layui/css/layui.css" rel="stylesheet" type="text/css">
+    <script src="__STATIC__/layui/layui.js"></script>
+    <link href="__TMPL__/public/assets/css/message.css" rel="stylesheet">
+
+    <!---图片拖拽排序引入-->
+    <script src="__TMPL__/public/assets/js/Sortable.js"></script>
+
+
+    <!--[if lt IE 9]>
+    <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <style>
+        form .input-order {
+            margin-bottom: 0px;
+            padding: 0 2px;
+            width: 42px;
+            font-size: 12px;
+        }
+
+        form .input-order:focus {
+            outline: none;
+        }
+
+        .table-actions {
+            margin-top: 5px;
+            margin-bottom: 5px;
+            padding: 0px;
+        }
+
+        .table-list {
+            margin-bottom: 0px;
+        }
+
+        .form-required {
+            color: red;
+        }
+
+        .layui-input-block {
+            margin-left: 0px;
+        }
+
+        .edit_post_save {
+            margin-bottom: 330px;
+        }
+        a:hover {
+            text-decoration: none;
+        }
+        a:focus {
+            text-decoration: none;
+        }
+        .layui-btn + .layui-btn {
+            margin-left: 1px;
+        }
+        .img-rounded {
+            border-radius: 4px;
+            overflow: hidden;
+        }
+    </style>
+
+
+    <php>$_app=app()->http->getName();</php>
+    <php>
+        $cmf_version=cmf_version();
+        if (strpos(cmf_version(), '6.') === 0) {
+        $_app=app()->http->getName();
+        }else{
+        }
+    </php>
+    <script type="text/javascript">
+        //全局变量
+        var GV = {
+            ROOT: "__ROOT__/",
+            WEB_ROOT: "__WEB_ROOT__/",
+            JS_ROOT: "static/js/",
+            APP: '{$_app}'/*当前应用名*/
+        };
+    </script>
+    <script src="__TMPL__/public/assets/js/jquery-1.10.2.min.js"></script>
+    <script src="__TMPL__/public/assets/js/message.js"></script>
+    <script src="__STATIC__/js/wind.js"></script>
+    <script src="__TMPL__/public/assets/js/bootstrap.min.js"></script>
+    <script>
+        Wind.css('artDialog');
+        Wind.css('layer');
+        $(function () {
+            $("[data-toggle='tooltip']").tooltip({
+                container: 'body',
+                html: true,
+            });
+            $("li.dropdown").hover(function () {
+                $(this).addClass("open");
+            }, function () {
+                $(this).removeClass("open");
+            });
+        });
+    </script>
+    <if condition="APP_DEBUG">
+        <style>
+            #think_page_trace_open {
+                z-index: 9999;
+            }
+        </style>
+    </if>
+
+
+    <!--复制需要的input框-->
+    <textarea readonly id="copy_content" class="form-control item-left"
+              style="position: absolute;top: -540px;left: 0;opacity: 0;z-index: -10;"></textarea>
+
+
+    <audio style="display: none;" id="audio"
+           src="https://oss.ausite.cn/kf0008899/default/20231124/74d85b6eabf35f4f9f129a4b501c2621.mp3">您的浏览器不支持
+    </audio>
+
+
+    <!--订单通知-->
+<!--    <script>-->
+<!--        var a_audio = document.getElementById("audio");-->
+<!--        setInterval(function () {-->
+<!--            $.ajax({-->
+<!--                url: "{:url('/admin/shop_order/order_notification')}",-->
+<!--                type: "post",-->
+<!--                dataType: "json",-->
+<!--                success: function (res) {-->
+<!--                    var code = res.code;-->
+<!--                    if (code == 1) {-->
+<!--                        addToast();-->
+<!--                        a_audio.play();-->
+<!--                    }-->
+<!--                }-->
+<!--            });-->
+<!--        }, 5000); //每隔5秒执行一次ajax请求-->
+
+<!--        function addToast() {-->
+<!--            $.Toast("通知", "您有一条新订单!", "success", {-->
+<!--                stack: true,-->
+<!--                has_icon: true,-->
+<!--                has_close_btn: true,-->
+<!--                fullscreen: false,-->
+<!--                timeout: 10000,-->
+<!--                sticky: false,-->
+<!--                has_progress: true,-->
+<!--                rtl: false,-->
+<!--            });-->
+<!--        }-->
+<!--    </script>-->
+
+<!-- 悬浮提示-->
+    <script>
+        $(function () {
+            var tips;
+            $('.order_num').on({
+                //延时1秒
+                mouseenter: function () {
+                    var that = this;
+                    tips = layer.tips("<span style='color:black;font-size: 15px;font-weight: 400;'>点击复制订单号</span>", that, {
+                        tips: [1, '#efefef'],
+                        time: 0,
+                        area: 'auto',
+                        maxWidth: 500
+                    });
+                },
+
+                //去除
+                mouseleave: function () {
+                    layer.close(tips);
+                }
+            });
+        })
+
+
+        //复制变量
+        function copyContent(clickContent) {
+            //获取要赋值的input的元素
+            var inputElement = document.getElementById("copy_content");
+            //给input框赋值
+            //clickContent = clickContent.replace(/<br\s*\/?>/g, "");
+            inputElement.value = clickContent;
+            //选中input框的内容
+            inputElement.select();
+            // 执行浏览器复制命令
+            document.execCommand("Copy");
+            //提示已复制
+            layer.msg(clickContent + '已复制', {icon: 6, time: 700});
+        }
+
+
+        //复制文本,根据id
+        function copyIdValue(item_id) {
+            //获取点击的值(图片)
+            // var image_value = document.getElementById(item_id).value;
+            // var clickContent = "{:cmf_get_asset_url('" + image_value + "')}";
+
+            //获取点击的值
+            var clickContent = document.getElementById(item_id).value;
+            //获取要赋值的input的元素
+            var inputElement = document.getElementById("copy_content");
+            //给input框赋值,字符串去空
+            //clickContent = clickContent.replace(/\s+/g, '');
+            inputElement.value = clickContent;
+            //选中input框的内容
+            inputElement.select();
+            // 执行浏览器复制命令
+            document.execCommand("Copy");
+            //提示已复制
+            layer.msg(clickContent + '已复制', {icon: 6, time: 500});
+        }
+
+
+        //复制文本,根据id
+        function copyInnerText(item_id) {
+            //获取点击的值
+            var clickContent = document.getElementById(item_id).innerText;
+            //获取要赋值的input的元素
+            var inputElement = document.getElementById("copy_content");
+            //给input框赋值,字符串去空
+            //clickContent = clickContent.replace(/\s+/g, '');
+            inputElement.value = clickContent;
+            //选中input框的内容
+            inputElement.select();
+            // 执行浏览器复制命令
+            document.execCommand("Copy");
+            //提示已复制
+            layer.msg(clickContent + '已复制', {icon: 6, time: 500});
+        }
+
+
+    </script>
+

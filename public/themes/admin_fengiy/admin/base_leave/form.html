@@ -1,0 +1,190 @@
+
+
+
+
+    <!--用户-->    <div class="form-group">
+        <label class="col-sm-2 control-label">用户信息:</label>
+        <div class="layui-input-block col-sm-6">
+                            <input type="text" name="user_id" class="form-control post-params item-left" value="{$user_id|default=''}">
+                    </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--联系人-->    <div class="form-group">
+        <label class="col-sm-2 control-label">联系人:</label>
+        <div class="layui-input-block col-sm-6">
+                            <input type="text" name="username" class="form-control post-params item-left" value="{$username|default=''}">
+                    </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--手机号-->    <div class="form-group">
+        <label class="col-sm-2 control-label">手机号:</label>
+        <div class="layui-input-block col-sm-6">
+                            <input type="text" name="phone" class="form-control post-params item-left" value="{$phone|default=''}">
+                    </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--标题-->    <div class="form-group">
+        <label class="col-sm-2 control-label">标题:</label>
+        <div class="layui-input-block col-sm-6">
+                            <input type="text" name="title" class="form-control post-params item-left" value="{$title|default=''}">
+                    </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--留言内容-->    <div class="form-group">
+        <label class="col-sm-2 control-label">留言内容:</label>
+        <div class="layui-input-block col-sm-6">
+                            <input type="text" name="content" class="form-control post-params item-left" value="{$content|default=''}">
+                    </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--图集-->    <div class="form-group">
+        <label class="col-sm-2 control-label">图集:</label>
+        <div class="layui-input-block col-sm-6">
+                                <div class="help-block text-danger">长按图片可上下拖动,调整图片顺序</div>
+<if condition="!empty($images)">
+<ul id="imagesId00000006" class="pic-list list-unstyled form-inline">
+<foreach name="$images" item="vo">
+<li id="savedImages-00000006-{$key}" style="margin-bottom: 5px;">
+<input id="photoImages-00000006-{$key}" type="hidden" name="images[{$key}]" value="{$vo}">
+<img id="photoImages-00000006-{$key}-preview" src="{:cmf_get_image_preview_url($vo)}" height="50" onclick="parent.imagePreviewDialog(this.src);">
+<a href="javascript:uploadOneImage('图片上传','#photoImages-00000006-{$key}');">替换</a>
+<a href="javascript:(function(){$('#savedImages-00000006-{$key}').remove();})();">移除</a>
+</li>
+</foreach>
+</ul>
+<else/>
+<ul id="imagesId00000006" class="pic-list list-unstyled form-inline">
+<li id="savedImages-00000006" style="margin-bottom: 5px;">
+</li>
+</ul>
+</if>
+<a href="javascript:uploadMultiImage('图片上传','#imagesId00000006','itemImages-00000006');" class="btn btn-sm btn-default">选择图片</a>
+<script type="text/html" id="itemImages-00000006">
+<li id="savedImages-00000006-{id}" style="margin-bottom: 5px;">
+<input id="photoImages-00000006-{id}" type="hidden" name="images[{id}]" value="{filepath}">
+<img id="photoImages-00000006-{id}-preview" src="{url}" height="50" onclick="imagePreviewDialog(this.src);">
+<a href="javascript:uploadOneImage('图片上传','#photoImages-00000006-{id}');">替换</a>
+<a href="javascript:(function(){$('#savedImages-00000006-{id}').remove();})();">移除</a>
+</li>
+</script>
+<script>
+// 多图上传支持排序
+new Sortable(imagesId00000006, {
+animation: 150,
+ghostClass: 'blue-background-class'
+});
+</script>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--回复内容-->    <div class="form-group">
+        <label class="col-sm-2 control-label">回复内容:</label>
+        <div class="layui-input-block col-sm-6">
+                            <input type="text" name="reply_content" class="form-control post-params item-left" value="{$reply_content|default=''}">
+                    </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--回复时间-->    <div class="form-group">
+        <label class="col-sm-2 control-label">回复时间:</label>
+        <div class="layui-input-block col-sm-6">
+                                                    <input class="form-control post-params item-left js-datetime" name="reply_time" required
+                           type="text"
+                           value="{:isset($reply_time) && $reply_time > 10000 ? date('Y-m-d H:i', $reply_time) : ''}">
+         </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--状态:1待处理,2已处理-->    <div class="form-group">
+        <label class="col-sm-2 control-label">状态:</label>
+        <div class="layui-input-block col-sm-6">
+                            <input type="text" name="status" class="form-control post-params item-left" value="{$status|default=''}">
+                    </div>
+    </div>
+
+
+
+
+
+
+
+
+

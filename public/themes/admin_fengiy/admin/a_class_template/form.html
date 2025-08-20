@@ -1,0 +1,49 @@
+<!--商品类型:paid=有偿共享,show=种质展示,discount=限时折扣,full=满减活动,new=新品预售,goods=普通商品-->
+<input type="hidden" name="type" class="form-control post-params item-left" value="goods">
+
+
+<!--pid-->
+<div class="form-group" style="display: none;">
+    <label class="col-sm-2 control-label">pid:</label>
+    <div class="layui-input-block col-sm-6">
+        <input type="text" name="pid" class="form-control post-params item-left" value="{$pid|default=''}">
+    </div>
+</div>
+
+
+<!--名称-->
+<div class="form-group">
+    <label class="col-sm-2 control-label">名称:</label>
+    <div class="layui-input-block col-sm-6">
+        <input type="text" name="name" class="form-control post-params item-left" value="{$name|default=''}">
+    </div>
+</div>
+
+
+<!--图片-->
+<if condition="$pid">
+        <div class="form-group">
+        <label class="col-sm-2 control-label">图片:</label>
+        <div class="layui-input-block col-sm-6">
+            <input type="hidden" class="form-control post-params item-left" name="image" id="photo-0000004"
+                   value="{$image}">
+            <if condition='!empty($image)'>
+                <a href="javascript:imagePreviewDialog('{:cmf_get_asset_url($image)}');">
+                    <img src='{:cmf_get_image_preview_url($image)}' id='photo-0000004-preview' style='width: 85px;'>
+                </a>
+                <else/>
+                <img src='/static/images/default.png' id='photo-0000004-preview' style='width: 85px;'>
+            </if>
+            <a href="javascript:uploadOneImage('图片上传','#photo-0000004','image');">上传</a>
+            <a onclick="$('#photo-0000004-preview').attr('src','__TMPL__/public/assets/images/default-thumbnail.png');$('#photo-0000004').val('');return false;">取消图片</a>
+        </div>
+    </div>
+
+</if>
+
+
+
+
+
+
+

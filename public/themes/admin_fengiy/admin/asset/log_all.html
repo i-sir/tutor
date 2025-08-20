@@ -1,0 +1,154 @@
+<include file="public@header"/></head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <foreach name="operate_type_log_list" key="key" item="vo">
+            <li
+            <if condition="$key == $operate_type"> class="active"</if>
+            ><a href="{:url('log_all',array('user_id'=>$user_id,'operate_type'=>$key))}">{$vo}</a></li>
+        </foreach>
+    </ul>
+
+    <form class="well form-inline margin-top-20 layui-form ajax-form" method="get" autocomplete="off"
+          action="{:url('log_all',array('user_id'=>$user_id,'operate_type'=>$operate_type))}">
+
+
+        用户信息：
+        <div class="form-group layui-form">
+            <div class="layui-form-item" style="margin-bottom: 0 !important;">
+                <div class="col-sm-6">
+                    <div class="layui-inline">
+                        <input type="text" class="form-control" name="user_keyword" style="width: 180px;"
+                               value="{:input('request.user_keyword/s','')}" placeholder="请输昵称/手机号搜索">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        说明搜索：
+        <div class="form-group layui-form">
+            <div class="layui-form-item" style="margin-bottom: 0 !important;">
+                <div class="col-sm-6">
+                    <div class="layui-inline">
+                        <input type="text" class="form-control" name="keyword" style="width: 180px;"
+                               value="{:input('request.keyword/s','')}" placeholder="请输说明内容搜索">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        时间筛选：
+        <div class="form-group">
+            <div class="layui-form-item">
+                <div class="col-sm-6"
+                     style="display: flex;margin-top: 10px;width: 180px;margin-right: 40px">
+                    <input type="text" class="form-control post-params js-date" name="beginTime"
+                           value="{:input('request.beginTime/s','')}" placeholder="请输入开始时间">
+                </div>
+            </div>
+        </div>
+        ~
+        <div class="form-group">
+            <div class="layui-form-item">
+                <div class="col-sm-6" style="display: flex;width: 150px;margin-top: 10px;!important;">
+                    <input type="text" class="form-control post-params js-date" name="endTime"
+                           value="{:input('request.endTime/s','')}" placeholder="请输入结束时间">
+                </div>
+            </div>
+        </div>
+
+
+        <button type="submit" class="layui-btn" style="margin-left: 70px">搜索</button>
+        <a type="button" class="layui-btn layui-bg-blue ajax-export" href="javascript:;">导出</a>
+        <a class="layui-btn layui-bg-red"
+           href="{:url('log_all',array('user_id'=>$user_id,'operate_type'=>$operate_type))}">清空</a>
+
+
+        <input type="hidden" name="is_export" class="is_export" value="0">
+        <input type="hidden" name="user_id" value="{$user_id}">
+        <input type="hidden" name="operate_type" value="{$operate_type}">
+    </form>
+
+
+    <form class="js-ajax-form" method="post">
+
+
+        <table class="table table-hover table-bordered">
+            <thead>
+            <tr>
+                <th style="">ID</th>
+                <th style="">用户信息</th>
+                <!--<th style="">类型</th>-->
+                <th style="">说明</th>
+                <th style="">变动值</th>
+                <th style="">变动前</th>
+                <th style="">变动后</th>
+                <th style="">单号</th>
+                <!--                <th style="">子级</th>-->
+                <th style="">创建时间</th>
+            </tr>
+            </thead>
+            <tbody>
+            <foreach name="list" item="vo">
+                <tr>
+                    <td>{$vo.id}</td>
+                    <td>
+                        <if condition="!empty($vo.user_info)">
+                            <div style="display: flex;align-items: center;">
+                                <a href="javascript:imagePreviewDialog('{:cmf_get_image_preview_url($vo.user_info.avatar)}');">
+                                    <img class="img-rounded" src="{:cmf_get_image_preview_url($vo.user_info.avatar)}"
+                                         style="width:40px;height:40px;">
+                                </a>
+                                <div style="margin-left: 6px;">
+                                    <p ondblclick="copyContent('{$vo.user_info.openid}')">{$vo.user_info.nickname}
+                                        ({$vo.user_info.id})</p>
+                                    <p>{$vo.user_info.phone}</p>
+                                </div>
+                            </div>
+                        </if>
+                    </td>
+                    <!--<td>{$vo.change_type_name}</td>-->
+                    <td>{$vo.content}</td>
+                    <td>
+                        <if condition="$vo.change_type == 1 ">
+                            <p style="color: green;">+{$vo.price}</p>
+                            <else/>
+                            <p style="color: red;">-{$vo.price}</p>
+                        </if>
+                    </td>
+                    <td>{$vo.before}</td>
+                    <td>{$vo.after}</td>
+                    <td>{$vo.order_num}</td>
+                    <!--                    <td>-->
+                    <!--                        <if condition="!empty($vo.child_user_info)">-->
+                    <!--                            <span ondblclick="copyContent('{$vo.child_user_info.openid}')">{$vo.child_user_info.nickname} ({$vo.user_info.id})</span>-->
+                    <!--                            <span>{$vo.child_user_info.phone}</span>-->
+                    <!--                        </if>-->
+                    <!--                    </td>-->
+                    <td>{$vo.create_time|date='Y-m-d H:i:s'}</td>
+
+                </tr>
+            </foreach>
+            </tbody>
+        </table>
+    </form>
+
+    <div class="pagination">{$page|default=''}</div>
+</div>
+<script src="__STATIC__/js/admin.js"></script>
+</body>
+</html>
+
+
+<script>
+    //导出
+    $(".ajax-export").click(function () {
+        //alert("正在开发中...");
+        $(".is_export").val(1);
+        $(".ajax-form").submit();
+        $(".is_export").val(0);
+        return false;
+    });
+</script>

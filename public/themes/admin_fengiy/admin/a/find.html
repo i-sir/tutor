@@ -1,0 +1,139 @@
+<include file="public@header"/>
+<style>
+    textarea {
+        border: 0;
+        outline: none;
+        background-color: rgba(0, 0, 0, 0);
+    }
+
+    input {
+        border: 0;
+        outline: none;
+        background-color: rgba(0, 0, 0, 0);
+    }
+
+    .col-md-6 {
+        margin-top: 7px;
+    }
+</style>
+
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="{:url('find',['id'=>$id,'page'=>$page,'params'=>$params])}">查看</a></li>
+    </ul>
+    <form method="post" class="form-horizontal js-ajax-form margin-top-20 layui-form" autocomplete="off"
+          action="{:url('edit_post',['id'=>$id,'page'=>$page,'params'=>$params])}">
+
+
+        <!--用户信息-->
+        <div class="form-group">
+            <label class="col-sm-2 control-label">用户信息:</label>
+            <div class="layui-input-block col-sm-6">
+                <if condition='!empty($user_info)'>
+                    <p>(ID:{$user_info.id})</p>
+                    <a href="javascript:imagePreviewDialog('{:cmf_get_image_preview_url($user_info.avatar)}');">
+                        <img src='{:cmf_get_image_preview_url($user_info.avatar)}'
+                             style='height: 45px;'>
+                    </a>
+                    <span ondblclick="copyContent('{$user_info.openid}')">{$user_info.nickname}</span>
+                    <else/>
+                    已删除
+                </if>
+            </div>
+        </div>
+
+
+
+        <!--图片视频 一块显示-->
+        <div class="form-group">
+            <label class="col-sm-2 control-label">附件信息:</label>
+            <div class="layui-input-block col-sm-6">
+                <if condition="!empty($images)">
+                    <foreach name="$images" item="value">
+                        <if condition="strpos($value, '.mp4') !== false">
+                            <div>
+                                <video src="{$value}" controls="controls" width="150px;"
+                                       height="150px;"></video>
+                                <!--                                    <a href="{$value}" target="_blank">查看视频</a>-->
+                            </div>
+                            <else/>
+                            <div>
+                                <a href="javascript:imagePreviewDialog('{:cmf_get_image_preview_url($value)}');">
+                                    <img src="{:cmf_get_image_preview_url($value)}"
+                                         style="height:40px; ">
+                                </a>
+                            </div>
+                        </if>
+                    </foreach>
+                </if>
+            </div>
+        </div>
+
+
+        <!--多图-->
+        <div class="form-group">
+            <label class="col-sm-2 control-label">多图:</label>
+            <div class="layui-input-block col-sm-6">
+                <if condition="!empty($images)">
+                    <foreach name="images" item="value">
+                        <a href="javascript:imagePreviewDialog('{:cmf_get_image_preview_url($value)}');">
+                            <img src="{:cmf_get_image_preview_url($value)}"
+                                 style="height:40px; ">
+                        </a>
+                    </foreach>
+                </if>
+            </div>
+        </div>
+
+
+        <!--单图-->
+        <div class="form-group">
+            <label class="col-sm-2 control-label">单图:</label>
+            <div class="layui-input-block col-sm-6">
+                <if condition="!empty($image)">
+                    <a href="javascript:imagePreviewDialog('{:cmf_get_image_preview_url($image)}');">
+                        <img src="{:cmf_get_image_preview_url($image)}"
+                             style="height:40px; ">
+                    </a>
+                </if>
+            </div>
+        </div>
+
+        <!--文件-->
+        <div class="form-group">
+            <label class="col-sm-2 control-label">文件:</label>
+            <div class="layui-input-block col-sm-6">
+                <input type="hidden" name="video" value="{$video|default=''}">
+                <notempty name="$video">
+                    <a id="file-preview" href="{:cmf_get_file_download_url($video)}"
+                       target="_blank">下载</a>
+                </notempty>
+            </div>
+        </div>
+
+
+        <!--日期-->
+        <div class="form-group">
+            <label class="col-sm-2 control-label">有效终止日期:</label>
+            <div class="layui-input-block col-sm-6">
+                {:isset($end_time) && $end_time > 10000 ? date('Y-m-d H:i:s', $end_time) : ''}
+            </div>
+        </div>
+
+
+
+        <!-- 主键id -->
+        <input type="text" name="id" value="{$id}" class="form-control post-params item-left" style="display: none">
+
+
+    </form>
+
+</div>
+<script src="__STATIC__/js/admin.js"></script>
+</body>
+</html>
+
+
+

@@ -1,0 +1,29 @@
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<!-- Set render engine for 360 browser -->
+<meta name="renderer" content="webkit">
+
+<!-- No Baidu Siteapp-->
+<meta http-equiv="Cache-Control" content="no-siteapp"/>
+
+<link style="width:30px;height:30px;border-radius:30px;" rel="icon" href="{:cmf_get_asset_url(cmf_config('app_logo'))}" type="image/x-icon">
+
+<link href="__ADMIN_TMPL__/public/assets/themes/{:cmf_get_admin_style()}/bootstrap.min.css" rel="stylesheet">
+<link href="__ADMIN_TMPL__/public/assets/simpleboot3/css/simplebootadmin.css" rel="stylesheet">
+<link href="__STATIC__/font-awesome/css/font-awesome.min.css?page=index" rel="stylesheet" type="text/css">
+<title>{:cmf_config('app_name')!=''?cmf_config('app_name'):'微巨宝后台管理系统'}(操作日志)</title>
+<link href="__STATIC__/layui/css/layui.css" rel="stylesheet" type="text/css">
+<script src="__STATIC__/layui/layui.js"></script>
+
+<script type="text/javascript">
+    //全局变量
+    var GV = {
+        ROOT: "__ROOT__/",
+        WEB_ROOT: "__WEB_ROOT__/",
+        JS_ROOT: "static/js/"
+    };
+</script>
+<script src="__ADMIN_TMPL__/public/assets/js/jquery-1.10.2.min.js"></script>
+<script src="__STATIC__/js/wind.js"></script>
+<script src="__ADMIN_TMPL__/public/assets/js/bootstrap.min.js"></script>

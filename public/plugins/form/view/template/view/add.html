@@ -1,0 +1,24 @@
+{$head}
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li><a href="{$url_list}">{$list_name}</a></li>
+        <li class="active"><a href="{$url_add}">添加</a></li>
+        <!--<li><a  href="{:url('edit')}" >{:lang('ADMIN_NAV_EDIT')}</a></li>-->
+    </ul>
+    <form method="post" class="form-horizontal js-ajax-form margin-top-20 layui-form" autocomplete="off" action="{$url_add_post}">
+
+        <include file="{$controllers_name}/form"/>
+
+        <div class="col-sm-offset-2 col-sm-10">
+            <button type="submit" class="layui-btn js-ajax-submit" id="save">保存</button>
+            <a class="layui-btn layui-btn-primary" href="javascript:history.back(-1);">返回</a>
+        </div>
+    </form>
+
+</div>
+<script src="{$admin_js}"></script>
+</body>
+</html>
+

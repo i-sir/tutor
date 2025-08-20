@@ -1,0 +1,359 @@
+<foreach name="fields" item="vo" key="key">
+
+
+
+
+    {$vo.annotation_field}
+    <div class="form-group">
+        <label class="col-sm-2 control-label">{$vo.COLUMN_COMMENT}:</label>
+        <div class="layui-input-block col-sm-6">
+            <switch name="vo.type">
+                <case value="textarea">
+                    <textarea rows="4" class="form-control post-params item-left"  cols="60"
+                              name="{$vo.COLUMN_NAME}">{$vo.value}</textarea>
+                </case>
+                <case value="number">
+                    <input type="number" class="form-control post-params item-left" name="{$vo.COLUMN_NAME}" value="{$vo.value}">
+                </case>
+                <case value="content">
+                    <script type="text/plain" id="{$vo.COLUMN_NAME}" name="{$vo.COLUMN_NAME}">{$vo.edit_html}</script>
+                    <script type="text/javascript">
+                        //编辑器路径定义
+                        var editorURL = GV.WEB_ROOT;
+                    </script>
+                    <script type="text/javascript" src="__STATIC__/js/ueditor/ueditor.config.js?v=00001"></script>
+                    <script type="text/javascript" src="__STATIC__/js/ueditor/ueditor.all.min.js"></script>
+                    <!--编辑器支持秀米-->
+                    <script type="text/javascript" src="__STATIC__/js/ueditor/xiumi/xiumi-ue-dialog-v5.js"></script>
+                    <link rel="stylesheet" type="text/css" href="__STATIC__/js/ueditor/xiumi/xiumi-ue-v5.css" />
+                    <script type="text/javascript">
+                        $(function () {
+                            editorcontent = new baidu.editor.ui.Editor();
+                            editorcontent.render('{$vo.COLUMN_NAME}');
+                            try {
+                                editorcontent.sync();
+                            } catch (err) {
+                            }
+                        });
+                    </script>
+                </case>
+                <case value="lnglat-----000000">
+                    <!--经纬度选取位置-->
+                    <div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">地址</label>
+                            <div class="col-md-6 col-sm-10">
+                                <div style="display: flex;">
+                                    <input type="text" class="form-control post-params" name="address" id="address"
+                                           placeholder="请输入详细地址" required
+                                           value="{$address}" onblur="searchAddress()">
+                                    <a class="btn btn-primary" href="javascript:;" style="margin-left: 10px;"
+                                       onclick="searchAddress()">搜索</a>
+                                </div>
+                                <div id="container" style="margin-top:10px;width:600px;height:300px;"></div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <!-- sql
+                              CREATE TABLE `cmf_lnglat` (
+                              `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+                              `name` varchar(50) DEFAULT NULL COMMENT '学校名称',
+                              `address` varchar(255) DEFAULT NULL COMMENT '地址描述',
+                              `lnglat` varchar(255) DEFAULT NULL COMMENT '经纬度',
+                              `create_time` int(11) DEFAULT NULL,
+                              `province` varchar(255) DEFAULT NULL,
+                              `city` varchar(255) DEFAULT NULL,
+                              `county` varchar(255) DEFAULT NULL,
+                              `p_name` varchar(255) DEFAULT NULL,
+                              `c_name` varchar(255) DEFAULT NULL,
+                              `co_name` varchar(255) DEFAULT NULL,
+                              `lon` varchar(255) DEFAULT NULL,
+                              `lat` varchar(255) DEFAULT NULL,
+                              PRIMARY KEY (`id`)
+                            ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COMMENT='学校管理';
+                              -->
+                            <!--  控制器
+                                    回显
+                                    $lnglat             = explode(',', $toArray['lnglat']);
+                                    $toArray['lon']     = $lnglat[0];
+                                    $toArray['lat']     = $lnglat[1];
+                                    $toArray['p_name']  = Db::name('region')->where(['code' => $toArray['province']])->value('name');
+                                    $toArray['c_name']  = Db::name('region')->where(['code' => $toArray['city']])->value('name');
+                                    $toArray['co_name'] = Db::name('region')->where(['code' => $toArray['county']])->value('name');
+
+                                本控制器增加两个方法
+
+                                    public function reverse_address_i()
+                                    {   //经纬度转地址
+                                        $lnglat = $this->request->param('lnglat');
+                                        $url    = "https://apis.map.qq.com/ws/geocoder/v1/?location=" . $lnglat . "&key=GGVBZ-DUV6J-N33FQ-FX3AE-HTJ56-N6FDP&get_poi=1";
+                                        $result = file_get_contents($url);
+                                        $result = json_decode($result, true);
+                                        $this->success('', '', $result['result']['address']);
+                                    }
+
+                                    public function search_address_i()
+                                    {   //地址转经纬度
+                                        $address  = $this->request->param('address');
+                                        $url      = "https://apis.map.qq.com/ws/geocoder/v1/?key=GGVBZ-DUV6J-N33FQ-FX3AE-HTJ56-N6FDP&address=" . $address;
+                                        $result   = file_get_contents($url);
+                                        $result   = json_decode($result, true);
+                                        $location = $result['result']['location'];
+                                        $this->success('', '', $location);
+                                    }
+
+                             -->
+
+                            <label class="col-sm-2 control-label">经纬度</label>
+                            <input type="hidden" name="lon" value="{$lon}" id="lon">
+                            <input type="hidden" name="lat" value="{$lat}" id="lat">
+                            <div class="col-md-6 col-sm-10">
+                                <input type="text" class="form-control post-params" id="lnglat" name="lnglat"
+                                       placeholder="" readonly
+                                       required
+                                       value="{$lnglat}">
+                            </div>
+                            <script src="https://map.qq.com/api/gljs?v=1.exp&key=XQABZ-Z6GWP-OWEDN-V3K2Y-W43D6-D4B5P"></script>
+                            <script>
+                                //定义地图中心点坐标
+
+                                var already_lat = $("#lat").val();
+                                var already_lon = $("#lon").val();
+
+                                if (already_lat == '') {
+                                    already_lat = 39.916706;
+                                    already_lon = 116.403119;
+                                }
+                                var center = new TMap.LatLng(already_lat, already_lon);
+                                //定义map变量，调用 TMap.Map() 构造函数创建地图
+                                var map = new TMap.Map(document.getElementById('container'), {
+                                    center: center,//设置地图中心点坐标
+                                    zoom: 17, //设置地图缩放级别
+                                    viewMode: '3D'
+                                });
+                                let markerLayer = new TMap.MultiMarker({
+                                    id: 'marker-layer',
+                                    map: map
+                                });
+                                var clickHandler = function (evt) {
+                                    var lat = evt.latLng.getLat().toFixed(6);
+                                    var lng = evt.latLng.getLng().toFixed(6);
+                                    $("#lnglat").val(lng + "," + lat);
+                                    removeMarker("search_res");
+                                    addMarker(new TMap.LatLng(lat, lng), "search_res");
+
+                                    let url = "{:url('reverse_address_i')}";
+                                    $.get(url, {lnglat: lat + "," + lng}, function (res) {
+                                        //debugger;
+                                        $("#address").val(res.data);
+                                    });
+                                };
+                                map.on("click", clickHandler);
+
+                                function addMarker(latLng, id) {
+                                    markerLayer.add({
+                                        id: id,
+                                        position: latLng
+                                    });
+                                    let lng = latLng.lng;
+                                    let lat = latLng.lat;
+
+
+                                    map.setCenter(new TMap.LatLng(lat, lng)); // 坐标为天安门
+                                }
+
+                                //移除marker事件
+                                function removeMarker(id) {
+                                    markerLayer.remove(id)
+                                }
+
+                                function searchAddress() {
+                                    var province = $(".province option:selected").text();
+                                    var city = $(".city option:selected").text();
+                                    var district = $(".district option:selected").text();
+
+                                    if (province == '省份') {
+                                        layer.msg('请选择地区');
+                                        return;
+                                    }
+                                    if (city == '请选择' || district == '请选择') {
+                                        layer.msg('请选择地区');
+                                        return;
+                                    }
+
+                                    let address = $("#address").val();
+                                    var full_address = province + city + district + address;
+                                    let url = "{:url('search_address_i')}";
+                                    $.get(url, {address: full_address}, function (res) {
+                                        // debugger;
+                                        let location = res.data;
+                                        $("#lnglat").val(location.lng + "," + location.lat);
+                                        removeMarker("search_res");
+                                        addMarker(new TMap.LatLng(location.lat, location.lng), "search_res");
+                                    });
+                                }
+
+                            </script>
+
+
+                            <!--地区三级联动 layui-->
+                            <script>
+                                layui.use(['form', 'element'], function () {
+                                    var form = layui.form,
+                                        element = layui.element;
+                                    var provinceList;
+                                    $.ajax({
+                                        url: 'https://dz117.aulod.com/api/wxapp/house/getArea',
+                                        type: "GET",
+                                        async: false,
+                                        success: function (res) {
+                                            //console.log(res);
+                                            if (res.code == 1) {
+                                                provinceList = res.data;
+                                            } else {
+                                                layer.msg(res.msg, {icon: 7});
+                                            }
+                                        }
+                                    });
+
+                                    var province = $(".province");
+
+                                    //初始将省份数据赋予
+                                    for (var i = 0; i < provinceList.length; i++) {
+                                        addEle(province, provinceList[i].name, provinceList[i].code);
+                                    }
+
+                                    //向select中 追加内容
+                                    function addEle(ele, value, code) {
+                                        var optionStr = "";
+                                        optionStr = "<option value=" + code + " >" + value + "</option>";
+                                        ele.append(optionStr);
+                                    }
+
+                                    //重新渲染select
+                                    form.render('select');
+
+                                    //移除select中所有项
+                                    function removeEle(ele) {
+                                        ele.find("option").remove();
+                                        var optionStar = "<option value=''>" + "请选择" + "</option>";
+                                        ele.append(optionStar);
+                                    }
+
+                                    var provinceText,
+                                        cityText,
+                                        cityItem;
+                                    //选定省份后 将该省份的数据读取追加上
+                                    form.on('select(province)', function (data) {
+                                        console.log(data);
+                                        var city = $(data.elem).parents(".layui-form-item").find(".city"),
+                                            district = $(data.elem).parents(".layui-form-item").find(".district");
+                                        provinceText = data.value;
+
+                                        $.each(provinceList, function (i, item) {
+                                            if (provinceText == item.code) {
+                                                cityItem = i;
+                                                return cityItem;
+                                            }
+                                        });
+                                        removeEle(city);
+                                        removeEle(district);
+                                        $.each(provinceList[cityItem].cityList, function (i, item) {
+                                            addEle(city, item.name, item.code);
+                                        })
+                                        form.render('select');
+                                    })
+
+                                    //选定后 将对应的数据读取追加上
+                                    form.on('select(city)', function (data) {
+                                        var district = $(data.elem).parents(".layui-form-item").find(".district");
+                                        cityText = data.value;
+                                        removeEle(district);
+                                        $.each(provinceList, function (i, item) {
+                                            if (provinceText == item.code) {
+                                                cityItem = i;
+                                                return cityItem;
+                                            }
+                                        });
+                                        $.each(provinceList[cityItem].cityList, function (i, item) {
+                                            if (cityText == item.code) {
+                                                for (var n = 0; n < item.areaList.length; n++) {
+                                                    addEle(district, item.areaList[n]['name'], item.areaList[n]['code']);
+                                                }
+                                            }
+                                        })
+                                        form.render('select');
+                                    })
+                                })
+                            </script>
+                        </div>
+                    </div>
+                </case>
+                <case value="select">
+                    <select name="{$vo.COLUMN_NAME}" lay-search>
+                        <volist name="vo.data" id="vd">
+                            <if condition="$vd['value'] eq $vo['value']">
+                                <option value="{$vd.value}" selected="selected">{$vd.name}</option>
+                                <else/>
+                                <option value="{$vd.value}">{$vd.name}</option>
+                            </if>
+                        </volist>
+                    </select>
+                </case>
+                <case value="radio">
+                    <volist name="vo.data" id="vd">
+                        <if condition="$vd['value'] eq $vo['value']">
+                            <label><input type="radio" name="{$vo.COLUMN_NAME}" value="{$vd.value}" checked="checked">{$vd.name}<span>[{$vd.value}]</span></label>
+                            <else/>
+                            <label><input type="radio" name="{$vo.COLUMN_NAME}" value="{$vd.value}">{$vd.name}<span>[{$vd.value}]</span></label>
+                        </if>
+                    </volist>
+                </case>
+                <case value="checkbox">
+                    <volist name="vo.data" id="vd">
+                        <if condition="in_array($vd['value'],(array)$vo['value'])">
+                            <label><input type="checkbox" name="{$vo.COLUMN_NAME}[]" value="{$vd.value}" checked="checked">{$vd.name}<span>[{$vd.value}]</span></label>
+                            <else/>
+                            <label><input type="checkbox" name="{$vo.COLUMN_NAME}[]" value="{$vd.value}">{$vd.name}<span>[{$vd.value}]</span></label>
+                        </if>
+                    </volist>
+                </case>
+                <case value="time">
+                    <input type="time" class="form-control post-params item-left" name="{$vo.COLUMN_NAME}" value="{$vo.value}">
+                </case>
+                <case value="date">
+                    {$vo.edit_html}
+                </case>
+                <case value="image">
+                    {$vo.edit_html}
+                </case>
+                <case value="images">
+                    {$vo.edit_html}
+                </case>
+                <case value="video">
+                    {$vo.edit_html}
+                </case>
+                <case value="type">
+                    {$vo.edit_html}
+                </case>
+                <case value="file">
+                    {$vo.edit_html}
+                </case>
+                <case value="class">
+                    {$vo.edit_html}
+                </case>
+                <default/>
+                <input type="text" name="{$vo.COLUMN_NAME}" class="form-control post-params item-left" value="{$vo.value}">
+            </switch>
+        </div>
+    </div>
+
+
+
+
+
+
+
+</foreach>
+
+

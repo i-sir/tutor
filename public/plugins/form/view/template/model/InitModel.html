@@ -1,0 +1,22 @@
+<?php
+
+namespace initmodel;
+
+%root_menu_name%
+
+
+use think\facade\Db;
+use think\Model;
+use think\model\concern\SoftDelete;
+
+
+class %model_name% extends Model{
+
+	protected $name = '%table_name%';//%table_result_name%
+
+	//软删除
+	protected $hidden            = ['delete_time'];
+	protected $deleteTime        = 'delete_time';
+    protected $defaultSoftDelete = 0;
+    use SoftDelete;
+}
