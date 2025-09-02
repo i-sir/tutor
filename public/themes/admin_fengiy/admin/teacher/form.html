@@ -1,0 +1,553 @@
+
+
+
+
+    <!--user_id-->    <div class="form-group">
+        <label class="col-sm-2 control-label">用户信息:</label>
+        <div class="layui-input-block col-sm-6">
+                            <input type="text" name="user_id" class="form-control post-params item-left" value="{$user_id|default=''}">
+                    </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--姓名-->    <div class="form-group">
+        <label class="col-sm-2 control-label">姓名:</label>
+        <div class="layui-input-block col-sm-6">
+                            <input type="text" name="username" class="form-control post-params item-left" value="{$username|default=''}">
+                    </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--年龄-->    <div class="form-group">
+        <label class="col-sm-2 control-label">年龄:</label>
+        <div class="layui-input-block col-sm-6">
+                            <input type="text" name="age" class="form-control post-params item-left" value="{$age|default=''}">
+                    </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--性别-->    <div class="form-group">
+        <label class="col-sm-2 control-label">性别:</label>
+        <div class="layui-input-block col-sm-6">
+                            <input type="text" name="gender" class="form-control post-params item-left" value="{$gender|default=''}">
+                    </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--所在位置-->    <div class="form-group">
+        <label class="col-sm-2 control-label">所在位置:</label>
+        <div class="layui-input-block col-sm-6">
+                            <input type="text" name="address" class="form-control post-params item-left" value="{$address|default=''}">
+                    </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--毕业院校-->    <div class="form-group">
+        <label class="col-sm-2 control-label">毕业院校:</label>
+        <div class="layui-input-block col-sm-6">
+                            <input type="text" name="school" class="form-control post-params item-left" value="{$school|default=''}">
+                    </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--个人介绍-->    <div class="form-group">
+        <label class="col-sm-2 control-label">个人介绍:</label>
+        <div class="layui-input-block col-sm-6">
+                                <textarea rows="4" class="form-control post-params item-left"  cols="60"
+                              name="introduce">{$introduce|default=''}</textarea>
+                        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--资质证书-->    <div class="form-group">
+        <label class="col-sm-2 control-label">资质证书:</label>
+        <div class="layui-input-block col-sm-6">
+                            <input type="text" name="qualification" class="form-control post-params item-left" value="{$qualification|default=''}">
+                    </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--资质证书-->    <div class="form-group">
+        <label class="col-sm-2 control-label">资质证书:</label>
+        <div class="layui-input-block col-sm-6">
+                                <div class="help-block text-danger">长按图片可上下拖动,调整图片顺序</div>
+<if condition="!empty($qualification_images)">
+<ul id="imagesId00000009" class="pic-list list-unstyled form-inline">
+<foreach name="$qualification_images" item="vo">
+<li id="savedImages-00000009-{$key}" style="margin-bottom: 5px;">
+<input id="photoImages-00000009-{$key}" class="form-control post-params item-left" type="hidden" name="qualification_images[{$key}]" value="{$vo}">
+<img id="photoImages-00000009-{$key}-preview" src="{:cmf_get_image_preview_url($vo)}" height="50" onclick="parent.imagePreviewDialog(this.src);">
+<a href="javascript:uploadOneImage('图片上传','#photoImages-00000009-{$key}');">替换</a>
+<a href="javascript:(function(){$('#savedImages-00000009-{$key}').remove();})();">移除</a>
+</li>
+</foreach>
+</ul>
+<else/>
+<ul id="imagesId00000009" class="pic-list list-unstyled form-inline">
+<li id="savedImages-00000009" style="margin-bottom: 5px;">
+</li>
+</ul>
+</if>
+<a href="javascript:uploadMultiImage('图片上传','#imagesId00000009','itemImages-00000009');" class="btn btn-sm btn-default">选择图片</a>
+<script type="text/html" id="itemImages-00000009">
+<li id="savedImages-00000009-{id}" style="margin-bottom: 5px;">
+<input id="photoImages-00000009-{id}" class="form-control post-params item-left" type="hidden" name="qualification_images[{id}]" value="{filepath}">
+<img id="photoImages-00000009-{id}-preview" src="{url}" height="50" onclick="imagePreviewDialog(this.src);">
+<a href="javascript:uploadOneImage('图片上传','#photoImages-00000009-{id}');">替换</a>
+<a href="javascript:(function(){$('#savedImages-00000009-{id}').remove();})();">移除</a>
+</li>
+</script>
+<script>
+// 多图上传支持排序
+new Sortable(imagesId00000009, {
+animation: 150,
+ghostClass: 'blue-background-class'
+});
+</script>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--个人照片-->    <div class="form-group">
+        <label class="col-sm-2 control-label">个人照片:</label>
+        <div class="layui-input-block col-sm-6">
+                                <div class="help-block text-danger">长按图片可上下拖动,调整图片顺序</div>
+<if condition="!empty($images)">
+<ul id="imagesId000000010" class="pic-list list-unstyled form-inline">
+<foreach name="$images" item="vo">
+<li id="savedImages-000000010-{$key}" style="margin-bottom: 5px;">
+<input id="photoImages-000000010-{$key}" class="form-control post-params item-left" type="hidden" name="images[{$key}]" value="{$vo}">
+<img id="photoImages-000000010-{$key}-preview" src="{:cmf_get_image_preview_url($vo)}" height="50" onclick="parent.imagePreviewDialog(this.src);">
+<a href="javascript:uploadOneImage('图片上传','#photoImages-000000010-{$key}');">替换</a>
+<a href="javascript:(function(){$('#savedImages-000000010-{$key}').remove();})();">移除</a>
+</li>
+</foreach>
+</ul>
+<else/>
+<ul id="imagesId000000010" class="pic-list list-unstyled form-inline">
+<li id="savedImages-000000010" style="margin-bottom: 5px;">
+</li>
+</ul>
+</if>
+<a href="javascript:uploadMultiImage('图片上传','#imagesId000000010','itemImages-000000010');" class="btn btn-sm btn-default">选择图片</a>
+<script type="text/html" id="itemImages-000000010">
+<li id="savedImages-000000010-{id}" style="margin-bottom: 5px;">
+<input id="photoImages-000000010-{id}" class="form-control post-params item-left" type="hidden" name="images[{id}]" value="{filepath}">
+<img id="photoImages-000000010-{id}-preview" src="{url}" height="50" onclick="imagePreviewDialog(this.src);">
+<a href="javascript:uploadOneImage('图片上传','#photoImages-000000010-{id}');">替换</a>
+<a href="javascript:(function(){$('#savedImages-000000010-{id}').remove();})();">移除</a>
+</li>
+</script>
+<script>
+// 多图上传支持排序
+new Sortable(imagesId000000010, {
+animation: 150,
+ghostClass: 'blue-background-class'
+});
+</script>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--个人视频-->    <div class="form-group">
+        <label class="col-sm-2 control-label">个人视频:</label>
+        <div class="layui-input-block col-sm-6">
+                                <input type="text" class="form-control post-params item-left"  name="video"  id="video-00000011"  
+                         readonly="readonly"  value="{$video}">
+<if condition='!empty($video)'>
+<a id="video-00000011-preview" href="{:cmf_get_file_download_url($video)}"
+										target="_blank">下载</a>
+</if>
+<a href="javascript:uploadOne('视频上传','#video-00000011','video');">上传</a>
+<a onclick="$('#video-00000011').val('');return false;">取消</a>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--标签-->    <div class="form-group">
+        <label class="col-sm-2 control-label">标签:</label>
+        <div class="layui-input-block col-sm-6">
+                            <input type="text" name="tag" class="form-control post-params item-left" value="{$tag|default=''}">
+                    </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--状态:1审核中,2已通过,3已驳回-->    <div class="form-group">
+        <label class="col-sm-2 control-label">状态:</label>
+        <div class="layui-input-block col-sm-6">
+                            <input type="text" name="status" class="form-control post-params item-left" value="{$status|default=''}">
+                    </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--工作状态:1接单中,2已下线-->    <div class="form-group">
+        <label class="col-sm-2 control-label">工作状态:</label>
+        <div class="layui-input-block col-sm-6">
+                            <input type="text" name="work_status" class="form-control post-params item-left" value="{$work_status|default=''}">
+                    </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--线上课时费(元/30分钟)-->    <div class="form-group">
+        <label class="col-sm-2 control-label">线上课时费(元/30分钟):</label>
+        <div class="layui-input-block col-sm-6">
+                                <input type="number" class="form-control post-params item-left" name="online_price" value="{$online_price|default=''}">
+                        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--线下课时费(元/30分钟)-->    <div class="form-group">
+        <label class="col-sm-2 control-label">线下课时费(元/30分钟):</label>
+        <div class="layui-input-block col-sm-6">
+                                <input type="number" class="form-control post-params item-left" name="offline_price" value="{$offline_price|default=''}">
+                        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--套餐原价-->    <div class="form-group">
+        <label class="col-sm-2 control-label">套餐原价:</label>
+        <div class="layui-input-block col-sm-6">
+                                <input type="number" class="form-control post-params item-left" name="package_price" value="{$package_price|default=''}">
+                        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--上课方式:1线上,2线下-->    <div class="form-group">
+        <label class="col-sm-2 control-label">上课方式:</label>
+        <div class="layui-input-block col-sm-6">
+                                <if condition="!empty($type)">
+    <select class="form-control post-params" lay-search lay-filter="type" name="type">
+        <foreach item="vo" key="key" name="type_list">
+            <option value="{$key}"
+            <if condition="$type eq $key ">selected</if>
+            >{$vo}</option>
+        </foreach>
+    </select>
+    <else/>
+    <select class="form-control post-params" lay-search lay-filter="type" name="type">
+        <foreach item="vo" key="key" name="type_list">
+            <option value="{$key}">{$vo}</option>
+        </foreach>
+    </select>
+</if>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--接单地址-->    <div class="form-group">
+        <label class="col-sm-2 control-label">接单地址:</label>
+        <div class="layui-input-block col-sm-6">
+                            <input type="text" name="receive_address" class="form-control post-params item-left" value="{$receive_address|default=''}">
+                    </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--经度-->    <div class="form-group">
+        <label class="col-sm-2 control-label">经度:</label>
+        <div class="layui-input-block col-sm-6">
+                            <input type="text" name="receive_lng" class="form-control post-params item-left" value="{$receive_lng|default=''}">
+                    </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--纬度-->    <div class="form-group">
+        <label class="col-sm-2 control-label">纬度:</label>
+        <div class="layui-input-block col-sm-6">
+                            <input type="text" name="receive_lat" class="form-control post-params item-left" value="{$receive_lat|default=''}">
+                    </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--接单公里-->    <div class="form-group">
+        <label class="col-sm-2 control-label">接单公里:</label>
+        <div class="layui-input-block col-sm-6">
+                            <input type="text" name="receive_km" class="form-control post-params item-left" value="{$receive_km|default=''}">
+                    </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--年级-->    <div class="form-group">
+        <label class="col-sm-2 control-label">年级:</label>
+        <div class="layui-input-block col-sm-6">
+                            <input type="text" name="grade_ids" class="form-control post-params item-left" value="{$grade_ids|default=''}">
+                    </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--科目-->    <div class="form-group">
+        <label class="col-sm-2 control-label">科目:</label>
+        <div class="layui-input-block col-sm-6">
+                            <input type="text" name="course_ids" class="form-control post-params item-left" value="{$course_ids|default=''}">
+                    </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--拒绝理由-->    <div class="form-group">
+        <label class="col-sm-2 control-label">拒绝理由:</label>
+        <div class="layui-input-block col-sm-6">
+                            <input type="text" name="refuse" class="form-control post-params item-left" value="{$refuse|default=''}">
+                    </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--通过时间-->    <div class="form-group">
+        <label class="col-sm-2 control-label">通过时间:</label>
+        <div class="layui-input-block col-sm-6">
+                                                    <input class="form-control post-params item-left js-datetime" name="pass_time" required
+                           type="text"
+                           value="{:isset($pass_time) && $pass_time > 10000 ? date('Y-m-d H:i', $pass_time) : ''}">
+         </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--拒绝时间-->    <div class="form-group">
+        <label class="col-sm-2 control-label">拒绝时间:</label>
+        <div class="layui-input-block col-sm-6">
+                                                    <input class="form-control post-params item-left js-datetime" name="refuse_time" required
+                           type="text"
+                           value="{:isset($refuse_time) && $refuse_time > 10000 ? date('Y-m-d H:i', $refuse_time) : ''}">
+         </div>
+    </div>
+
+
+
+
+
+
+
+
+

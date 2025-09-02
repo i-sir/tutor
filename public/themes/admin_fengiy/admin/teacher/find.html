@@ -1,0 +1,287 @@
+<include file="public@header"/>
+<style>
+    textarea {
+        border: 0;
+        outline: none;
+        background-color: rgba(0, 0, 0, 0);
+    }
+
+    input {
+        border: 0;
+        outline: none;
+        background-color: rgba(0, 0, 0, 0);
+    }
+
+    .col-sm-6 {
+        margin-top: 7px;
+    }
+</style>
+
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="{:url('find',['id'=>$id,'pid'=>$pid,'params'=>$params])}">查看</a></li>
+    </ul>
+    <form method="post" class="form-horizontal js-ajax-form margin-top-20 layui-form" autocomplete="off"
+          action="{:url('edit_post',['id'=>$id,'page'=>$page,'pid'=>$pid,'params'=>$params])}">
+
+
+        <!--user_id-->
+        <div class="form-group">
+            <label class="col-sm-2 control-label">用户信息:</label>
+            <div class="layui-input-block col-sm-6">
+                <if condition='!empty($user_info)'>
+                    <div style="display: flex;align-items: center;">
+                        <a href="javascript:imagePreviewDialog('{:cmf_get_asset_url($user_info.avatar)}');">
+                            <img class='img-rounded' src='{:cmf_get_asset_url($user_info.avatar)}' style='height:40px;'>
+                        </a>
+                        <div style="margin-left: 6px;">
+                            <p ondblclick="copyContent('{$user_info.openid}')">
+                                {$user_info.nickname}({$user_info.id})</p>
+                            <p>{$user_info.phone}</p>
+                        </div>
+                    </div>
+                    <else/>
+                    已删除
+                </if>
+            </div>
+        </div>
+
+
+        <!--姓名-->
+        <div class="form-group">
+            <label class="col-sm-2 control-label">姓名:</label>
+            <div class="layui-input-block col-sm-6">
+                {$username|default=''}
+            </div>
+        </div>
+
+
+        <!--年龄-->
+        <div class="form-group">
+            <label class="col-sm-2 control-label">年龄:</label>
+            <div class="layui-input-block col-sm-6">
+                {$age|default=''}
+            </div>
+        </div>
+
+
+        <!--性别-->
+        <div class="form-group">
+            <label class="col-sm-2 control-label">性别:</label>
+            <div class="layui-input-block col-sm-6">
+                {$gender|default=''}
+            </div>
+        </div>
+
+
+        <!--所在位置-->
+        <div class="form-group">
+            <label class="col-sm-2 control-label">所在位置:</label>
+            <div class="layui-input-block col-sm-6">
+                {$address|default=''}
+            </div>
+        </div>
+
+
+        <!--毕业院校-->
+        <div class="form-group">
+            <label class="col-sm-2 control-label">毕业院校:</label>
+            <div class="layui-input-block col-sm-6">
+                {$school|default=''}
+            </div>
+        </div>
+
+
+        <!--个人介绍-->
+        <div class="form-group">
+            <label class="col-sm-2 control-label">个人介绍:</label>
+            <div class="layui-input-block col-sm-6">
+                {$introduce|default=''}
+            </div>
+        </div>
+
+
+        <!--资质证书-->
+        <div class="form-group">
+            <label class="col-sm-2 control-label">资质证书:</label>
+            <div class="layui-input-block col-sm-6">
+                {$qualification|default=''}
+            </div>
+        </div>
+
+
+        <!--资质证书-->
+        <div class="form-group">
+            <label class="col-sm-2 control-label">资质证书:</label>
+            <div class="layui-input-block col-sm-6">
+                <if condition='!empty($qualification_images)'>
+                    <foreach name='$qualification_images' item='value'>
+                        <a href="javascript:imagePreviewDialog('{:cmf_get_image_preview_url($value)}');">
+                            <img src='{:cmf_get_image_preview_url($value)}' style='height:40px;'>
+                        </a>
+                    </foreach>
+                </if>
+            </div>
+        </div>
+
+
+        <!--个人照片-->
+        <div class="form-group">
+            <label class="col-sm-2 control-label">个人照片:</label>
+            <div class="layui-input-block col-sm-6">
+                <if condition='!empty($images)'>
+                    <foreach name='$images' item='value'>
+                        <a href="javascript:imagePreviewDialog('{:cmf_get_image_preview_url($value)}');">
+                            <img src='{:cmf_get_image_preview_url($value)}' style='height:40px;'>
+                        </a>
+                    </foreach>
+                </if>
+            </div>
+        </div>
+
+
+        <!--个人视频-->
+        <div class="form-group">
+            <label class="col-sm-2 control-label">个人视频:</label>
+            <div class="layui-input-block col-sm-6">
+                <if condition='!empty($video)'>
+                    <a href="{:cmf_get_file_download_url($video)}"
+                       target="_blank">下载</a>
+                    </a>
+                    <else/>
+                    暂无上传
+                </if>
+            </div>
+        </div>
+
+
+        <!--标签-->
+        <div class="form-group">
+            <label class="col-sm-2 control-label">标签:</label>
+            <div class="layui-input-block col-sm-6">
+                {$tag|default=''}
+            </div>
+        </div>
+
+
+        <!--状态:1审核中,2已通过,3已驳回-->
+        <div class="form-group">
+            <label class="col-sm-2 control-label">状态:</label>
+            <div class="layui-input-block col-sm-6">
+                {$status_name|default=''}
+            </div>
+        </div>
+
+
+        <!--工作状态:1接单中,2已下线-->
+        <div class="form-group" style="display: none;">
+            <label class="col-sm-2 control-label">工作状态:</label>
+            <div class="layui-input-block col-sm-6">
+                {$work_status_name|default=''}
+            </div>
+        </div>
+
+
+        <!--线上课时费(元/30分钟)-->
+        <div class="form-group">
+            <label class="col-sm-2 control-label">线上课时费(元/30分钟):</label>
+            <div class="layui-input-block col-sm-6">
+                {$online_price}
+            </div>
+        </div>
+
+
+        <!--线下课时费(元/30分钟)-->
+        <div class="form-group">
+            <label class="col-sm-2 control-label">线下课时费(元/30分钟):</label>
+            <div class="layui-input-block col-sm-6">
+                {$offline_price}
+            </div>
+        </div>
+
+
+        <!--套餐原价-->
+        <div class="form-group">
+            <label class="col-sm-2 control-label">套餐原价:</label>
+            <div class="layui-input-block col-sm-6">
+                {$package_price}
+            </div>
+        </div>
+
+
+        <!--上课方式:1线上,2线下-->
+        <div class="form-group">
+            <label class="col-sm-2 control-label">上课方式:</label>
+            <div class="layui-input-block col-sm-6">
+                {$type_name|default=''}
+            </div>
+        </div>
+
+
+        <!--接单地址-->
+        <div class="form-group">
+            <label class="col-sm-2 control-label">接单地址:</label>
+            <div class="layui-input-block col-sm-6">
+                {$receive_address|default=''}
+            </div>
+        </div>
+
+
+
+
+        <!--接单公里-->
+        <div class="form-group">
+            <label class="col-sm-2 control-label">接单范围(km):</label>
+            <div class="layui-input-block col-sm-6">
+                {$receive_km|default=''}
+            </div>
+        </div>
+
+
+        <!--接单公里-->
+        <div class="form-group">
+            <label class="col-sm-2 control-label">公里/单价:</label>
+            <div class="layui-input-block col-sm-6">
+                {$km_price|default=''}
+            </div>
+        </div>
+
+
+        <!--年级-->
+        <div class="form-group">
+            <label class="col-sm-2 control-label">年级:</label>
+            <div class="layui-input-block col-sm-6">
+                {$grade_name|default=''}
+            </div>
+        </div>
+
+
+        <!--科目-->
+        <div class="form-group">
+            <label class="col-sm-2 control-label">科目:</label>
+            <div class="layui-input-block col-sm-6">
+                {$course_name|default=''}
+            </div>
+        </div>
+
+
+
+
+
+
+
+        <!-- 主键id -->
+        <input type="text" name="id" value="{$id}" class="form-control post-params item-left" style="display: none">
+
+
+    </form>
+
+</div>
+<script src="__STATIC__/js/admin.js"></script>
+</body>
+</html>
+
+
+
