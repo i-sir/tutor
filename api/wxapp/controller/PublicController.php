@@ -200,6 +200,12 @@ class PublicController extends AuthController
                 if (empty($v['about'])) $annotation[$menu_name][] = [$v['name'] => "{$v['label']}"];
                 if ($v['about']) $annotation[$menu_name][] = [$v['name'] => "{$v['label']} ({$v['about']})"];
             }
+
+
+            //程序配置,私有配置过滤
+            if (in_array($v['group_id'], [200, 999999])) unset($result[$v['name']]);
+
+
         }
         $result['_字段注释'] = $annotation;
 
