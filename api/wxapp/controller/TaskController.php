@@ -39,7 +39,7 @@ class TaskController
         $task = new \init\TaskInit();
         $task->operation_vip();//处理vip
         $task->operation_cancel_order();//自动取消订单
-        $task->operation_accomplish_order();//自动完成订单
+        //$task->operation_accomplish_order();//自动完成订单
 
 
         //将公众号的official_openid存入member表中  可以在用户授权登录后操作

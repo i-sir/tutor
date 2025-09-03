@@ -76,6 +76,7 @@ class OrderPayController extends AuthController
         $Pay            = new PayController();
         $OrderPayModel  = new \initmodel\OrderPayModel();
         $ShopOrderModel = new \initmodel\ShopOrderModel(); //订单管理   (ps:InitModel)
+        $TeacherOrderModel   = new \initmodel\TeacherOrderModel();
 
         $map   = [];
         $map[] = ['order_num', '=', $params['order_num']];
@@ -84,11 +85,11 @@ class OrderPayController extends AuthController
         //订单支付
         if ($params['order_type'] == 10) {
             //修改订单,支付类型
-            $ShopOrderModel->where($map)->strict(false)->update([
+            $TeacherOrderModel->where($map)->strict(false)->update([
                 'pay_type'    => 1,
                 'update_time' => time(),
             ]);
-            $order_info = $ShopOrderModel->where($map)->find();
+            $order_info = $TeacherOrderModel->where($map)->find();
         }
 
 
@@ -181,6 +182,7 @@ class OrderPayController extends AuthController
         $OrderPayModel    = new \initmodel\OrderPayModel();
         $ShopOrderModel   = new \initmodel\ShopOrderModel(); //订单管理   (ps:InitModel)
         $NotifyController = new NotifyController();
+        $TeacherOrderModel   = new \initmodel\TeacherOrderModel();
 
         $map   = [];
         $map[] = ['order_num', '=', $params['order_num']];
@@ -189,11 +191,11 @@ class OrderPayController extends AuthController
         //订单支付
         if ($params['order_type'] == 10) {
             //修改订单,支付类型
-            $ShopOrderModel->where($map)->strict(false)->update([
+            $TeacherOrderModel->where($map)->strict(false)->update([
                 'pay_type'    => 6,
                 'update_time' => time(),
             ]);
-            $order_info = $ShopOrderModel->where($map)->find();
+            $order_info = $TeacherOrderModel->where($map)->find();
         }
 
 

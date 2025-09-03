@@ -1,0 +1,924 @@
+
+
+
+
+    <!--上课方式:1线上,2线下-->    <div class="form-group">
+        <label class="col-sm-2 control-label">上课方式:1线上,2线下:</label>
+        <div class="layui-input-block col-sm-6">
+                                <if condition="!empty($type)">
+    <select class="form-control post-params" lay-search lay-filter="type" name="type">
+        <foreach item="vo" key="key" name="type_list">
+            <option value="{$key}"
+            <if condition="$type eq $key ">selected</if>
+            >{$vo}</option>
+        </foreach>
+    </select>
+    <else/>
+    <select class="form-control post-params" lay-search lay-filter="type" name="type">
+        <foreach item="vo" key="key" name="type_list">
+            <option value="{$key}">{$vo}</option>
+        </foreach>
+    </select>
+</if>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--门店id-->    <div class="form-group">
+        <label class="col-sm-2 control-label">门店id:</label>
+        <div class="layui-input-block col-sm-6">
+                            <input type="text" name="shop_id" class="form-control post-params item-left" value="{$shop_id|default=''}">
+                    </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--用户id-->    <div class="form-group">
+        <label class="col-sm-2 control-label">用户信息:</label>
+        <div class="layui-input-block col-sm-6">
+                            <input type="text" name="user_id" class="form-control post-params item-left" value="{$user_id|default=''}">
+                    </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--教师id-->    <div class="form-group">
+        <label class="col-sm-2 control-label">教师id:</label>
+        <div class="layui-input-block col-sm-6">
+                            <input type="text" name="teacher_id" class="form-control post-params item-left" value="{$teacher_id|default=''}">
+                    </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--状态:1待付款,2待接单,4待上课,8已完成,10已取消,12退款申请,14退款不通过,16退款通过-->    <div class="form-group">
+        <label class="col-sm-2 control-label">状态:</label>
+        <div class="layui-input-block col-sm-6">
+                            <input type="text" name="status" class="form-control post-params item-left" value="{$status|default=''}">
+                    </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--订单号-->    <div class="form-group">
+        <label class="col-sm-2 control-label">订单号:</label>
+        <div class="layui-input-block col-sm-6">
+                            <input type="text" name="order_num" class="form-control post-params item-left" value="{$order_num|default=''}">
+                    </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--支付单号-->    <div class="form-group">
+        <label class="col-sm-2 control-label">支付单号:</label>
+        <div class="layui-input-block col-sm-6">
+                            <input type="text" name="pay_num" class="form-control post-params item-left" value="{$pay_num|default=''}">
+                    </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--地址id-->    <div class="form-group">
+        <label class="col-sm-2 control-label">地址id:</label>
+        <div class="layui-input-block col-sm-6">
+                            <input type="text" name="address_id" class="form-control post-params item-left" value="{$address_id|default=''}">
+                    </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--身份标识 openid-->    <div class="form-group">
+        <label class="col-sm-2 control-label">身份标识 openid:</label>
+        <div class="layui-input-block col-sm-6">
+                            <input type="text" name="openid" class="form-control post-params item-left" value="{$openid|default=''}">
+                    </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--姓名-->    <div class="form-group">
+        <label class="col-sm-2 control-label">姓名:</label>
+        <div class="layui-input-block col-sm-6">
+                            <input type="text" name="username" class="form-control post-params item-left" value="{$username|default=''}">
+                    </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--手机号-->    <div class="form-group">
+        <label class="col-sm-2 control-label">手机号:</label>
+        <div class="layui-input-block col-sm-6">
+                            <input type="text" name="phone" class="form-control post-params item-left" value="{$phone|default=''}">
+                    </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--省-->    <div class="form-group">
+        <label class="col-sm-2 control-label">省:</label>
+        <div class="layui-input-block col-sm-6">
+                            <input type="text" name="province" class="form-control post-params item-left" value="{$province|default=''}">
+                    </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--市-->    <div class="form-group">
+        <label class="col-sm-2 control-label">市:</label>
+        <div class="layui-input-block col-sm-6">
+                            <input type="text" name="city" class="form-control post-params item-left" value="{$city|default=''}">
+                    </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--区-->    <div class="form-group">
+        <label class="col-sm-2 control-label">区:</label>
+        <div class="layui-input-block col-sm-6">
+                            <input type="text" name="county" class="form-control post-params item-left" value="{$county|default=''}">
+                    </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--详细地址-->    <div class="form-group">
+        <label class="col-sm-2 control-label">详细地址:</label>
+        <div class="layui-input-block col-sm-6">
+                            <input type="text" name="address" class="form-control post-params item-left" value="{$address|default=''}">
+                    </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--实际支付金额-->    <div class="form-group">
+        <label class="col-sm-2 control-label">实际支付金额:</label>
+        <div class="layui-input-block col-sm-6">
+                                <input type="number" class="form-control post-params item-left" name="amount" value="{$amount|default=''}">
+                        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--余额支付金额-->    <div class="form-group">
+        <label class="col-sm-2 control-label">余额支付金额:</label>
+        <div class="layui-input-block col-sm-6">
+                                <input type="number" class="form-control post-params item-left" name="balance" value="{$balance|default=''}">
+                        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--商品金额-->    <div class="form-group">
+        <label class="col-sm-2 control-label">商品金额:</label>
+        <div class="layui-input-block col-sm-6">
+                                <input type="number" class="form-control post-params item-left" name="goods_amount" value="{$goods_amount|default=''}">
+                        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--原始 总金额 = 商品金额+优惠金额+运费金额-->    <div class="form-group">
+        <label class="col-sm-2 control-label">原始 总金额 = 商品金额+优惠金额+运费金额:</label>
+        <div class="layui-input-block col-sm-6">
+                                <input type="number" class="form-control post-params item-left" name="total_amount" value="{$total_amount|default=''}">
+                        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--优惠券id-->    <div class="form-group">
+        <label class="col-sm-2 control-label">优惠券id:</label>
+        <div class="layui-input-block col-sm-6">
+                            <input type="text" name="coupon_id" class="form-control post-params item-left" value="{$coupon_id|default=''}">
+                    </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--优惠金额-->    <div class="form-group">
+        <label class="col-sm-2 control-label">优惠金额:</label>
+        <div class="layui-input-block col-sm-6">
+                                <input type="number" class="form-control post-params item-left" name="coupon_amount" value="{$coupon_amount|default=''}">
+                        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--使用积分-->    <div class="form-group">
+        <label class="col-sm-2 control-label">使用积分:</label>
+        <div class="layui-input-block col-sm-6">
+                                <input type="number" class="form-control post-params item-left" name="point" value="{$point|default=''}">
+                        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--积分已抵扣金额-->    <div class="form-group">
+        <label class="col-sm-2 control-label">积分已抵扣金额:</label>
+        <div class="layui-input-block col-sm-6">
+                                <input type="number" class="form-control post-params item-left" name="point_balance" value="{$point_balance|default=''}">
+                        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--运费-->    <div class="form-group">
+        <label class="col-sm-2 control-label">运费:</label>
+        <div class="layui-input-block col-sm-6">
+                                <input type="number" class="form-control post-params item-left" name="freight_amount" value="{$freight_amount|default=''}">
+                        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--路费单价-->    <div class="form-group">
+        <label class="col-sm-2 control-label">路费单价:</label>
+        <div class="layui-input-block col-sm-6">
+                                <input type="number" class="form-control post-params item-left" name="km_price" value="{$km_price|default=''}">
+                        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--总里程-->    <div class="form-group">
+        <label class="col-sm-2 control-label">总里程:</label>
+        <div class="layui-input-block col-sm-6">
+                            <input type="text" name="km" class="form-control post-params item-left" value="{$km|default=''}">
+                    </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--赠送积分-->    <div class="form-group">
+        <label class="col-sm-2 control-label">赠送积分:</label>
+        <div class="layui-input-block col-sm-6">
+                                <input type="number" class="form-control post-params item-left" name="give_point" value="{$give_point|default=''}">
+                        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--支付类型:1微信支付,2余额支付,3积分支付,4支付宝支付,5组合支付(微信+余额),6免费兑换-->    <div class="form-group">
+        <label class="col-sm-2 control-label">支付类型:</label>
+        <div class="layui-input-block col-sm-6">
+                            <input type="text" name="pay_type" class="form-control post-params item-left" value="{$pay_type|default=''}">
+                    </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--备注-->    <div class="form-group">
+        <label class="col-sm-2 control-label">备注:</label>
+        <div class="layui-input-block col-sm-6">
+                            <input type="text" name="remark" class="form-control post-params item-left" value="{$remark|default=''}">
+                    </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--核销二维码-->    <div class="form-group">
+        <label class="col-sm-2 control-label">核销二维码:</label>
+        <div class="layui-input-block col-sm-6">
+                            <input type="text" name="cav_qr_code" class="form-control post-params item-left" value="{$cav_qr_code|default=''}">
+                    </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--核销码-->    <div class="form-group">
+        <label class="col-sm-2 control-label">核销码:</label>
+        <div class="layui-input-block col-sm-6">
+                            <input type="text" name="cav_code" class="form-control post-params item-left" value="{$cav_code|default=''}">
+                    </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--快递单号-->    <div class="form-group">
+        <label class="col-sm-2 control-label">快递单号:</label>
+        <div class="layui-input-block col-sm-6">
+                            <input type="text" name="exp_num" class="form-control post-params item-left" value="{$exp_num|default=''}">
+                    </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--快递名称-->    <div class="form-group">
+        <label class="col-sm-2 control-label">快递名称:</label>
+        <div class="layui-input-block col-sm-6">
+                            <input type="text" name="exp_name" class="form-control post-params item-left" value="{$exp_name|default=''}">
+                    </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--购物车下单-->    <div class="form-group">
+        <label class="col-sm-2 control-label">购物车下单:</label>
+        <div class="layui-input-block col-sm-6">
+                            <input type="text" name="catr_ids" class="form-control post-params item-left" value="{$catr_ids|default=''}">
+                    </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--商品id-->    <div class="form-group">
+        <label class="col-sm-2 control-label">商品id:</label>
+        <div class="layui-input-block col-sm-6">
+                            <input type="text" name="goods_ids" class="form-control post-params item-left" value="{$goods_ids|default=''}">
+                    </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--商品名字-->    <div class="form-group">
+        <label class="col-sm-2 control-label">商品名字:</label>
+        <div class="layui-input-block col-sm-6">
+                            <input type="text" name="goods_name" class="form-control post-params item-left" value="{$goods_name|default=''}">
+                    </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--课程时长-->    <div class="form-group">
+        <label class="col-sm-2 control-label">课程时长:</label>
+        <div class="layui-input-block col-sm-6">
+                            <input type="text" name="duration" class="form-control post-params item-left" value="{$duration|default=''}">
+                    </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--年级-->    <div class="form-group">
+        <label class="col-sm-2 control-label">年级:</label>
+        <div class="layui-input-block col-sm-6">
+                            <input type="text" name="grade_name" class="form-control post-params item-left" value="{$grade_name|default=''}">
+                    </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--科目-->    <div class="form-group">
+        <label class="col-sm-2 control-label">科目:</label>
+        <div class="layui-input-block col-sm-6">
+                            <input type="text" name="course_name" class="form-control post-params item-left" value="{$course_name|default=''}">
+                    </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--管理员备注-->    <div class="form-group">
+        <label class="col-sm-2 control-label">管理员备注:</label>
+        <div class="layui-input-block col-sm-6">
+                            <input type="text" name="admin_remark" class="form-control post-params item-left" value="{$admin_remark|default=''}">
+                    </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--评价时间-->    <div class="form-group">
+        <label class="col-sm-2 control-label">评价时间:</label>
+        <div class="layui-input-block col-sm-6">
+                                                    <input class="form-control post-params item-left js-datetime" name="comment_time" required
+                           type="text"
+                           value="{:isset($comment_time) && $comment_time > 10000 ? date('Y-m-d H:i', $comment_time) : ''}">
+         </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--接单时间-->    <div class="form-group">
+        <label class="col-sm-2 control-label">接单时间:</label>
+        <div class="layui-input-block col-sm-6">
+                                                    <input class="form-control post-params item-left js-datetime" name="receive_time" required
+                           type="text"
+                           value="{:isset($receive_time) && $receive_time > 10000 ? date('Y-m-d H:i', $receive_time) : ''}">
+         </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--自动取消接单时间-->    <div class="form-group">
+        <label class="col-sm-2 control-label">自动取消接单时间:</label>
+        <div class="layui-input-block col-sm-6">
+                                                    <input class="form-control post-params item-left js-datetime" name="auto_cancel_receive_time" required
+                           type="text"
+                           value="{:isset($auto_cancel_receive_time) && $auto_cancel_receive_time > 10000 ? date('Y-m-d H:i', $auto_cancel_receive_time) : ''}">
+         </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--取消接单时间-->    <div class="form-group">
+        <label class="col-sm-2 control-label">取消接单时间:</label>
+        <div class="layui-input-block col-sm-6">
+                                                    <input class="form-control post-params item-left js-datetime" name="cancel_receive_time" required
+                           type="text"
+                           value="{:isset($cancel_receive_time) && $cancel_receive_time > 10000 ? date('Y-m-d H:i', $cancel_receive_time) : ''}">
+         </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--取消时间-->    <div class="form-group">
+        <label class="col-sm-2 control-label">取消时间:</label>
+        <div class="layui-input-block col-sm-6">
+                                                    <input class="form-control post-params item-left js-datetime" name="cancel_time" required
+                           type="text"
+                           value="{:isset($cancel_time) && $cancel_time > 10000 ? date('Y-m-d H:i', $cancel_time) : ''}">
+         </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--支付时间-->    <div class="form-group">
+        <label class="col-sm-2 control-label">支付时间:</label>
+        <div class="layui-input-block col-sm-6">
+                                                    <input class="form-control post-params item-left js-datetime" name="pay_time" required
+                           type="text"
+                           value="{:isset($pay_time) && $pay_time > 10000 ? date('Y-m-d H:i', $pay_time) : ''}">
+         </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--发货时间-->    <div class="form-group">
+        <label class="col-sm-2 control-label">发货时间:</label>
+        <div class="layui-input-block col-sm-6">
+                                                    <input class="form-control post-params item-left js-datetime" name="send_time" required
+                           type="text"
+                           value="{:isset($send_time) && $send_time > 10000 ? date('Y-m-d H:i', $send_time) : ''}">
+         </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--收货时间-->    <div class="form-group">
+        <label class="col-sm-2 control-label">收货时间:</label>
+        <div class="layui-input-block col-sm-6">
+                                                    <input class="form-control post-params item-left js-datetime" name="take_delivery_time" required
+                           type="text"
+                           value="{:isset($take_delivery_time) && $take_delivery_time > 10000 ? date('Y-m-d H:i', $take_delivery_time) : ''}">
+         </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--完成时间-->    <div class="form-group">
+        <label class="col-sm-2 control-label">完成时间:</label>
+        <div class="layui-input-block col-sm-6">
+                                                    <input class="form-control post-params item-left js-datetime" name="accomplish_time" required
+                           type="text"
+                           value="{:isset($accomplish_time) && $accomplish_time > 10000 ? date('Y-m-d H:i', $accomplish_time) : ''}">
+         </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--自动取消时间-->    <div class="form-group">
+        <label class="col-sm-2 control-label">自动取消时间:</label>
+        <div class="layui-input-block col-sm-6">
+                                                    <input class="form-control post-params item-left js-datetime" name="auto_cancel_time" required
+                           type="text"
+                           value="{:isset($auto_cancel_time) && $auto_cancel_time > 10000 ? date('Y-m-d H:i', $auto_cancel_time) : ''}">
+         </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--自动完成时间-->    <div class="form-group">
+        <label class="col-sm-2 control-label">自动完成时间:</label>
+        <div class="layui-input-block col-sm-6">
+                                                    <input class="form-control post-params item-left js-datetime" name="auto_accomplish_time" required
+                           type="text"
+                           value="{:isset($auto_accomplish_time) && $auto_accomplish_time > 10000 ? date('Y-m-d H:i', $auto_accomplish_time) : ''}">
+         </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--自动核销时间-->    <div class="form-group">
+        <label class="col-sm-2 control-label">自动核销时间:</label>
+        <div class="layui-input-block col-sm-6">
+                                                    <input class="form-control post-params item-left js-datetime" name="auto_verification_time" required
+                           type="text"
+                           value="{:isset($auto_verification_time) && $auto_verification_time > 10000 ? date('Y-m-d H:i', $auto_verification_time) : ''}">
+         </div>
+    </div>
+
+
+
+
+
+
+
+
+
