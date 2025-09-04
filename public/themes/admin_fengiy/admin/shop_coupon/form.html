@@ -1,5 +1,5 @@
 <div class="form-group">
-    <label class="col-sm-2 control-label">时间类型:</label>
+    <label class="col-sm-2 control-label">优惠券类型:</label>
     <div class="layui-input-block col-sm-6">
         <select name="type" class="form-control post-params item-left" lay-filter="type" id="type">
             <option value="1"
@@ -9,25 +9,29 @@
             <option value="2"
             <if condition="$type eq 2">selected</if>
             >按天</option>
+
         </select>
     </div>
 </div>
 
 
-<div class="form-group">
-    <label class="col-sm-2 control-label">优惠券类型:</label>
+
+<div class="form-group" style="display:none;">
+    <label class="col-sm-2 control-label">核销类型:</label>
     <div class="layui-input-block col-sm-6">
-        <select name="coupon_type" class="form-control post-params item-left" lay-filter="coupon_type" id="coupon_type">
+        <select name="cav_type" class="form-control post-params item-left" lay-filter="cav_type" >
             <option value="1"
-            <if condition="$coupon_type eq 1">selected</if>
-            >满减券</option>
+            <if condition="$cav_type eq 1">selected</if>
+            >到店核销</option>
 
             <option value="2"
-            <if condition="$coupon_type eq 2">selected</if>
-            >折扣券</option>
+            <if condition="$cav_type eq 2">selected</if>
+            >下单使用</option>
+
         </select>
     </div>
 </div>
+
 
 
 <div class="form-group">
@@ -36,35 +40,27 @@
         <input type="text" name="name" class="form-control post-params item-left" value="{$name|default=''}">
     </div>
 </div>
-<div class="form-group show_coupon_type show_coupon_type1">
+<div class="form-group">
     <label class="col-sm-2 control-label">满额:</label>
     <div class="layui-input-block col-sm-6">
-        <input type="number" name="full_amount" class="form-control post-params item-left"
+        <input type="text" name="full_amount" class="form-control post-params item-left"
                value="{$full_amount|default=''}">
     </div>
 </div>
-<div class="form-group show_coupon_type show_coupon_type1">
+<div class="form-group">
     <label class="col-sm-2 control-label">面额:</label>
     <div class="layui-input-block col-sm-6">
-        <input type="number" name="amount" class="form-control post-params item-left" value="{$amount|default=''}">
+        <input type="text" name="amount" class="form-control post-params item-left" value="{$amount|default=''}">
     </div>
 </div>
-<div class="form-group show_coupon_type show_coupon_type2">
-    <label class="col-sm-2 control-label">折扣:</label>
-    <div class="layui-input-block col-sm-6">
-        <input type="number" name="discount" class="form-control post-params item-left" value="{$discount|default=''}">
-    </div>
-</div>
-
-
 <div class="form-group show_type show_type1">
     <label class="col-sm-2 control-label">开始时间:</label>
     <div class="layui-input-block col-sm-6">
         <if condition="$start_time">
-            <input class="form-control post-params item-left js-date" name="start_time"  type="text"
+            <input class="form-control post-params item-left js-datetime" name="start_time"  type="text"
                    value="{$start_time|date='Y-m-d'}">
             <else/>
-            <input class="form-control post-params item-left js-date" name="start_time"  type="text"
+            <input class="form-control post-params item-left js-datetime" name="start_time"  type="text"
                    value="">
         </if>
     </div>
@@ -73,10 +69,10 @@
     <label class="col-sm-2 control-label">结束时间:</label>
     <div class="layui-input-block col-sm-6">
         <if condition="$end_time">
-            <input class="form-control post-params item-left js-date" name="end_time"  type="text"
+            <input class="form-control post-params item-left js-datetime" name="end_time"  type="text"
                    value="{$end_time|date='Y-m-d'}">
             <else/>
-            <input class="form-control post-params item-left js-date" name="end_time"  type="text"
+            <input class="form-control post-params item-left js-datetime" name="end_time"  type="text"
                    value="">
         </if>
     </div>
@@ -94,8 +90,6 @@
 <script>
     layui.use(['layer', 'form'], function () {
         let layer = layui.layer, form = layui.form;
-
-        //时间类型
         const type = $("#type").val();
         setShow(type)
         form.on('select(type)', function (data) {
@@ -105,21 +99,6 @@
         function setShow(type) {
             $('.show_type').css('display', 'none');
             $('.show_type' + type).css('display', 'block');
-            //可以初始化值为空
-        }
-
-
-
-        //优惠券类型   折扣券,满减券
-        const coupon_type = $("#coupon_type").val();
-        setShow2(coupon_type)
-        form.on('select(coupon_type)', function (data) {
-            setShow2(data.value)
-        })
-
-        function setShow2(type) {
-            $('.show_coupon_type').css('display', 'none');
-            $('.show_coupon_type' + type).css('display', 'block');
             //可以初始化值为空
         }
     });

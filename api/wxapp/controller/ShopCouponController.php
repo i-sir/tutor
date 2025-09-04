@@ -57,7 +57,7 @@ class ShopCouponController extends AuthController
 
 
     /**
-     * 优惠券可领取 列表
+     * 优惠券可领取 列表 (不需要)
      * @OA\Post(
      *     tags={"优惠券"},
      *     path="/wxapp/shop_coupon/find_coupon_list",
@@ -128,7 +128,7 @@ class ShopCouponController extends AuthController
 
 
     /**
-     * 领取优惠券
+     * 领取优惠券 (不需要)
      * @OA\Post(
      *     tags={"优惠券"},
      *     path="/wxapp/shop_coupon/add_coupon",
@@ -295,7 +295,7 @@ class ShopCouponController extends AuthController
 
 
     /**
-     * 核销优惠券
+     * 核销优惠券 (不需要)
      * @OA\Post(
      *     tags={"优惠券"},
      *     path="/wxapp/shop_coupon/verification_coupon",

@@ -26,6 +26,7 @@ class AuthController extends RestBaseController
 
     public $user_info;
     public $user_id;
+    public $teacher_id;
     public $openid;
 
     /**
@@ -50,6 +51,7 @@ class AuthController extends RestBaseController
         if (!empty($user_info)) {
             $this->user_info = $user_info;
             $this->user_id   = $user_info['id'];
+            $this->teacher_id   = $user_info['teacher_id'];
         }
 
         // token 验证
@@ -86,7 +88,10 @@ class AuthController extends RestBaseController
      */
     protected function checkAuth($level = 1)
     {
+        $TeacherModel = new \initmodel\TeacherModel(); //教师管理   (ps:InitModel)
+
         if (empty($this->user_id)) $this->error('请先授权登录');
+        if ($level == 2 && !$TeacherModel->where('user_id', $this->user_id)->count()) $this->error('暂无权限');
     }
 
 

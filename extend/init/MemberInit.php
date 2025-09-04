@@ -43,6 +43,7 @@ class MemberInit extends Base
     public function get_my_info($where = [], $params = [])
     {
         $MemberModel = new \initmodel\MemberModel(); //会员管理  (ps:InitModel)
+        $TeacherModel = new \initmodel\TeacherModel(); //教师管理   (ps:InitModel)
 
         //传入id直接查询
         if (is_string($where) || is_int($where)) $where = ["id" => (int)$where];
@@ -53,6 +54,8 @@ class MemberInit extends Base
         //处理公共数据
         if ($item['avatar']) $item['avatar'] = cmf_get_asset_url($item['avatar']);
 
+        //教师id
+        $item['teacher_id'] = $TeacherModel->where('user_id','=',$item['id'])->value('id');
 
         return $item;
     }

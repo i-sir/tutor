@@ -3,6 +3,7 @@
 namespace init;
 
 use api\wxapp\controller\InitController;
+use api\wxapp\controller\WxBaseController;
 use plugins\weipay\lib\PayController;
 use think\facade\Db;
 use think\facade\Log;
@@ -16,13 +17,50 @@ class TaskInit
 
 
     /**
+     * 更新优惠券状态   定时任务
+     */
+    public function operation_coupon()
+    {
+        $ShopCouponModel     = new \initmodel\ShopCouponModel(); //优惠券   (ps:InitModel)
+        $ShopCouponUserModel = new \initmodel\ShopCouponUserModel(); //优惠券领取记录   (ps:InitModel)
+
+        /** 处理优惠券状态 **/
+        $map   = [];
+        $map[] = ['type', '=', 1];//时间段,按分钟正常显示
+        $map[] = ['start_time', '<=', time()];
+        $map[] = ['end_time', '>', time()];
+        //优惠券列表,更新状态
+        $ShopCouponModel->where($map)->update(['status' => 1, 'update_time' => time()]);
+
+
+        /** 处理优惠券状态 **/
+        $map3   = [];
+        $map3[] = ['type', '=', 2];
+        //优惠券列表,更新状态
+        $ShopCouponModel->where($map3)->update(['status' => 1, 'update_time' => time()]);
+
+
+        /** 处理优惠券领取记录状态 **/
+        $map2   = [];
+        $map2[] = ['used', '=', 1];
+        $map2[] = ['end_time', '<', time()];
+        //优惠券领取记录,更新状态  已过期
+        $ShopCouponUserModel->where($map2)->update(['used' => 3, 'update_time' => time()]);
+
+
+        echo("更新置顶,执行成功\n" . cmf_random_string(80) . "\n" . date('Y-m-d H:i:s') . "\n");
+    }
+
+
+    /**
      * 自动取消订单
      */
     public function operation_cancel_order()
     {
-        $ShopOrderModel = new \initmodel\ShopOrderModel(); //商城订单   (ps:InitModel)
-        $Pay            = new PayController();
-        $OrderPayModel  = new \initmodel\OrderPayModel();
+        $ShopOrderModel   = new \initmodel\ShopOrderModel(); //商城订单   (ps:InitModel)
+        $Pay              = new PayController();
+        $OrderPayModel    = new \initmodel\OrderPayModel();
+        $WxBaseController = new WxBaseController();//微信基础类
 
 
         $map   = [];
@@ -37,7 +75,7 @@ class TaskInit
                     $map300   = [];
                     $map300[] = ['order_num', '=', $order_info['order_num']];
                     $pay_num  = $OrderPayModel->where($map300)->value('pay_num');
-                }else{
+                } else {
                     $pay_num = $order_info['pay_num'];
                 }
                 $Pay->close_order($pay_num);
@@ -53,9 +91,34 @@ class TaskInit
         }
 
 
+        //取消老师接单,并退款
+        $map100   = [];
+        $map100[] = ['status', '=', 2];
+        $map100[] = ['auto_cancel_receive_time', '<', time()];
+        $list2    = $ShopOrderModel->where($map100)->select();
+        if ($list2) {
+
+            foreach ($list2 as $key => $order_info) {
+                $pay_num       = $order_info['pay_num'];
+                $refund_result = $WxBaseController->wx_refund($pay_num, $order_info['amount']);//退款测试&输入单号直接退
+                if ($refund_result['code'] == 0) {
+                    Log::write('订单退款失败：' . $pay_num);
+                    Log::write($refund_result['msg']);
+                }
+            }
+
+
+            //更新订单状态
+            $ShopOrderModel->where($map100)->strict(false)->update([
+                'status'      => 10,
+                'cancel_receive_time' => time(),
+                'update_time' => time(),
+            ]);
+        }
+
+
         echo("自动取消订单,执行成功\n" . cmf_random_string(80) . "\n" . date('Y-m-d H:i:s') . "\n");
     }
-
 
 
     /**

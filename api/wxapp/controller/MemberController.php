@@ -242,7 +242,7 @@ class MemberController extends AuthController
      *     @OA\Parameter(
      *         name="operate_type",
      *         in="query",
-     *         description="操作字段类型:balance余额,point积分",
+     *         description="操作字段类型:commission老师佣金",
      *         required=false,
      *         @OA\Schema(
      *             type="string",
@@ -310,8 +310,8 @@ class MemberController extends AuthController
 
 
         $where   = [];
-        $where[] = ['user_id', '=', $this->user_id];
-        $where[] = ['identity_type', '=', $this->user_info['identity_type'] ?? 'member'];
+        $where[] = ['user_id', '=', $this->teacher_id];
+        $where[] = ['identity_type', '=', $this->user_info['identity_type'] ?? 'teacher'];
         $where[] = ['operate_type', '=', $params['operate_type'] ?? 'balance'];
         $where[] = $this->getBetweenTime($params['begin_time'], $params['end_time']);
         if ($params['change_type']) $where[] = ['change_type', '=', $params['change_type'] ?? 1];

@@ -66,6 +66,8 @@ class TeacherOrderInit extends Base
     {
         $TeacherInit = new \init\TeacherInit();//教师管理   (ps:InitController)
         $MemberInit  = new \init\MemberInit();//会员管理 (ps:InitController)
+        $BaseCommentInit = new \init\BaseCommentInit();//商品评价    (ps:InitController)
+
         //接口类型
         if ($params['InterfaceType']) $this->InterfaceType = $params['InterfaceType'];
         //数据格式
@@ -91,6 +93,9 @@ class TeacherOrderInit extends Base
         $teacher_info         = $TeacherInit->get_find(['id' => $item['teacher_id']]);
         $item['teacher_info'] = $teacher_info;
 
+        //评价信息
+        $comment_info         = $BaseCommentInit->get_find(['ext_id' => $item['id']]);
+        $item['comment_info'] = $comment_info;
 
         /** 处理数据 **/
         if ($this->InterfaceType == 'api') {

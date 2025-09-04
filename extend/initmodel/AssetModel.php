@@ -27,8 +27,9 @@ class AssetModel extends Model
 
     //操作字段类型 && 如删除,后台自动不显示
     public $operate_type = [
-        'balance' => '余额',
-        'point'   => '积分',
+        //        'balance' => '余额',
+        //        'point'   => '积分',
+        'commission' => '佣金',
     ];
 
     //操作类型,对应key (管理员专属)
@@ -40,16 +41,18 @@ class AssetModel extends Model
 
     //操作记录列表   && 如删除,后台列表自动不显示
     public $operate_type_log = [
-        'balance' => '余额',
-        'point'   => '积分',
+        //        'balance' => '余额',
+        //        'point'   => '积分',
+        'commission' => '佣金',
     ];
 
 
     //身份类型
     public $identity_type = [
-        'member' => '用户',
-        'rider'  => '骑手',
-        'shop'   => '店铺',
+        'member'  => '用户',
+        'teacher' => '教师',
+        'rider'   => '骑手',
+        'shop'    => '店铺',
     ];
 
     //订单类型
@@ -64,6 +67,9 @@ class AssetModel extends Model
         210  => '签到(积分)',
         220  => '兑换优惠券扣除(积分)',
         290  => '兑换优惠券扣除(积分)',
+
+        //老师佣金
+        500  => '授课完成,发放佣金',
 
         //提现板块
         800  => '提现申请',
@@ -98,6 +104,7 @@ class AssetModel extends Model
     public static function incAsset($describe = '', $params = [])
     {
         if ($params['identity_type'] == 'member') $Model = new \initmodel\MemberModel();//用户管理
+        if ($params['identity_type'] == 'teacher') $Model = new \initmodel\TeacherModel(); //教师管理   (ps:InitModel)
 
 
         //查找对应个人信息
@@ -154,6 +161,7 @@ class AssetModel extends Model
     public static function decAsset($describe = '', $params = [])
     {
         if ($params['identity_type'] == 'member') $Model = new \initmodel\MemberModel();//用户管理
+        if ($params['identity_type'] == 'teacher') $Model = new \initmodel\TeacherModel(); //教师管理   (ps:InitModel)
 
 
         //查找对应个人信息

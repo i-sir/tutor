@@ -1,13 +1,10 @@
 <include file="public@header"/></head>
 <body>
 <div class="wrap js-check-wrap">
-    <ul class="nav nav-tabs">
-        <li class="active"><a href="{:url('index',array('params'=>$params))}">用户管理</a></li>
-        <!--        <li><a href="{:url('add',array('params'=>$params))}">添加</a></li>-->
-    </ul>
+
 
     <form class="well form-inline margin-top-20 layui-form ajax-form w-form-search" method="get" autocomplete="off"
-          action="{:url('index')}">
+          action="{:url('send')}">
         关键字：
         <div class="form-group layui-form">
             <div class="layui-form-item" style="margin-bottom: 0 !important;">
@@ -25,30 +22,44 @@
         <!--<a type="button" class="layui-btn layui-bg-blue ajax-export" href="javascript:;">导出</a>-->
         <a class="layui-btn layui-bg-red" href="{:url('index',array('params'=>$params))}">清空</a>
         <input type="hidden" name="is_export" class="is_export" value="0">
-
+        <input type="hidden" name="coupon_id" value="{$coupon_id}">
 
     </form>
 
 
     <form class="js-ajax-form" method="post" autocomplete="off">
 
+        <br>
+        <div class="table-actions">
+            <button class="layui-btn layui-btn-primary layui-border-blue  js-ajax-submit" type="submit"
+                    data-action="{:url('send_post',['coupon_id'=>$coupon_id,'page'=>$page,'params'=>$params])}"
+                    data-subcheck="true" data-msg="确定发放优惠券吗？">发放
+            </button>
+        </div>
+
 
         <table class="table table-hover table-bordered">
             <thead>
             <tr>
-
-                <th style="width: 60px">ID</th>
-                <th style="width: 60px">用户信息</th>
-                <th style="width: 60px">手机号</th>
-<!--                <th style="width: 60px">余额</th>-->
-<!--                <th style="width: 60px">积分</th>-->
-                <th style="width: 60px">创建时间</th>
-<!--                <th style="width: 160px">操作</th>-->
+                <th style="text-align:center;width: 20px;line-height: 32px;">
+                    <label>
+                        <input style="transform: scale(1.5);" type="checkbox" class="js-check-all" data-direction="x"
+                               data-checklist="js-check-x">
+                    </label>
+                </th>
+                <th style="">ID</th>
+                <th style="">用户信息</th>
+                <th style="">手机号</th>
+                <th style="">创建时间</th>
             </tr>
             </thead>
             <tbody>
-            <foreach name="list" item="vo">
+            <foreach name="user_list" item="vo">
                 <tr>
+                    <td style="text-align:center;width: 20px;line-height: 32px;">
+                        <input type="checkbox" class="js-check" data-yid="js-check-y" data-xid="js-check-x" name="ids[]"
+                               style="transform: scale(1.5);" value="{$vo.id}">
+                    </td>
                     <td>{$vo.id}</td>
                     <td>
                         <div style="display: flex;align-items: center;">
@@ -64,59 +75,37 @@
                         </div>
                     </td>
                     <td>{$vo.phone}</td>
-<!--                    <td>{$vo.balance}</td>-->
-<!--                    <td>{$vo.point}</td>-->
-                    <!--                    <td>-->
-                    <!--                        <if condition="!empty($vo.p_user_info)">-->
-                    <!--                            <span ondblclick="copyContent('{$vo.p_user_info.openid}')">{$vo.p_user_info.nickname} ({$vo.p_user_info.id})</span>-->
-                    <!--                            <span>{$vo.p_user_info.phone}</span>-->
-                    <!--                        </if>-->
-                    <!--                    </td>-->
                     <td>{$vo.create_time|date='Y-m-d H:i:s'}</td>
 
-<!--                    <td>-->
-<!--                        <a class="layui-btn layui-btn-primary layui-border-green layui-btn-xs"-->
-<!--                           href="{:url('edit',['id'=>$vo.id,'page'=>$page,'params'=>$params])}">编辑</a>-->
-
-<!--                        <a class="layui-btn layui-btn-primary layui-border-blue layui-btn-xs"-->
-<!--                           href="javascript:parent.openIframeLayer('{:url('find',['id'=>$vo.id,'page'=>$page,'params'=>$params])}','查看',{ area: ['65%', '85%'],move:'.layui-layer-title'},false);"-->
-<!--                        >查看</a>-->
-
-
-<!--                        <if condition="APP_DEBUG">-->
-<!--                            <a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs js-ajax-delete"-->
-<!--                               href="{:url('delete',array('id'=>$vo.id,'page'=>$page,'params'=>$params))}">删除</a>-->
-<!--                        </if>-->
-
-
-<!--&lt;!&ndash;                        <a class="layui-btn layui-btn-primary layui-border-blue layui-btn-xs"&ndash;&gt;-->
-<!--&lt;!&ndash;                           href="javascript:parent.openIframeLayer('{:url('asset/operate',['id'=>$vo.id,'identity_type'=>'member','operate_type'=>''])}','[{$vo.nickname}]操作',{ area: ['45%', '65%'],move:'.layui-layer-title'},true);"&ndash;&gt;-->
-<!--&lt;!&ndash;                        >操作</a>&ndash;&gt;-->
-
-
-<!--&lt;!&ndash;                        <a class="layui-btn layui-btn-primary layui-border-orange layui-btn-xs"&ndash;&gt;-->
-<!--&lt;!&ndash;                           href="javascript:parent.openIframeLayer('{:url('asset/log',['user_id'=>$vo.id,'identity_type'=>'member'])}','[{$vo.nickname}]记录',{ area: ['65%', '85%'],move:'.layui-layer-title'},false);"&ndash;&gt;-->
-<!--&lt;!&ndash;                        >记录</a>&ndash;&gt;-->
-
-
-
-
-<!--&lt;!&ndash;                        <a class="layui-btn layui-btn-primary layui-border-purple layui-btn-xs"&ndash;&gt;-->
-<!--&lt;!&ndash;                           href="javascript:parent.openIframeLayer('{:url('children',array('pid'=>$vo.id))}','[{$vo.nickname}]关系',{ area: ['65%', '85%'],move:'.layui-layer-title'},false);"&ndash;&gt;-->
-<!--&lt;!&ndash;                        >关系</a>&ndash;&gt;-->
-<!--                    </td>-->
                 </tr>
             </foreach>
             </tbody>
         </table>
+
+        <button class="layui-btn layui-btn-primary layui-border-blue  js-ajax-submit" type="submit"
+                data-action="{:url('send_post',['coupon_id'=>$coupon_id,'page'=>$page,'params'=>$params])}"
+                data-subcheck="true" data-msg="确定发放优惠券吗？">发放
+        </button>
+
     </form>
 
-    <div class="pagination">{$pagination|default=''}</div>
 </div>
 <script src="__STATIC__/js/admin.js"></script>
 </body>
 </html>
 
+<script>
+    layui.use(['layer', 'form', 'slider'], function () {
+        var layer = layui.layer, form = layui.form;
+
+
+        form.on('switch(is_admin)', function (data) {
+            batchPost(data.value, 'is_admin', this.checked ? 1 : 2)
+        });
+
+
+    });
+</script>
 
 <script>
     //复制变量

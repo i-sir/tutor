@@ -341,6 +341,12 @@ class NotifyController extends AuthController
                 Log::write("订单状态异常[processOrder],订单号[{$order_num}]");
                 return false;//订单状态异常
             }
+
+
+            //自动取消接单时间
+            $cancel_order                       = cmf_config('automatically_cancel_order_acceptance');  //老师n分钟内没有接单,自动取消订单
+            $update['auto_cancel_receive_time'] = time() + $cancel_order * 60;
+
             $result = $TeacherOrderModel->where($map)->strict(false)->update($update);//更新订单信息
         }
 

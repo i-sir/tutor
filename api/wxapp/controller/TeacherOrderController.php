@@ -184,7 +184,18 @@ class TeacherOrderController extends AuthController
      *    @OA\Parameter(
      *         name="id",
      *         in="query",
-     *         description="id",
+     *         description="id 二选一",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="string",
+     *         )
+     *     ),
+     *
+     *
+     *    @OA\Parameter(
+     *         name="order_num",
+     *         in="query",
+     *         description="订单号  二选一",
      *         required=false,
      *         @OA\Schema(
      *             type="string",
@@ -213,8 +224,9 @@ class TeacherOrderController extends AuthController
         $params["user_id"] = $this->user_id;
 
         /** 查询条件 **/
-        $where   = [];
-        $where[] = ["id", "=", $params["id"]];
+        $where = [];
+        if ($params['id']) $where[] = ["id", "=", $params["id"]];
+        if ($params['order_num']) $where[] = ["order_num", "=", $params["order_num"]];
 
         /** 查询数据 **/
         $params["InterfaceType"] = "api";//接口类型
@@ -710,6 +722,656 @@ class TeacherOrderController extends AuthController
 
 
     /**
+     * 老师接单
+     * @OA\Post(
+     *     tags={"订单管理"},
+     *     path="/wxapp/teacher_order/receive_order",
+     *
+     *
+     *    @OA\Parameter(
+     *         name="id",
+     *         in="query",
+     *         description="id 二选一",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="string",
+     *         )
+     *     ),
+     *
+     *
+     *    @OA\Parameter(
+     *         name="order_num",
+     *         in="query",
+     *         description="订单号  二选一",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="string",
+     *         )
+     *     ),
+     *
+     *
+     *
+     *     @OA\Response(response="200", description="An example resource"),
+     *     @OA\Response(response="default", description="An example resource")
+     * )
+     *
+     *   test_environment: http://tutor.ikun:9090/api/wxapp/teacher_order/receive_order
+     *   official_environment: https://xcxkf159.aubye.com/api/wxapp/teacher_order/receive_order
+     *   api:  /wxapp/teacher_order/receive_order
+     *   remark_name: 老师接单
+     *
+     */
+    public function receive_order()
+    {
+        $this->checkAuth(2);
+        $TeacherOrderInit  = new \init\TeacherOrderInit();//订单管理    (ps:InitController)
+        $TeacherOrderModel = new \initmodel\TeacherOrderModel(); //订单管理   (ps:InitModel)
+
+        /** 获取参数 **/
+        $params            = $this->request->param();
+        $params["user_id"] = $this->user_id;
+
+        /** 查询条件 **/
+        $where = [];
+        if ($params['id']) $where[] = ["id", "=", $params["id"]];
+        if ($params['order_num']) $where[] = ["order_num", "=", $params["order_num"]];
+
+
+        //查新订单信息
+        $order_info = $TeacherOrderModel->where($where)->find();
+        if (empty($order_info)) $this->error("暂无数据");
+        if ($order_info['status'] != 2) $this->error("订单状态错误");
+
+
+        //更新订单信息
+        $update['status']       = 4;
+        $update['receive_time'] = time();
+        $update['update_time']  = time();
+        $result                 = $TeacherOrderModel->where($where)->strict(false)->update($update);
+        if (!$result) $this->error("操作失败!");
+
+
+        $this->success("操作成功!");
+    }
+
+
+    /**
+     * 老师取消接单
+     * @OA\Post(
+     *     tags={"订单管理"},
+     *     path="/wxapp/teacher_order/cancel_receive_order",
+     *
+     *
+     *    @OA\Parameter(
+     *         name="id",
+     *         in="query",
+     *         description="id 二选一",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="string",
+     *         )
+     *     ),
+     *
+     *
+     *    @OA\Parameter(
+     *         name="order_num",
+     *         in="query",
+     *         description="订单号  二选一",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="string",
+     *         )
+     *     ),
+     *
+     *
+     *
+     *     @OA\Response(response="200", description="An example resource"),
+     *     @OA\Response(response="default", description="An example resource")
+     * )
+     *
+     *   test_environment: http://tutor.ikun:9090/api/wxapp/teacher_order/cancel_receive_order
+     *   official_environment: https://xcxkf159.aubye.com/api/wxapp/teacher_order/cancel_receive_order
+     *   api:  /wxapp/teacher_order/cancel_receive_order
+     *   remark_name: 老师取消接单
+     *
+     */
+    public function cancel_receive_order()
+    {
+        $this->checkAuth(2);
+        $TeacherOrderInit  = new \init\TeacherOrderInit();//订单管理    (ps:InitController)
+        $TeacherOrderModel = new \initmodel\TeacherOrderModel(); //订单管理   (ps:InitModel)
+        $WxBaseController  = new WxBaseController();//微信基础类
+
+        /** 获取参数 **/
+        $params            = $this->request->param();
+        $params["user_id"] = $this->user_id;
+
+        /** 查询条件 **/
+        $where = [];
+        if ($params['id']) $where[] = ["id", "=", $params["id"]];
+        if ($params['order_num']) $where[] = ["order_num", "=", $params["order_num"]];
+
+
+        //查新订单信息
+        $order_info = $TeacherOrderModel->where($where)->find();
+        if (empty($order_info)) $this->error("暂无数据");
+        if ($order_info['status'] != 2) $this->error("订单状态错误");
+
+
+        //退款
+        $refund_result = $WxBaseController->wx_refund($order_info['pay_num'], $order_info['amount']);//退款测试&输入单号直接退
+        if ($refund_result['code'] == 0) $this->error($refund_result['msg']);
+
+
+        //更新订单信息
+        $update['status']              = 10;
+        $update['cancel_receive_time'] = time();
+        $update['update_time']         = time();
+        $result                        = $TeacherOrderModel->where($where)->strict(false)->update($update);
+        if (!$result) $this->error("操作失败!");
+
+
+        $this->success("操作成功!");
+    }
+
+
+    /**
+     * 完成订单
+     * @OA\Post(
+     *     tags={"订单管理"},
+     *     path="/wxapp/teacher_order/accomplish_order",
+     *
+     *
+     *    @OA\Parameter(
+     *         name="id",
+     *         in="query",
+     *         description="id 二选一",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="string",
+     *         )
+     *     ),
+     *
+     *
+     *    @OA\Parameter(
+     *         name="order_num",
+     *         in="query",
+     *         description="订单号  二选一",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="string",
+     *         )
+     *     ),
+     *
+     *
+     *
+     *     @OA\Response(response="200", description="An example resource"),
+     *     @OA\Response(response="default", description="An example resource")
+     * )
+     *
+     *   test_environment: http://tutor.ikun:9090/api/wxapp/teacher_order/accomplish_order
+     *   official_environment: https://xcxkf159.aubye.com/api/wxapp/teacher_order/accomplish_order
+     *   api:  /wxapp/teacher_order/accomplish_order
+     *   remark_name: 完成订单
+     *
+     */
+    public function accomplish_order()
+    {
+        $this->checkAuth();
+        $TeacherOrderInit  = new \init\TeacherOrderInit();//订单管理    (ps:InitController)
+        $TeacherOrderModel = new \initmodel\TeacherOrderModel(); //订单管理   (ps:InitModel)
+        $InitController    = new InitController();
+
+        /** 获取参数 **/
+        $params            = $this->request->param();
+        $params["user_id"] = $this->user_id;
+
+        /** 查询条件 **/
+        $where = [];
+        if ($params['id']) $where[] = ["id", "=", $params["id"]];
+        if ($params['order_num']) $where[] = ["order_num", "=", $params["order_num"]];
+
+
+        //查新订单信息.
+        $order_info = $TeacherOrderModel->where($where)->find();
+        if (empty($order_info)) $this->error("暂无数据");
+        if ($order_info['status'] != 4) $this->error("订单状态错误");
+
+
+        //更新订单信息
+        $update['status']          = 8;
+        $update['accomplish_time'] = time();
+        $update['update_time']     = time();
+        $result                    = $TeacherOrderModel->where($where)->strict(false)->update($update);
+        if (!$result) $this->error("操作失败!");
+
+
+        //发佣金
+        $InitController->sendTeacherOrderAccomplish($order_info['order_num']);
+
+
+        $this->success("操作成功!");
+    }
+
+
+    /**
+     * 评论订单  (订单已完成并且 is_comment==2 可评价)
+     * @OA\Post(
+     *     tags={"订单管理"},
+     *     path="/wxapp/teacher_order/comment_order",
+     *
+     *
+     *
+     *     @OA\Parameter(
+     *         name="openid",
+     *         in="query",
+     *         description="openid",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="string",
+     *         )
+     *     ),
+     *
+     *
+     *
+     *  @OA\Parameter(
+     *         name="order_num",
+     *         in="query",
+     *         description="订单号 或 id二选一",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="string",
+     *         )
+     *     ),
+     *
+     *
+     *    @OA\Parameter(
+     *         name="id",
+     *         in="query",
+     *         description="id 或 订单号二选一",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="string",
+     *         )
+     *     ),
+     *
+     *
+     *
+     *
+     *    @OA\Parameter(
+     *         name="content",
+     *         in="query",
+     *         description="评论内容",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="string",
+     *         )
+     *     ),
+     *
+     *
+     *
+     *    @OA\Parameter(
+     *         name="images",
+     *         in="query",
+     *         description="图片数组",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="string",
+     *         )
+     *     ),
+     *
+     *
+     *    @OA\Parameter(
+     *         name="star",
+     *         in="query",
+     *         description="星级1-5",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="string",
+     *         )
+     *     ),
+     *
+     *
+     *
+     *
+     *     @OA\Response(response="200", description="An example resource"),
+     *     @OA\Response(response="default", description="An example resource")
+     * )
+     *
+     *   test_environment: http://shop_template.ikun:9090/api/wxapp/teacher_order/comment_order
+     *   official_environment: http://shop_template.com/api/wxapp/teacher_order/comment_order
+     *   api: /wxapp/teacher_order/comment_order
+     *   remark_name: 评论订单
+     *
+     */
+    public function comment_order()
+    {
+        $this->checkAuth();
+        $TeacherOrderModel = new \initmodel\TeacherOrderModel(); //订单管理   (ps:InitModel)
+        $BaseCommentModel  = new \initmodel\BaseCommentModel(); //评价   (ps:InitModel)
+
+
+        $params = $this->request->param();
+
+        $where   = [];
+        $where[] = ['user_id', '=', $this->user_id];
+        if ($params['id']) $where[] = ['id', '=', $params['id']];
+        if ($params['order_num']) $where[] = ['order_num', '=', $params['order_num']];
+
+        //取消订单
+        $order_info = $TeacherOrderModel->where($where)->find();
+        if (empty($order_info)) $this->error('暂无数据!');
+        if ($order_info['is_comment'] == 1) $this->error('已评价!');
+        $TeacherOrderModel->where($where)->strict(false)->update([
+            'is_comment'   => 1,
+            'update_time'  => time(),
+            'comment_time' => time(),
+        ]);
+
+
+        $BaseCommentModel->strict(false)->insert([
+            'type'        => 'teacher',
+            'user_id'     => $order_info['user_id'],
+            'pid'         => $order_info['teacher_id'],
+            'ext_id'      => $order_info['id'],
+            'star'        => $params['star'],
+            'content'     => $params['content'],
+            'images'      => $this->setParams($params['images']),
+            'create_time' => time(),
+        ]);
+
+
+        $this->success("评价成功");
+    }
+
+
+    /**
+     * 申请退款
+     * @OA\Post(
+     *     tags={"订单管理"},
+     *     path="/wxapp/teacher_order/refund_order",
+     *
+     *
+     *    @OA\Parameter(
+     *         name="id",
+     *         in="query",
+     *         description="id 二选一",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="string",
+     *         )
+     *     ),
+     *
+     *
+     *    @OA\Parameter(
+     *         name="order_num",
+     *         in="query",
+     *         description="订单号  二选一",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="string",
+     *         )
+     *     ),
+     *
+     *    @OA\Parameter(
+     *         name="refund_why",
+     *         in="query",
+     *         description="退款原因",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="string",
+     *         )
+     *     ),
+     *
+     *
+     *    @OA\Parameter(
+     *         name="refund_describe",
+     *         in="query",
+     *         description="退款说明",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="string",
+     *         )
+     *     ),
+     *
+     *
+     *    @OA\Parameter(
+     *         name="refund_amount",
+     *         in="query",
+     *         description="退款金额",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="string",
+     *         )
+     *     ),
+     *
+     *
+     *
+     *     @OA\Response(response="200", description="An example resource"),
+     *     @OA\Response(response="default", description="An example resource")
+     * )
+     *
+     *   test_environment: http://tutor.ikun:9090/api/wxapp/teacher_order/refund_order
+     *   official_environment: https://xcxkf159.aubye.com/api/wxapp/teacher_order/refund_order
+     *   api:  /wxapp/teacher_order/refund_order
+     *   remark_name: 申请退款
+     *
+     */
+    public function refund_order()
+    {
+        $this->checkAuth();
+        $TeacherOrderInit  = new \init\TeacherOrderInit();//订单管理    (ps:InitController)
+        $TeacherOrderModel = new \initmodel\TeacherOrderModel(); //订单管理   (ps:InitModel)
+
+        /** 获取参数 **/
+        $params            = $this->request->param();
+        $params["user_id"] = $this->user_id;
+
+        /** 查询条件 **/
+        $where = [];
+        if ($params['id']) $where[] = ["id", "=", $params["id"]];
+        if ($params['order_num']) $where[] = ["order_num", "=", $params["order_num"]];
+
+
+        //查新订单信息
+        $order_info = $TeacherOrderModel->where($where)->find();
+        if (empty($order_info)) $this->error("暂无数据");
+        if (in_array($order_info['status'], [1, 10, 12, 14, 16])) $this->error("订单状态错误");
+        if ($params['refund_amount'] > $order_info['amount'] || $params['refund_amount'] < 0) $this->error("退款金额错误");
+
+
+        //更新订单信息
+        $update['refund_why']      = $params['refund_why'];
+        $update['refund_describe'] = $params['refund_describe'];
+        $update['refund_amount']   = $params['refund_amount'];
+        $update['status']          = 12;
+        $update['refund_time']     = time();
+        $update['update_time']     = time();
+        $result                    = $TeacherOrderModel->where($where)->strict(false)->update($update);
+        if (!$result) $this->error("操作失败!");
+
+
+        $this->success("操作成功!");
+
+
+    }
+
+
+    /**
+     * 同意退款
+     * @OA\Post(
+     *     tags={"订单管理"},
+     *     path="/wxapp/teacher_order/refund_pass_order",
+     *
+     *
+     *    @OA\Parameter(
+     *         name="id",
+     *         in="query",
+     *         description="id 二选一",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="string",
+     *         )
+     *     ),
+     *
+     *
+     *    @OA\Parameter(
+     *         name="order_num",
+     *         in="query",
+     *         description="订单号  二选一",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="string",
+     *         )
+     *     ),
+     *
+     *
+     *
+     *
+     *     @OA\Response(response="200", description="An example resource"),
+     *     @OA\Response(response="default", description="An example resource")
+     * )
+     *
+     *   test_environment: http://tutor.ikun:9090/api/wxapp/teacher_order/refund_pass_order
+     *   official_environment: https://xcxkf159.aubye.com/api/wxapp/teacher_order/refund_pass_order
+     *   api:  /wxapp/teacher_order/refund_pass_order
+     *   remark_name: 同意退款
+     *
+     */
+    public function refund_pass_order()
+    {
+        $this->checkAuth(2);
+
+        $TeacherOrderInit  = new \init\TeacherOrderInit();//订单管理    (ps:InitController)
+        $TeacherOrderModel = new \initmodel\TeacherOrderModel(); //订单管理   (ps:InitModel)
+        $WxBaseController  = new WxBaseController();//微信基础类
+
+        /** 获取参数 **/
+        $params            = $this->request->param();
+        $params["user_id"] = $this->user_id;
+
+        /** 查询条件 **/
+        $where = [];
+        if ($params['id']) $where[] = ["id", "=", $params["id"]];
+        if ($params['order_num']) $where[] = ["order_num", "=", $params["order_num"]];
+
+
+        //查新订单信息
+        $order_info = $TeacherOrderModel->where($where)->find();
+        if (empty($order_info)) $this->error("暂无数据");
+        if ($order_info['status'] != 12) $this->error("订单状态错误");
+
+
+        //退款
+        $refund_result = $WxBaseController->wx_refund($order_info['pay_num'], $order_info['refund_amount'], $order_info['amount']);//退款测试&输入单号直接退
+        if ($refund_result['code'] == 0) $this->error($refund_result['msg']);
+
+
+        //更新订单信息
+        $update['status']           = 16;
+        $update['refund_pass_time'] = time();
+        $update['update_time']      = time();
+        $result                     = $TeacherOrderModel->where($where)->strict(false)->update($update);
+        if (!$result) $this->error("操作失败!");
+
+
+        $this->success("操作成功!");
+
+    }
+
+
+    /**
+     * 拒绝退款
+     * @OA\Post(
+     *     tags={"订单管理"},
+     *     path="/wxapp/teacher_order/refund_refuse_order",
+     *
+     *
+     *    @OA\Parameter(
+     *         name="id",
+     *         in="query",
+     *         description="id 二选一",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="string",
+     *         )
+     *     ),
+     *
+     *
+     *    @OA\Parameter(
+     *         name="order_num",
+     *         in="query",
+     *         description="订单号  二选一",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="string",
+     *         )
+     *     ),
+     *
+     *
+     *
+     *    @OA\Parameter(
+     *         name="refund_refuse",
+     *         in="query",
+     *         description="退款理由",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="string",
+     *         )
+     *     ),
+     *
+     *
+     *
+     *
+     *     @OA\Response(response="200", description="An example resource"),
+     *     @OA\Response(response="default", description="An example resource")
+     * )
+     *
+     *   test_environment: http://tutor.ikun:9090/api/wxapp/teacher_order/refund_refuse_order
+     *   official_environment: https://xcxkf159.aubye.com/api/wxapp/teacher_order/refund_refuse_order
+     *   api:  /wxapp/teacher_order/refund_refuse_order
+     *   remark_name: 拒绝退款
+     *
+     */
+    public function refund_refuse_order()
+    {
+        $this->checkAuth(2);
+
+        $TeacherOrderInit  = new \init\TeacherOrderInit();//订单管理    (ps:InitController)
+        $TeacherOrderModel = new \initmodel\TeacherOrderModel(); //订单管理   (ps:InitModel)
+
+        /** 获取参数 **/
+        $params            = $this->request->param();
+        $params["user_id"] = $this->user_id;
+
+        /** 查询条件 **/
+        $where = [];
+        if ($params['id']) $where[] = ["id", "=", $params["id"]];
+        if ($params['order_num']) $where[] = ["order_num", "=", $params["order_num"]];
+
+
+        //查新订单信息
+        $order_info = $TeacherOrderModel->where($where)->find();
+        if (empty($order_info)) $this->error("暂无数据");
+        if ($order_info['status'] != 12) $this->error("订单状态错误");
+
+
+        //更新订单信息
+        $update['refund_refuse']      = $params['refund_refuse'];
+        $update['status']             = 14;
+        $update['refund_refuse_time'] = time();
+        $update['update_time']        = time();
+        $result                       = $TeacherOrderModel->where($where)->strict(false)->update($update);
+        if (!$result) $this->error("操作失败!");
+
+
+        $this->success("操作成功!");
+
+
+    }
+
+
+    /**
      * 求两个经纬度之间的距离
      * @param float $lng1 经度1
      * @param float $lat1 纬度1
@@ -736,5 +1398,6 @@ class TeacherOrderController extends AuthController
 
         return round($s / 1000, 2); // 返回距离，单位为千米
     }
+
 
 }

@@ -48,6 +48,7 @@
                 <th style="">用户信息</th>
                 <th style="">姓名</th>
                 <th style="">年龄</th>
+                <th style="">佣金</th>
                 <th style="">性别</th>
                 <th style="">所在位置</th>
                 <th style="">毕业院校</th>
@@ -82,6 +83,7 @@
                     </td>
                     <td>{$vo.username|default=''}</td>  <!--姓名-->
                     <td>{$vo.age|default=''}</td>  <!--年龄-->
+                    <td>{$vo.commission|default=''}</td>  <!--佣金-->
                     <td>{$vo.gender|default=''}</td>  <!--性别-->
                     <td>{$vo.address|default=''}</td>  <!--所在位置-->
                     <td>{$vo.school|default=''}</td>  <!--毕业院校-->
@@ -99,6 +101,14 @@
                             >查看</a>
                         </if>
 
+                        <a class="layui-btn layui-btn-primary layui-border-blue layui-btn-xs"
+                           href="javascript:parent.openIframeLayer('{:url('asset/operate',['id'=>$vo.id,'identity_type'=>'teacher','operate_type'=>'commission'])}','',{ area: ['45%', '65%'],move:'.layui-layer-title'},true);"
+                        >操作佣金</a>
+
+
+                        <a class="layui-btn layui-btn-primary layui-border-orange layui-btn-xs"
+                           href="javascript:parent.openIframeLayer('{:url('asset/log',['user_id'=>$vo.id,'identity_type'=>'teacher','operate_type'=>'commission'])}','',{ area: ['65%', '85%'],move:'.layui-layer-title'},false);"
+                        >记录</a>
 
                         <!--通过无页面+拒绝窗口-->
                         <if condition="$vo.status == 1">
@@ -109,8 +119,6 @@
                                href="javascript:parent.openIframeLayer('{:url('refuse',['id'=>$vo.id,'status'=>3])}','',{ area: ['65%', '85%'],move:'.layui-layer-title'},true);"
                             >拒绝</a>
                         </if>
-
-
 
 
                     </td>

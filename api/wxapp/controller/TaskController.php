@@ -39,6 +39,7 @@ class TaskController
         $task = new \init\TaskInit();
         $task->operation_vip();//处理vip
         $task->operation_cancel_order();//自动取消订单
+        $task->operation_coupon();//更新优惠券状态
         //$task->operation_accomplish_order();//自动完成订单
 
 

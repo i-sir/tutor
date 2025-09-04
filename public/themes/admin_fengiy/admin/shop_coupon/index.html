@@ -54,7 +54,6 @@
                     <th style="">排序</th>
                 </if>
                 <th style="">ID</th>
-                <th style="">时间类型</th>
                 <th style="">优惠券类型</th>
                 <th style="">优惠券名称</th>
                 <th style="">满额</th>
@@ -62,7 +61,8 @@
                 <th style="">开始时间</th>
                 <th style="">结束时间</th>
                 <th style="">有效期(天)</th>
-                <th style="">显示</th>
+<!--                <th style="">承担方</th>-->
+<!--                <th style="">显示</th>-->
                 <th style="">创建时间</th>
 
                 <th style="">操作</th>
@@ -80,7 +80,6 @@
                     </if>
                     <td>{$vo.id}</td>
                     <td>{$vo.type_name}</td>
-                    <td>{$vo.coupon_type_name}</td>
                     <td>{$vo.name}</td>
                     <td>{$vo.full_amount}</td>
                     <td>{$vo.amount}</td>
@@ -99,18 +98,34 @@
                             {$vo.day}
                         </if>
                     </td>
-                    <td>
-                        <div class="layui-form">
-                            <input type="checkbox" lay-skin="switch" lay-text="是|否" lay-filter="is_show" name="is_show"
-                                   value="{$vo.id}"
-                            <if condition="$vo.is_show == 1">checked</if>
-                            >
-                        </div>
-                    </td>
+<!--                    <td>-->
+<!--                        <div class="layui-form">-->
+<!--                            <input type="checkbox" lay-skin="switch" lay-text="平台|商家" lay-filter="bear" name="bear"-->
+<!--                                   value="{$vo.id}"-->
+<!--                            <if condition="$vo.bear == 1">checked</if>-->
+<!--                            >-->
+<!--                        </div>-->
+<!--                    </td>-->
+
+<!--                    <td>-->
+<!--                        <div class="layui-form">-->
+<!--                            <input type="checkbox" lay-skin="switch" lay-text="是|否" lay-filter="is_show" name="is_show"-->
+<!--                                   value="{$vo.id}"-->
+<!--                            <if condition="$vo.is_show == 1">checked</if>-->
+<!--                            >-->
+<!--                        </div>-->
+<!--                    </td>-->
 
                     <td>{$vo.create_time|date='Y-m-d H:i:s'}</td>
 
                     <td>
+
+                        <!--弹出窗口-->
+                        <a class="layui-btn layui-btn-primary layui-border-blue layui-btn-xs"
+                           href="javascript:parent.openIframeLayer('{:url('send',['coupon_id'=>$vo.id])}','',{ area: ['65%', '85%'],move:'.layui-layer-title'},false);"
+                        >发放优惠券</a>
+
+
                         <if condition="cmf_auth_check(cmf_get_current_admin_id(),'admin/ShopCoupon/edit')">
                             <a class="layui-btn layui-btn-primary layui-border-green layui-btn-xs"
                                href="{:url('edit',['id'=>$vo.id,'params'=>$params])}">编辑</a>
@@ -141,6 +156,11 @@
 
         form.on('switch(is_show)', function (data) {
             batchPost(data.value, 'is_show', this.checked ? 1 : 2)
+        });
+
+
+        form.on('switch(bear)', function (data) {
+            batchPost(data.value, 'bear', this.checked ? 1 : 2)
         });
 
 

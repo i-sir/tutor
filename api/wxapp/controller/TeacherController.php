@@ -270,7 +270,7 @@ class TeacherController extends AuthController
      *
      *
      *     @OA\Parameter(
-     *         name="order_number",
+     *         name="total_duration",
      *         in="query",
      *         description="授课时长   文字100-200 ",
      *         required=false,
@@ -893,5 +893,71 @@ class TeacherController extends AuthController
         if (empty($result)) $this->error("失败请重试");
 
         $this->success("操作成功");
+    }
+
+
+    /**
+     * 评价列表
+     * @OA\Post(
+     *     tags={"教师管理"},
+     *     path="/wxapp/teacher/find_comment_list",
+     *
+     *
+     *
+     *    @OA\Parameter(
+     *         name="openid",
+     *         in="query",
+     *         description="openid",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="string",
+     *         )
+     *     ),
+     *
+     *
+     *    @OA\Parameter(
+     *         name="pid",
+     *         in="query",
+     *         description="教师id",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="string",
+     *         )
+     *     ),
+     *
+     *
+     *
+     *
+     *     @OA\Response(response="200", description="An example resource"),
+     *     @OA\Response(response="default", description="An example resource")
+     * )
+     *
+     *   test_environment: http://tutor.ikun:9090/api/wxapp/teacher/find_comment_list
+     *   official_environment: https://xcxkf159.aubye.com/api/wxapp/teacher/find_comment_list
+     *   api:  /wxapp/teacher/find_comment_list
+     *   remark_name: 评价列表
+     *
+     */
+    public function find_comment_list()
+    {
+        $BaseCommentInit = new \init\BaseCommentInit();//商品评价    (ps:InitController)
+        $params          = $this->request->param();
+
+        /** 查询条件 **/
+        $where   = [];
+        $where[] = ["type", "=", 'teacher'];
+        $where[] = ["pid", "=", $params["pid"]];
+
+
+        /** 查询数据 **/
+        $params["InterfaceType"] = "api";//接口类型
+        $params["DataFormat"]    = "list";//数据格式,find详情,list列表
+        $params["field"]         = "*";//过滤字段
+
+        /** 查询数据 **/
+        $result = $BaseCommentInit->get_list_paginate($where, $params);
+
+
+        $this->success("详情数据", $result);
     }
 }

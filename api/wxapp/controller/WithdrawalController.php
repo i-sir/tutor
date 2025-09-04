@@ -88,8 +88,8 @@ class WithdrawalController extends AuthController
 
 
         $map   = [];
-        $map[] = ['user_id', '=', $this->user_id];
-        $map[] = ['identity_type', '=', $this->user_info['identity_type'] ?? 'member'];
+        $map[] = ['user_id', '=', $this->teacher_id];
+        $map[] = ['identity_type', '=', $this->user_info['identity_type'] ?? 'teacher'];
 
         //微信配置信息
         $plugin_config = cmf_get_option('weipay');
@@ -245,6 +245,102 @@ class WithdrawalController extends AuthController
      *
      */
     public function add_withdrawal()
+    {
+        $this->checkAuth(2);
+
+        // 启动事务
+        Db::startTrans();
+
+
+        $MemberWithdrawalModel = new \initmodel\MemberWithdrawalModel();//提现管理
+        $TeacherModel          = new \initmodel\TeacherModel(); //教师管理   (ps:InitModel)
+
+
+        $params = $this->request->param();
+
+        //获取身份类型
+        $this->user_info['identity_type'] = $this->user_info['identity_type'] ?? 'teacher';
+
+        if (empty($params['type'])) $params['type'] = 1;
+        if (empty($params['price'])) $this->error('请填写正确的金额!');
+
+
+        $user_info = $TeacherModel->where('user_id', '=', $this->user_id)->find();
+        if (empty($user_info)) $this->error('用户不存在!');
+
+        //先扣除指定金额
+        if ($params['price'] > $user_info['commission']) $this->error('提现金额超出了可提现金额！');
+
+
+        //计算手续费
+        $withdraw_amount = cmf_config('withdraw_amount');
+        if ($withdraw_amount > $params['price']) $this->error('提现金额不能低于' . $withdraw_amount . '元！');
+
+
+        $charges = 0;//手续费
+        // $withdraw_charges = cmf_config('withdraw_charges') / 100;
+        // if ($withdraw_charges) {
+        //     $charges = $params['price'] * $withdraw_charges;
+        //     $charges = round($charges, 2);
+        // }
+
+        //需打款金额
+        $rmb = round($params['price'] - $charges, 2);
+
+
+        $order_num = $this->get_num_only('order_num', 4, 1, '', $MemberWithdrawalModel);
+        //插入数据
+        $recharge = [
+            'type'          => $params['type'],
+            'price'         => $params['price'],
+            'user_id'       => $this->teacher_id,
+            'identity_type' => 'teacher',
+            'openid'        => $this->openid,
+            'wx_openid'     => $this->openid,
+            'charges'       => $charges,
+            'rmb'           => $rmb,
+            'create_time'   => time(),
+            'ali_username'  => $params['ali_username'],
+            'ali_account'   => $params['ali_account'],
+            'opening_bank'  => $params['opening_bank'],
+            'wx_image'      => $params['wx_image'],
+            'bank_username' => $params['bank_username'],
+            'bank_account'  => $params['bank_account'],
+            'wx_username'   => $params['wx_username'],
+            'order_num'     => $order_num,
+            'status'        => 1,
+        ];
+
+        //插入提现记录
+        $result = $MemberWithdrawalModel->strict(false)->insert($recharge, true);
+
+
+        if ($result) {
+            $remark = "操作人[{$this->user_id}-{$this->user_info['nickname']}];操作说明[申请提现:{$params['price']}];操作类型[用户申请提现];";//管理备注
+            AssetModel::decAsset('用户提现,扣除余额  [800]', [
+                'operate_type'  => 'commission',//操作类型，balance|point ...
+                'identity_type' => $this->user_info['identity_type'],//身份类型，member| ...
+                'user_id'       => $this->teacher_id,
+                'price'         => $recharge['price'],
+                'order_num'     => $recharge['order_num'],
+                'order_type'    => 800,
+                'content'       => '提现',
+                'remark'        => $remark,
+                'order_id'      => 0,
+            ]);
+
+
+            // 提交事务
+            Db::commit();
+
+            $this->success('提交成功!');
+        } else {
+            $this->error('提交失败，请稍后再试！');
+        }
+    }
+
+
+    public function add_withdrawal_000()
     {
         $this->checkAuth();
 

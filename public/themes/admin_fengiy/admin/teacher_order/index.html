@@ -223,6 +223,14 @@
                                 <span class="layui-btn-xs layui-btn layui-btn-primary layui-border-orange{$vo.status_color}">
                                     {$vo.status_name}
                                 </span>
+                                <if condition="10 < $vo.status">
+                                    <a data-toggle="tooltip"
+                                       href="javascript:openIframeLayer('{:url('reason',['id'=>$vo.id])}','查看退款原因',{area: ['800px', '460px']})"
+                                       style="margin-left: 5px"
+                                       title="退款原因">
+                                        <i class="layui-icon layui-icon-question layui-font-22 layui-font-red"></i>
+                                    </a>
+                                </if>
                             </div>
                         </td>
 
@@ -238,31 +246,31 @@
                                 <!--                                </a>-->
 
                                 <if condition="$vo.status==2">
-<!--                                    <a class="layui-bg-gray-light layui-circle op-btn"-->
-<!--                                       data-toggle="tooltip"-->
-<!--                                       href="javascript:parent.openIframeLayer('{:url('send',['id'=>$vo.id])}','发货',{area: ['80%', '80%']},true)"-->
-<!--                                       title="发货">-->
-<!--                                        <i class="layui-icon layui-icon-release"></i>-->
-<!--                                    </a>-->
+                                    <!--                                    <a class="layui-bg-gray-light layui-circle op-btn"-->
+                                    <!--                                       data-toggle="tooltip"-->
+                                    <!--                                       href="javascript:parent.openIframeLayer('{:url('send',['id'=>$vo.id])}','发货',{area: ['80%', '80%']},true)"-->
+                                    <!--                                       title="发货">-->
+                                    <!--                                        <i class="layui-icon layui-icon-release"></i>-->
+                                    <!--                                    </a>-->
 
-<!--                                    <a class="layui-bg-gray-light layui-circle op-btn"-->
-<!--                                       data-id="{$vo.id}"-->
-<!--                                       data-toggle="tooltip"-->
-<!--                                       lay-on="send-confirm"-->
-<!--                                       title="确认配送？">-->
-<!--                                        <i class="layui-icon layui-icon-release"></i>-->
-<!--                                    </a>-->
+                                    <!--                                    <a class="layui-bg-gray-light layui-circle op-btn"-->
+                                    <!--                                       data-id="{$vo.id}"-->
+                                    <!--                                       data-toggle="tooltip"-->
+                                    <!--                                       lay-on="send-confirm"-->
+                                    <!--                                       title="确认配送？">-->
+                                    <!--                                        <i class="layui-icon layui-icon-release"></i>-->
+                                    <!--                                    </a>-->
                                 </if>
 
 
                                 <if condition="$vo.status==2">
-<!--                                    <a class="layui-bg-gray-light layui-circle op-btn"-->
-<!--                                       data-id="{$vo.id}"-->
-<!--                                       data-toggle="tooltip"-->
-<!--                                       lay-on="verification_order"-->
-<!--                                       title="确认核销？">-->
-<!--                                        <i class="layui-icon layui-icon-unlink"></i>-->
-<!--                                    </a>-->
+                                    <!--                                    <a class="layui-bg-gray-light layui-circle op-btn"-->
+                                    <!--                                       data-id="{$vo.id}"-->
+                                    <!--                                       data-toggle="tooltip"-->
+                                    <!--                                       lay-on="verification_order"-->
+                                    <!--                                       title="确认核销？">-->
+                                    <!--                                        <i class="layui-icon layui-icon-unlink"></i>-->
+                                    <!--                                    </a>-->
                                 </if>
 
 

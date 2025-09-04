@@ -192,6 +192,34 @@ class TeacherOrderController extends AdminBaseController
         return $this->fetch();
     }
 
+    //查看详情
+    public function reason()
+    {
+        $this->base_edit();//处理基础信息
+
+        $TeacherOrderInit  = new \init\TeacherOrderInit();//订单管理    (ps:InitController)
+        $TeacherOrderModel = new \initmodel\TeacherOrderModel(); //订单管理   (ps:InitModel)
+        $params            = $this->request->param();
+
+        /** 查询条件 **/
+        $where   = [];
+        $where[] = ["id", "=", $params["id"]];
+
+        /** 查询数据 **/
+        $params["InterfaceType"] = "admin";//接口类型
+        $params["DataFormat"]    = "find";//数据格式,find详情,list列表
+        $result                  = $TeacherOrderInit->get_find($where, $params);
+        if (empty($result)) $this->error("暂无数据");
+
+        /** 数据格式转数组 **/
+        $toArray = $result->toArray();
+        foreach ($toArray as $k => $v) {
+            $this->assign($k, $v);
+        }
+
+        return $this->fetch();
+    }
+
 
     //查看详情
     public function details()

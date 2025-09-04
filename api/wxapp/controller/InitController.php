@@ -31,10 +31,10 @@ class InitController
     /**
      * 给上级发放佣金
      * @param $p_user_id 上级id
-     * @param $child_id 子级id
-     *                  https://xcxkf159.aubye.com/api/wxapp/init/send_invitation_commission?p_user_id=1
+     * @param $child_id  子级id
+     *                   https://xcxkf159.aubye.com/api/wxapp/init/send_invitation_commission?p_user_id=1
      */
-    public function send_invitation_commission($p_user_id = 0, $child_id = 0)
+    public function sendInvitationCommission($p_user_id = 0, $child_id = 0)
     {
         //邀请佣金
         $price  = cmf_config('invitation_rewards');
@@ -54,6 +54,53 @@ class InitController
         ]);
 
         return "true";
+    }
+
+
+    /**
+     * 订单完成,给教师放发佣金
+     * @param $order_num
+     */
+    public function sendTeacherOrderAccomplish($order_num)
+    {
+        $TeacherOrderModel = new \initmodel\TeacherOrderModel(); //订单管理   (ps:InitModel)
+        $TeacherModel      = new \initmodel\TeacherModel(); //教师管理   (ps:InitModel)
+
+
+        $map   = [];
+        $map[] = ['order_num', '=', $order_num];
+
+
+        $order_info = $TeacherOrderModel->where($map)->find();
+        if (empty($order_info)) return false;
+        //if ($order_info['status'] != 4) return false;
+
+
+        //发佣金
+        $platform_commission = cmf_config('platform_commission');        //教师订单,平台抽取(%)
+        $commission          = $order_info['amount'] - $order_info['amount'] * ($platform_commission / 100);
+
+        $remark = "操作人[授课完成,给老师发佣金];操作说明[授课完成,给老师发佣金];操作类型[授课完成,给老师发佣金];";//管理备注
+        AssetModel::incAsset('授课完成,给老师发佣金 [500]', [
+            'operate_type'  => 'commission',//操作类型，balance|point ...
+            'identity_type' => 'teacher',//身份类型，member| ...
+            'user_id'       => $order_info['teacher_id'],
+            'price'         => $commission,
+            'order_num'     => $order_num,
+            'order_type'    => 500,
+            'content'       => '授课完成',
+            'remark'        => $remark,
+            'order_id'      => $order_info['id'],
+        ]);
+
+
+        //老师课时增加一下
+        $total_duration = (float)$order_info['duration'];
+        if ($order_info['is_package'] == 1) $total_duration = cmf_config('package_duration');//套餐时长,小时
+        $TeacherModel->where('id', '=', $order_info['teacher_id'])->inc('total_duration', $total_duration)->update();
+
+
+        return true;
     }
 
 }

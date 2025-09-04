@@ -59,6 +59,7 @@ class WithdrawalController extends AdminBaseController
         $this->base_index();//处理基础文字
         $MemberWithdrawalModel = new \initmodel\MemberWithdrawalModel();//提现管理
         $MemberInit            = new \init\MemberInit();//会员管理 (ps:InitController)
+        $TeacherModel          = new \initmodel\TeacherModel(); //教师管理   (ps:InitModel)
 
         $params = $this->request->param();
 
@@ -77,15 +78,15 @@ class WithdrawalController extends AdminBaseController
             ->where($where)
             ->order("id desc")
             ->paginate(10)
-            ->each(function ($item, $key) use ($MemberInit) {
+            ->each(function ($item, $key) use ($MemberInit, $TeacherModel) {
                 if ($item['create_time']) $item['create_time'] = date('Y-m-d H:i:s', $item['create_time']);
 
                 if ($item['identity_type'] == 'member') {
                     $item['user_info'] = $MemberInit->get_find($item['user_id']);
                 } else {
-                    //                    $user_info           = $TechnicianInit->get_find($item['user_id']);
-                    //                    $user_info['avatar'] = $user_info['avatar'][0];
-                    //                    $item['user_info']   = $user_info;
+                    $user_info             = $TeacherModel->where('id', '=', $item['user_id'])->find();
+                    $user_info['nickname'] = $user_info['username'];
+                    $item['user_info']     = $user_info;
                 }
 
                 $item['type_name']          = $this->type_array[$item['type']];
@@ -184,10 +185,10 @@ class WithdrawalController extends AdminBaseController
                 }
 
                 //用户佣金提现驳回
-                if ($withdrawal_info['identity_type'] == 'member2') {
+                if ($withdrawal_info['identity_type'] == 'teacher') {
 
-                    AssetModel::incAsset('用户提现驳回,退回佣金(积分) [810]', [
-                        'operate_type'  => 'point',//操作类型，balance|point ...
+                    AssetModel::incAsset('教师提现驳回,退回佣金(积分) [810]', [
+                        'operate_type'  => 'commission',//操作类型，balance|point ...
                         'identity_type' => $withdrawal_info['identity_type'],//身份类型，member| ...
                         'user_id'       => $withdrawal_info['user_id'],
                         'price'         => $withdrawal_info['price'],

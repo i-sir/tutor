@@ -79,7 +79,7 @@
             <thead>
             <tr>
                 <th style="">ID</th>
-                <th style="">用户信息</th>
+                <th style="">教师信息</th>
                 <!--<th style="">类型</th>-->
                 <th style="">说明</th>
                 <th style="">变动值</th>
@@ -97,10 +97,13 @@
                     <td>
                         <if condition="!empty($vo.user_info)">
                             <div style="display: flex;align-items: center;">
-                                <a href="javascript:imagePreviewDialog('{:cmf_get_image_preview_url($vo.user_info.avatar)}');">
-                                    <img class="img-rounded" src="{:cmf_get_image_preview_url($vo.user_info.avatar)}"
-                                         style="width:40px;height:40px;">
-                                </a>
+                                <if condition="!empty($vo.user_info.avatar)">
+                                    <a href="javascript:imagePreviewDialog('{:cmf_get_image_preview_url($vo.user_info.avatar)}');">
+                                        <img class="img-rounded"
+                                             src="{:cmf_get_image_preview_url($vo.user_info.avatar)}"
+                                             style="width:40px;height:40px;">
+                                    </a>
+                                </if>
                                 <div style="margin-left: 6px;">
                                     <p ondblclick="copyContent('{$vo.user_info.openid}')">{$vo.user_info.nickname}
                                         ({$vo.user_info.id})</p>

@@ -77,8 +77,9 @@ class AssetController extends AdminBaseController
     //提交
     public function operate_post()
     {
-        $MemberModel = new \initmodel\MemberModel();//用户管理
-        $AssetModel  = new \initmodel\AssetModel();
+        $MemberModel  = new \initmodel\MemberModel();//用户管理
+        $AssetModel   = new \initmodel\AssetModel();
+        $TeacherModel = new \initmodel\TeacherModel(); //教师管理   (ps:InitModel)
 
         $admin_id_and_name = cmf_get_current_admin_id() . '-' . session('name');//管理员信息
 
@@ -88,8 +89,9 @@ class AssetController extends AdminBaseController
 
         //用户
         if ($params['identity_type'] == 'member') $info = $MemberModel->where('id', '=', $params['id'])->find();
-        //店铺
-        if ($params['identity_type'] == 'shop') $info = [];
+        //老师
+        if ($params['identity_type'] == 'teacher') $info = $TeacherModel->where('id', '=', $params['id'])->find();
+
 
         //找出对应订单类型
         $operate_order = $AssetModel->operate_order_admin[$params['operate_type']];//操作类型
@@ -215,8 +217,9 @@ class AssetController extends AdminBaseController
     //所有人信息
     public function log_all()
     {
-        $AssetModel  = new \initmodel\AssetModel();
-        $MemberModel = new \initmodel\MemberModel();
+        $AssetModel   = new \initmodel\AssetModel();
+        $MemberModel  = new \initmodel\MemberModel();
+        $TeacherModel = new \initmodel\TeacherModel(); //教师管理   (ps:InitModel)
 
 
         //数据类型
@@ -240,7 +243,7 @@ class AssetController extends AdminBaseController
 
         //普通查询
         $map   = [];
-        $map[] = ["identity_type", "=", $params["identity_type"] ?? 'member'];
+        $map[] = ["identity_type", "=", $params["identity_type"] ?? 'teacher'];
         $map[] = ["operate_type", "=", $params["operate_type"] ?? 'balance'];
         $map[] = $this->getBetweenTime($params['beginTime'], $params['endTime']);
         if ($params["user_id"]) $map[] = ["user_id", "=", $params["user_id"]];
@@ -266,10 +269,10 @@ class AssetController extends AdminBaseController
         //拼表查询
         if ($params['user_keyword']) {
             $result = $AssetModel->alias('l')
-                ->join('member m', 'l.user_id = m.id')
+                ->join('teacher m', 'l.user_id = m.id')
                 ->where($map)
                 ->order('l.id desc')
-                ->field('l.*,m.nickname as user_nickname,m.phone as user_phone,m.avatar as user_avatar,m.openid as user_openid')
+                ->field('l.*,m.usernme as user_nickname,m.phone as user_phone')
                 ->paginate(['list_rows' => 15, 'query' => $params])
                 ->each(function ($item, $key) use ($change_type_list, $order_type_list, $operate_type_list, $MemberModel) {
                     $item['change_type_name']  = $change_type_list[$item['change_type']];
@@ -298,7 +301,7 @@ class AssetController extends AdminBaseController
             $result = $AssetModel->where($map)
                 ->order('id desc')
                 ->paginate(['list_rows' => 15, 'query' => $params])
-                ->each(function ($item, $key) use ($change_type_list, $order_type_list, $operate_type_list, $MemberModel) {
+                ->each(function ($item, $key) use ($change_type_list, $order_type_list, $operate_type_list, $MemberModel, $TeacherModel) {
                     $item['change_type_name']  = $change_type_list[$item['change_type']];
                     $item['order_type_name']   = $order_type_list[$item['order_type']];
                     $item['operate_type_name'] = $operate_type_list[$item['operate_type']];
@@ -309,8 +312,9 @@ class AssetController extends AdminBaseController
                     $item['child_user_info'] = $child_user_info;
 
                     //个人信息
-                    $user_info         = $MemberModel->where('id', $item['user_id'])->find();
-                    $item['user_info'] = $user_info;
+                    $user_info             = $TeacherModel->where('id', $item['user_id'])->find();
+                    $user_info['nickname'] = $user_info['username'];
+                    $item['user_info']     = $user_info;
 
 
                     return $item;

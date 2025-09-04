@@ -14,23 +14,23 @@
                value="{:input('request.keyword/s','')}" placeholder="请输入{:lang('搜索关键字')}">
 
 
-        提现类型：
-        <div class="form-group">
-            <div class="layui-form-item">
-                <div class="col-md-6 col-sm-10" style="display: flex;margin-top: 10px;width: 180px;">
-                    <select name="type" lay-search>
-                        <option value=""
-                        <if condition="$type eq '' ">selected</if>
-                        >暂不选择</option>
-                        <foreach name="type_list" key="key" item="vo">
-                            <option value="{$key}"
-                            <if condition="$type eq $key ">selected</if>
-                            > {$vo}</option>
-                        </foreach>
-                    </select>
-                </div>
-            </div>
-        </div>
+        <!--        提现类型：-->
+        <!--        <div class="form-group">-->
+        <!--            <div class="layui-form-item">-->
+        <!--                <div class="col-md-6 col-sm-10" style="display: flex;margin-top: 10px;width: 180px;">-->
+        <!--                    <select name="type" lay-search>-->
+        <!--                        <option value=""-->
+        <!--                        <if condition="$type eq '' ">selected</if>-->
+        <!--                        >暂不选择</option>-->
+        <!--                        <foreach name="type_list" key="key" item="vo">-->
+        <!--                            <option value="{$key}"-->
+        <!--                            <if condition="$type eq $key ">selected</if>-->
+        <!--                            > {$vo}</option>-->
+        <!--                        </foreach>-->
+        <!--                    </select>-->
+        <!--                </div>-->
+        <!--            </div>-->
+        <!--        </div>-->
 
 
         <!--        身份类型:-->
@@ -108,9 +108,9 @@
         <thead>
         <tr>
             <th width="50">ID</th>
-            <th>身份类型</th>
-            <th>提现方式</th>
-            <th>用户信息</th>
+            <!--            <th>身份类型</th>-->
+            <!--            <th>提现方式</th>-->
+            <th>教师信息</th>
             <th>提现总金额</th>
             <th>手续费</th>
             <th>应打款金额</th>
@@ -126,15 +126,17 @@
         <foreach name="list" item="vo">
             <tr>
                 <td>{$vo.id}</td>
-                <td>{$vo.identity_type_name}</td>
-                <td>{$vo.type_name}</td>
+                <!--                <td>{$vo.identity_type_name}</td>-->
+                <!--                <td>{$vo.type_name}</td>-->
                 <td>
                     <if condition="!empty($vo.user_info)">
                         <div style="display: flex;align-items: center;">
-                            <a href="javascript:imagePreviewDialog('{:cmf_get_image_preview_url($vo.user_info.avatar)}');">
-                                <img class="img-rounded" src="{:cmf_get_image_preview_url($vo.user_info.avatar)}"
-                                     style="width:45px;">
-                            </a>
+                            <if condition="!empty($vo.user_info.avatar)">
+                                <a href="javascript:imagePreviewDialog('{:cmf_get_image_preview_url($vo.user_info.avatar)}');">
+                                    <img class="img-rounded" src="{:cmf_get_image_preview_url($vo.user_info.avatar)}"
+                                         style="width:45px;">
+                                </a>
+                            </if>
                             <div style="margin-left: 6px;">
                                 <span ondblclick="copyContent('{$vo.user_info.openid}')">{$vo.user_info.nickname} ({$vo.user_info.id})</span>
                                 <br>
