@@ -257,6 +257,17 @@ class ShopCouponController extends AuthController
      *     ),
      *
      *
+     *    @OA\Parameter(
+     *         name="used",
+     *         in="query",
+     *         description="状态:1未使用,2已使用,3已过期",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="string",
+     *         )
+     *     ),
+     *
+     *
      *
      *     @OA\Response(response="200", description="An example resource"),
      *     @OA\Response(response="default", description="An example resource")
@@ -279,6 +290,7 @@ class ShopCouponController extends AuthController
 
         $map   = [];
         $map[] = ['user_id', '=', $this->user_id];
+        if ($params['used']) $map[] = ['used', '=', $params['used']];
         //筛选可使用优惠券
         if ($params['amount']) {
             $map[] = ['end_time', '>', time()];

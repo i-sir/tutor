@@ -137,7 +137,7 @@ class TeacherController extends AuthController
         /** 查询条件 **/
         $where   = [];
         $where[] = ['id', '>', 0];
-        $where[] = ['pid', '=', 0];
+        if (empty($params['is_index'])) $where[] = ['pid', '=', 0];
         $where[] = ['is_show', '=', 1];
         if ($params["keyword"]) $where[] = ["name", "like", "%{$params['keyword']}%"];
         if ($params["status"]) $where[] = ["status", "=", $params["status"]];
@@ -810,7 +810,10 @@ class TeacherController extends AuthController
         $where        = [];
         $where[]      = ['user_id', '=', $this->user_id];
         $teacher_info = $TeacherModel->where($where)->find();
-        if (empty($teacher_info)) $this->error("请先申请成为教师");
+        //if (empty($teacher_info)) $this->error("请先申请成为教师");
+
+        //未提交过,或者已驳回,在提交需要审核.
+        if (empty($teacher_info) || $teacher_info['status'] == 3) $params["status"] = 1;
 
 
         $teacher_id = $teacher_info['id'];
@@ -821,7 +824,7 @@ class TeacherController extends AuthController
 
 
         //每次编辑都需要待审核
-        $params["status"] = 1;
+        //$params["status"] = 1;
 
 
         /** 提交更新 **/

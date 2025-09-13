@@ -70,9 +70,13 @@ class TeacherClassInit extends Base
         /** 处理数据 **/
         if ($this->InterfaceType == 'api') {
             /** api处理文件 **/
-
+            if ($item['image']) $item['image'] = cmf_get_asset_url($item['image']);
 
             /** 处理富文本 **/
+
+            if ($item['pid'] != 0) {
+                $item['type'] = $TeacherClassModel->where('id', '=', $item['pid'])->value('type');
+            }
 
             //查询子级列表
             $item['child_list'] = $TeacherClassModel->where('pid', '=', $item['id'])->select();

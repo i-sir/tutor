@@ -105,6 +105,16 @@ class TeacherOrderController extends AuthController
      *         )
      *     ),
      *
+     *    @OA\Parameter(
+     *         name="is_teacher",
+     *         in="query",
+     *         description="true 教师订单列表",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="string",
+     *         )
+     *     ),
+     *
      *
      *     @OA\Parameter(
      *         name="keyword",
@@ -155,7 +165,8 @@ class TeacherOrderController extends AuthController
         /** 查询条件 **/
         $where   = [];
         $where[] = ['id', '>', 0];
-        $where[] = ['user_id', '=', $this->user_id];
+        if (empty($params['is_teacher'])) $where[] = ['user_id', '=', $this->user_id];
+        if ($params['is_teacher']) $where[] = ['teacher_id', '=', $this->teacher_id];
         if ($params["keyword"]) $where[] = ["order_num", "like", "%{$params['keyword']}%"];
         if ($params["status"]) $where[] = ["status", "=", $params["status"]];
         if ($params['type']) $where[] = ['type', '=', $params['type']];
@@ -405,12 +416,13 @@ class TeacherOrderController extends AuthController
             $map100       = [];
             $map100[]     = ['id', '=', $params['address_id']];
             $address_info = $ShopAddressModel->where($map100)->find();
-            if (empty($address_info)) $this->error("暂无此地址信息");
+            //if (empty($address_info)) $this->error("暂无此地址信息");
 
-
-            $insert['km_price'] = $teacher_info['km_price'];
-            $insert['km']       = $this->getDistance($teacher_info['receive_lng'], $teacher_info['receive_lat'], $address_info['lng'], $address_info['lat']);
-            $freight_amount     = $insert['km'] * $teacher_info['km_price'];
+            if ($address_info) {
+                $insert['km_price'] = $teacher_info['km_price'];
+                $insert['km']       = $this->getDistance($teacher_info['receive_lng'], $teacher_info['receive_lat'], $address_info['lng'], $address_info['lat']);
+                $freight_amount     = $insert['km'] * $teacher_info['km_price'];
+            }
         }
 
 
@@ -418,10 +430,6 @@ class TeacherOrderController extends AuthController
         if ($params['coupon_id']) {
             $coupon_info = $ShopCouponUserModel->where('id', '=', $params['coupon_id'])->find();
             if (empty($coupon_info) || $coupon_info['used'] != 1) $this->error('优惠券信息错误');
-            if ($coupon_info) {
-                //核销优惠券
-                $ShopCouponUserModel->where('id', '=', $params['coupon_id'])->update(['used' => 2, 'update_time' => time()]);
-            }
             $coupon_amount = $coupon_info['amount'];
         }
 
@@ -435,11 +443,11 @@ class TeacherOrderController extends AuthController
             //课时
             if ($params['type'] == 1) {
                 //线上
-                $goods_amount = $teacher_info['online_price'] * (float)$params['duration'];
+                $goods_amount = ($teacher_info['online_price'] * (float)$params['duration']) * 2;
 
             } elseif ($params['type'] == 2) {
                 //线下
-                $goods_amount = $teacher_info['offline_price'] * (float)$params['duration'];
+                $goods_amount = ($teacher_info['offline_price'] * (float)$params['duration']) * 2;
             }
         }
 
@@ -448,6 +456,7 @@ class TeacherOrderController extends AuthController
         $insert['amount']         = round($goods_amount + $freight_amount - $coupon_amount, 2);
         $insert['freight_amount'] = round($freight_amount, 2);
         $insert['goods_amount']   = round($goods_amount, 2);
+        $insert['coupon_amount']   = round($coupon_amount, 2);
 
 
         $this->success('计算成功!', $insert);
@@ -648,6 +657,9 @@ class TeacherOrderController extends AuthController
             $insert['city']     = $address_info['city'];
             $insert['county']   = $address_info['county'];
             $insert['address']  = $address_info['address'];
+            $insert['lng']      = $address_info['lng'];
+            $insert['lat']      = $address_info['lat'];
+            $insert['lnglat']   = $address_info['lnglat'];
         }
 
         // 优惠券处理
@@ -671,9 +683,9 @@ class TeacherOrderController extends AuthController
         } else {
             // 课时费用
             if ($params['type'] == 1) {
-                $goods_amount = $teacher_info['online_price'] * (float)$params['duration'];
+                $goods_amount = ($teacher_info['online_price'] * (float)$params['duration']) * 2;
             } elseif ($params['type'] == 2) {
-                $goods_amount = $teacher_info['offline_price'] * (float)$params['duration'];
+                $goods_amount = ($teacher_info['offline_price'] * (float)$params['duration']) * 2;
             }
         }
 
