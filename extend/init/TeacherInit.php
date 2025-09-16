@@ -53,6 +53,7 @@ class TeacherInit extends Base
     {
         $TeacherClassModel = new \initmodel\TeacherClassModel(); //授课类型   (ps:InitModel)
         $MemberInit        = new \init\MemberInit();//会员管理 (ps:InitController)
+        $TeacherOrderModel = new \initmodel\TeacherOrderModel();
 
 
         //接口类型
@@ -62,6 +63,16 @@ class TeacherInit extends Base
 
 
         /** 数据格式(公共部分),find详情&&list列表 共存数据 **/
+
+        //检测是否对这个老师已经下单过,下单过不让下单了
+        $item['is_package'] = false;
+        $map100             = [];
+        $map100[]           = ['teacher_id', '=', $item['id']];
+        $map100[]           = ['is_package', '=', 1];
+        $map100[]           = ['user_id', '=', $params['user_id']];
+        $map100[]           = ['status', 'in', [2, 4, 8]];
+        $is_package_order   = $TeacherOrderModel->where($map100)->find();
+        if ($is_package_order) $item['is_package'] = true;
 
 
         /** 处理文字描述 **/

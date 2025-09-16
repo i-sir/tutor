@@ -456,7 +456,7 @@ class TeacherOrderController extends AuthController
         $insert['amount']         = round($goods_amount + $freight_amount - $coupon_amount, 2);
         $insert['freight_amount'] = round($freight_amount, 2);
         $insert['goods_amount']   = round($goods_amount, 2);
-        $insert['coupon_amount']   = round($coupon_amount, 2);
+        $insert['coupon_amount']  = round($coupon_amount, 2);
 
 
         $this->success('计算成功!', $insert);
@@ -680,6 +680,16 @@ class TeacherOrderController extends AuthController
             // 套餐费用
             $package_discount = cmf_config('package_discount');
             $goods_amount     = ($teacher_info['package_price'] * ($package_discount / 100));
+
+            //检测是否对这个老师已经下单过,下单过不让下单了
+            $map100           = [];
+            $map100[]         = ['teacher_id', '=', $params['teacher_id']];
+            $map100[]         = ['is_package', '=', 1];
+            $map100[]         = ['user_id', '=', $this->user_id];
+            $map100[]         = ['status', 'in', [2, 4, 8]];
+            $is_package_order = $TeacherOrderModel->where($map100)->find();
+            if ($is_package_order) $this->error('套餐仅限购一次!');
+
         } else {
             // 课时费用
             if ($params['type'] == 1) {
